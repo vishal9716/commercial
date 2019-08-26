@@ -1,0 +1,64 @@
+
+
+.timeline{
+	width: 100%;
+	background-color: white;
+	display: block;
+	margin: 0 auto;
+}
+.timelineHeader{
+	width: 1440px;
+	border: 1px solid black;
+	height: 30px;
+	margin-bottom: 10px;
+	padding:0px;
+}
+.timelineHeaderContent{
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	height: 30px;
+	width: 60px; 
+	display: inline-block;
+	background-color :gray;
+	color : whitesmoke;
+	
+}
+.timelineHeaderText p{
+	font-size: .7em;
+	font-weight: bold;
+	text-align: center;
+	margin-top:5px; /* compensation for reducing the font size */	
+}
+.odd{
+	background-color:white;
+	color: gray;
+	}
+/* Rules for timeline-body */
+
+.folder{
+	margin-bottom: 10px;
+	width: 1440px;
+	height: 45px;
+	box-shadow: 1px 1px 1px 1px gray;
+	border:1px solid black;
+}
+.folderSection{
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	 display: inline-block;
+	 width: 60px;
+	 border-right: 1px solid black;
+	 height: 45px;
+}
+.folderSectionBreak{
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	display: inline-block;
+	 width: 14.72988px; /* compensation for the 4 right borders */
+	 border-right: 1px dotted gray;
+	 height: 45px;
+	 border
+}
