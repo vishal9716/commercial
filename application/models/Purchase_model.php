@@ -208,10 +208,9 @@ class Purchase_model extends CI_Model {
 
     function display_pr_list($pr_srno) {
         //echo "---".$pr_srno; 
-        $pr_srno = trim($pr_srno);
-        $sql = "select sr_no, pr_description, units,avg_cods, qty_in_stock,reorder_point, reorder_quantity,qty_req, pr_supplier_rate, pr_supplier_supplier,order_placed_rate,order_placed_supplier,status from purchase_request where sr_no= '" . $pr_srno . "'";
-//echo $sql; die;
-        $result = $this->db->query($sql)->result_array();
+       $pr_srno = trim($pr_srno);
+       $result = $this->db->get_where('purchase_request', array('sr_no' => $pr_srno));
+        $result = $result->result_array();
         //echo "<pre/>"; print_r($result); die;
         return $result;
     }

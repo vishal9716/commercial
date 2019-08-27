@@ -38,7 +38,7 @@
                                         <tbody>
 
                                             <tr class="even gradeC">
-                                                <td class="srno" contenteditable="true">1.</td>
+                                                <td class="srno" contenteditable="true">1</td>
                                                 <td class="date" contenteditable="true"></td>
                                                 <td class="vendor_person" contenteditable="true"></td>
                                                 <td class="contact_person" contenteditable="true"></td>
@@ -91,7 +91,7 @@
 
                     count = count + 1;
                     var html_code = "<tr id='row" + count + "'>";
-                    html_code += "<td class='srno' contenteditable='true'></td>";
+                    html_code += "<td class='srno' contenteditable='true'>" + count + "</td>";
                     html_code += "<td class='date' contenteditable='true'></td>";
                     html_code += "<td class='vendor_person' contenteditable='true'></td>";
                     html_code += "<td class='contact_person' contenteditable='true'></td>";

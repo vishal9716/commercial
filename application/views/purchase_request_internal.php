@@ -16,7 +16,7 @@
                         <?php echo $errormsg; ?>
                     </div>
                 <?php } ?>
-
+                <?php //print_r ($units_region);?>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -24,7 +24,8 @@
                             <select id="unitDropdownSelect" class="form-control select2 select2-hidden-accessible" name="unit">
                                 <option hidden value="" >--Select Units--</option>
                                 <?php foreach ($units_region as $units) { ?>
-                                    <option id="departmentsDropdown" value="<?php echo $units['unit_region_id']; ?>"><?php echo $units['unit_region_name']; ?></option>
+
+                                    <option id="departmentsDropdown" selected value="<?php echo $units[$purchase_request_list->unit_region_id]; ?>"><?php echo $units['unit_region_name']; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -98,7 +99,9 @@
                     <?php
                     $session_data = $this->session->userdata('logged_in');
                     $username = $session_data['username'];
-                    ?>             
+                    $firstname = $session_data['firstname'];
+                    $lastname = $session_data['lastname'];
+                    ?>           
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Order Placed by</label>
@@ -155,7 +158,7 @@
                                 <div class="col-md-4">
                                     <input class="form-control" placeholder="Enter PR S. No." readonly="readonly" value="" id="sr_no" name="sr_no" >
                                     <span  id ="missing-srnum" class="alert-danger" hidden></span>
-                            </div>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div id="table" class="table-editable ">
@@ -176,14 +179,14 @@
                                             </tr>
                                             <tr>
                                                 <th> Rate </th>
-                                                <th> Supplier </th>
+                                                <th> Total </th>
                                                 <th> Rate </th>
-                                                <th> Supplier </th>
+                                                <th> Toatl </th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr id="row_1">
-                                                <td class="pr_srno" contenteditable="true"></td>
+                                                <td class="pr_srno" contenteditable="true">1</td>
                                                 <td class="pr_desp" contenteditable="true"></td>
                                                 <td class="pr_dept_id" contenteditable="false" hidden ></td>
                                                 <td class="pr_unit" contenteditable="true"></td>
@@ -199,29 +202,41 @@
                                                 <td>
 
                                                     <span class="table-remove">
-                                                        <button type="button" name="save" id="save_pr" class="btn btn-info btn-sm">Save</button>
+                                                        <button title="Save PR" type="button" name="save" id="save_pr" class="btn btn-info btn-sm"><i class="fa fa-save"></i></button>
                                                     </span>
                                                     <span id="save" class="table-success">
-                                                        <button type="button" name="add" id="add" class="btn btn-success  btn-sm"><i class="fa fa-plus"></i></button>
+                                                        <button title="Add Item" type="button" name="add" id="add" class="btn btn-success  btn-sm"><i class="fa fa-plus"></i></button>
                                                     </span>
                                                 </td>
                                             </tr>
                                             <!-- This is our clonable table line -->
 
                                         </tbody>
-                                    </table>
-									
-									<table class="table table-bordered table-responsive-md table-striped text-center mb-0" id="fixAtPositionForSignature">
-                                        <tbody
-                                        <tr>
-                                                <td colspan="4" class="" contenteditable="true">ORIGINATOR</td>
-                                                <td colspan="4" class="" contenteditable="true">Unit Head</td>
-                                                <td colspan="4" class="" contenteditable="true">STORE</td>
-										  <td colspan="4" class="" contenteditable="true">PURCHASE</td>
-	 									 <td colspan="4" class="" contenteditable="true">ED/FA</td>
-                                                
+
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="8">Total</th>
+
+                                                <th  colspan="1" class="" contenteditable="true"></th>
+                                                <th  colspan="1" class="" contenteditable="true"></th>               
+                                                <td></td> 
+                                                <td></td>
                                             </tr>
-                                            </tbody>
+                                        </tfoot>
+                                    </table>
+
+                                    <table class="table table-bordered table-responsive-md table-striped text-center mb-0" id="fixAtPositionForSignature">
+                                        <tbody>
+                                            
+                                            <tr>
+                                                <td colspan="2" style="text-align: left;" contenteditable="true">ORIGINATOR : <?php echo ucfirst($firstname) . " " . ucfirst($lastname); ?></td>
+                                                <td colspan="2" class="" contenteditable="true">Unit Head : <?php echo ucfirst(); ?></td>
+                                                <td colspan="2" class="" contenteditable="true">STORE</td>
+                                                <td colspan="2" class="" contenteditable="true">PURCHASE</td>
+                                                <td colspan="3" class="" contenteditable="true">ED/FA</td>
+
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -264,7 +279,7 @@
                                     </div>
                                 </div>
 
- <div class="form-group">
+                                <div class="form-group">
                                     <label class="">Description Code</label>
 
                                     <div class="">
@@ -345,26 +360,26 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
     <script>
-        function createPurchaseRequest() {
-            
-            var dept_id = $("#departmentsDropdownSelect").val();
-            var unit_id = $("#unitDropdownSelect").val();
-            var issuing_date = $("#issuing_date").val();
-            $(".pr_dept_id").text(dept_id);
-            $.ajax({
-                url: "<?php echo base_url(); ?>purchase_request/generate_pr_sn",
-                method: "POST",
-                data: {
-                    dept_id: dept_id,
-                    unit_id: unit_id,
-                    issuing_date: issuing_date
-                },
-                success: function (data) {
-                    $("#sr_no").val(data);
-                    $('#prModal').modal('show');
-                }
-            });
-        }
+                            function createPurchaseRequest() {
+
+                                var dept_id = $("#departmentsDropdownSelect").val();
+                                var unit_id = $("#unitDropdownSelect").val();
+                                var issuing_date = $("#issuing_date").val();
+                                $(".pr_dept_id").text(dept_id);
+                                $.ajax({
+                                    url: "<?php echo base_url(); ?>purchase_request/generate_pr_sn",
+                                    method: "POST",
+                                    data: {
+                                        dept_id: dept_id,
+                                        unit_id: unit_id,
+                                        issuing_date: issuing_date
+                                    },
+                                    success: function (data) {
+                                        $("#sr_no").val(data);
+                                        $('#prModal').modal('show');
+                                    }
+                                });
+                            }
 
                             // For adding Department
                             function add_department() {
@@ -434,17 +449,17 @@
                                 });
                             }
 
-                            function calculateTotal(c){
-                               var qnty=$("#pr_qty_req_"+c).text();
-                               var suppRate=$("#pr_supplier_rate_"+c).text();
-                               var total1 = qnty * suppRate;
+                            function calculateTotal(c) {
+                                var qnty = $("#pr_qty_req_" + c).text();
+                                var suppRate = $("#pr_supplier_rate_" + c).text();
+                                var total1 = qnty * suppRate;
 
-                               var qnty=$("#pr_qty_req_"+c).text();
-                               var orderRate=$("#pr_order_rate_"+c).text();
-                               var total2 = qnty * orderRate;
+                                var qnty = $("#pr_qty_req_" + c).text();
+                                var orderRate = $("#pr_order_rate_" + c).text();
+                                var total2 = qnty * orderRate;
 
-                               $("#pr_supplier_supplier_"+c).text(total1);                                    
-                               $("#pr_order_supplier_"+c).text(total2);                                    
+                                $("#pr_supplier_supplier_" + c).text(total1);
+                                $("#pr_order_supplier_" + c).text(total2);
                             }
 
                             $(document).ready(function () {
@@ -453,7 +468,7 @@
                                 $('#add').click(function () {
                                     count = count + 1;
                                     var html_code = "<tr id='row_" + count + "'>";
-                                    html_code += "<td class='pr_srno' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_srno' contenteditable='true'>"+count+"</td>";
                                     html_code += "<td class='pr_desp' contenteditable='true'></td>";
                                     html_code += "<td class='pr_dept_id' contenteditable='true' hidden></td>";
                                     html_code += "<td class='pr_unit' contenteditable='true'></td>";
@@ -461,11 +476,11 @@
                                     html_code += "<td class='pr_qty_stk' contenteditable='true'></td>";
                                     html_code += "<td class='pr_reorder_pt' contenteditable='true'></td>";
                                     html_code += "<td class='pr_reorder_qty' contenteditable='true'></td>";
-                                    html_code += "<td class='pr_qty_req' id='pr_qty_req_"+count+"' contenteditable='true'></td>";
-                                    html_code += "<td class='pr_supplier_rate' id='pr_supplier_rate_"+count+"' contenteditable='true'></td>";
-                                    html_code += " <td class='pr_supplier_supplier' id='pr_supplier_supplier_"+count+"' onclick='calculateTotal("+count+")' contenteditable='true'></td>";
-                                    html_code += "<td class='pr_order_rate' id='pr_order_rate_"+count+"' contenteditable='true'></td>";
-                                    html_code += "<td class='pr_order_supplier' id='pr_order_supplier_"+count+"' onclick='calculateTotal("+count+")' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_qty_req' id='pr_qty_req_" + count + "' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_supplier_rate' id='pr_supplier_rate_" + count + "' contenteditable='true'></td>";
+                                    html_code += " <td class='pr_supplier_supplier' id='pr_supplier_supplier_" + count + "' onclick='calculateTotal(" + count + ")' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_order_rate' id='pr_order_rate_" + count + "' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_order_supplier' id='pr_order_supplier_" + count + "' onclick='calculateTotal(" + count + ")' contenteditable='true'></td>";
 
                                     html_code += "<td><button type='button' name='remove' data-row='row" + count + "' class='btn btn-danger btn-sm remove'>-</button></td>";
                                     html_code += "</tr>";
@@ -480,42 +495,43 @@
                                 $('#save_pr').click(function () {
                                     var sr_no = $('#sr_no').val();
                                     var pr_dept_id = $('.pr_dept_id').text();
-                                    var memo_items=[];
-                                    var count=0;
-                                    $('table tbody tr').each(function() {
+                                    var memo_items = [];
+                                    var count = 0;
+                                    $('table tbody tr').each(function () {
                                         count++;
                                         var ret = {};
-                                        $('table tbody tr#row_'+count+' td').map(function(index, td) {                                        
-                                        if(typeof $(td).attr('class') !== "undefined"){
+                                        $('table tbody tr#row_' + count + ' td').map(function (index, td) {
+                                            if (typeof $(td).attr('class') !== "undefined") {
                                                 ret[$(td).attr('class')] = $(td).text();
                                             }
-                                    });
-                                       memo_items.push(ret);
+                                        });
+                                        memo_items.push(ret);
                                     });
 
                                     $.ajax({
                                         url: "<?php echo base_url(); ?>index.php/purchase_request/add_purchase_request",
                                         method: "POST",
                                         data: {
-                                            memo_items:memo_items,
-                                            sr_no:sr_no,
-                                            pr_dept_id:pr_dept_id
+                                            memo_items: memo_items,
+                                            sr_no: sr_no,
+                                            pr_dept_id: pr_dept_id
                                         },
                                         success: function (data) {
-                                           var result= jQuery.parseJSON(data);
-                                           console.log(result);
+                                            alert(data);
+                                            var result = jQuery.parseJSON(data);
+                                            console.log(result);
 
-                                            if(result.error){
+                                            if (result.error) {
                                                 $("#missing-srnum").html(result.error);
                                                 $("#missing-srnum").show();
-                                            }else if(result.pr_num){
+                                            } else if (result.pr_num) {
                                                 $('#pr_srno').val(result.pr_num);
-                                            $('#prModal').modal('hide');
-                                            $("td[contentEditable='true']").text("");
-                                                for (var i = 2; i <= count; i++){
-                                                $('tr#' + i + '').remove();
+                                                $('#prModal').modal('hide');
+                                                $("td[contentEditable='true']").text("");
+                                                for (var i = 2; i <= count; i++) {
+                                                    $('tr#' + i + '').remove();
+                                                }
                                             }
-                                        }
                                         }
                                     });
                                 });
@@ -527,18 +543,18 @@
                                 var issuing_date = $('#issuing_date').val();
                                 var phone_person = $('#phone_person').val();
                                 var expense = $('#expense').val();
-                               
+
                                 var action_taken_by = $('#action_taken_by').val();
                                 var pr_reacd_on = $('#pr_reacd_on').val();
                                 var order_placed_by = $('#order_placed_by').val();
                                 var pr_srno = document.getElementById("pr_srno").value;
                                 var selectedOption = $("input:radio[name=optradio]:checked").val();
                                 var supplier_name = $("#supplierDropdownSelect option:selected").text();
-                                
+
                                 $.ajax({
                                     method: "POST",
                                     url: "<?php echo base_url(); ?>index.php/purchase_request/update_purchase_request",
-                                    data: {pr_srno:pr_srno, department_id: department_id, unit_id: unit_id, issuing_date: issuing_date, phone_person: phone_person, supplier_name: supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on, order_placed_by: order_placed_by, selectedOption: selectedOption},
+                                    data: {pr_srno: pr_srno, department_id: department_id, unit_id: unit_id, issuing_date: issuing_date, phone_person: phone_person, supplier_name: supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on, order_placed_by: order_placed_by, selectedOption: selectedOption},
                                     success: function (data) {
                                         alert(data);
                                         window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";

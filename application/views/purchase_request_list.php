@@ -21,13 +21,15 @@
     <?php
     $session_data = $this->session->userdata('logged_in');
     $username = $session_data['username'];
-    ?>	
+    $firstname = $session_data['firstname'];
+    $lastname = $session_data['lastname'];
+    ?> 	
     <!-- /.row -->
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Purchase Request listing &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Purchase Request listing  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span><a href="<?php echo base_url(); ?>index.php/purchase_request/internal"><?php if ($username == 'konain') { ?>Add Purchase Request <?php } ?></a></span>
                 </div>
                 <!-- /.panel-heading -->
@@ -40,6 +42,7 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover mb-0" id="dataTables-example">
                                 <thead>
+
                                     <tr>
                                         <th width="20">SNo</th>
                                         <th>PR SNo.</th>
@@ -61,7 +64,7 @@
                                 <tbody>
 
                                     <?php
-                                // echo "<pre>"; print_r($purchase_request_list); die();
+                                    // echo "<pre>"; print_r($purchase_request_list); die();
                                     $i = 0;
                                     foreach ($purchase_request_list as $list) {
                                         $i++;
@@ -82,7 +85,7 @@
 
                                             <td><?php echo date("d-m-Y", strtotime($list['pr_issue_date'])); ?></td>
                                             <td><?php echo $list['supplier_name']; ?></td>
-                                            <!--<td><?php // echo $list['pr_recd_on'];   ?></td>-->
+                                            <!--<td><?php // echo $list['pr_recd_on'];    ?></td>-->
                                             <td><?php echo $list['order_placed_by']; ?></td>
                                             <td><?php echo $type_list[$list['action_taken_by']]; ?></td>
                                             <td>
@@ -125,22 +128,22 @@
 
 
 
-                        <!--<span class="label label-danger">Reject</span>-->
-<?php if ($list['status'] != 0) { ?>
-    <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "4" . $status_list[$list['status']]; ?></span></span>
-<?php } else if ($session_data['uid'] == $list[user_id]) { ?>
-    <span  prid="<?php echo $list['sr_no']; ?>" class="label label-<?php echo $class; ?>"><?php echo $status_list[$list['status']]; ?></span>                                                    
-<?php } else { ?> 
-    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo "6" . $status_list[$list['status']]; ?></span>
-<?php } ?>
-</td>
-            <?php echo $list['phone_person']; ?>
+                                <!--<span class="label label-danger">Reject</span>-->
+                                                <?php if ($list['status'] != 0) { ?>
+                                                    <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "4" . $status_list[$list['status']]; ?></span></span>
+                                                <?php } else if ($session_data['uid'] == $list[user_id]) { ?>
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" class="label label-<?php echo $class; ?>"><?php echo $status_list[$list['status']]; ?></span>                                                    
+                                                <?php } else { ?> 
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo "6" . $status_list[$list['status']]; ?></span>
+                                                <?php } ?>
+                                            </td>
+                                            <?php echo $list['phone_person']; ?>
 
                                             <?php if (($session_data['uid'] == $list[user_id]) && $list['status'] == '0') { ?>
                                                 <td class="text-center"><a href="<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request?sr_no=<?php echo $list['sr_no']; ?>">Edit</a> 
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a></td>
 
-                                            <?php } else if( $list['uid']!='' && ($session_data['uid'] == $list['uid']) && ($list['status'] == '0')){ ?>
+                                            <?php } else if ($list['uid'] != '' && ($session_data['uid'] == $list['uid']) && ($list['status'] == '0')) { ?>
                                                 <td><a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> </td>
                                             <?php } ?>
                                             <?php if (($username == 'test') && $list['status'] == '0') {
@@ -277,6 +280,26 @@
 
                                     </tbody> 
                                 </table>
+
+
+                                <!-- signature Row added by Parul -->
+
+                                <table class="table table-bordered table-responsive-md table-striped text-center mb-0" id="fixAtPositionForSignature">
+                                    <tbody>
+
+                                        <tr>
+                                            <td colspan="2" style="text-align: center;" contenteditable="true">ORIGINATOR : <?php echo ucfirst($firstname) . " " . ucfirst($lastname); ?></td>
+                                            <td colspan="2" class="" contenteditable="true">Unit Head</td>
+                                            <td colspan="2" class="" contenteditable="true">STORE</td>
+                                            <td colspan="2" class="" contenteditable="true">PURCHASE</td>
+                                            <td colspan="2" class="" contenteditable="true">ED/FA</td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!--signature Row added by Parul  -->
+
+
                             </div>
                         </div>
                     </div>
@@ -292,91 +315,91 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script>
-                                                $(document).ready(function () {
+                                                        $(document).ready(function () {
 
 
-                                                    $(".prsno").click(function () {
-                                                        //I need to get the child of this-> then I need to fetch prsno attr
-                                                        var pr_srno = $(this).attr('prsno');
-                                                        var pr_srnumber = pr_srno.trim();
-                                                        $.ajax({
-                                                            url: "<?php echo base_url(); ?>index.php/purchase_request/display_pr_list",
-                                                            method: "POST",
-                                                            data: {
-                                                                pr_srnumber: pr_srnumber
-                                                            },
-                                                            success: function (data) {
-                                                                $('#crud_table tbody').empty();
-                                                                data = JSON.parse(data);
-                                                                var objList = data['pr_list'];
-                                                                $.each(objList, function (index, obj) {
-                                                                    var row = $('<tr>');
-                                                                    row.append('<td>' + eval(index + 1) + '</td>');
-                                                                    row.append('<td>' + obj.sr_no + '</td>');
-                                                                    row.append('<td>' + obj.pr_description + '</td>');
-                                                                    row.append('<td>' + obj.units + '</td>');
-                                                                    row.append('<td>' + obj.avg_cods + '</td>');
-                                                                    row.append('<td>' + obj.qty_in_stock + '</td>');
-                                                                    row.append('<td>' + obj.reorder_point + '</td>');
-                                                                    row.append('<td>' + obj.reorder_quantity + '</td>');
-                                                                    row.append('<td>' + obj.qty_req + '</td>');
-                                                                    // row.append('<td><span class="label label-warning">' + obj.status + '</span></td>');
-                                                                    row.append('<td>' + obj.pr_supplier_rate + '</td>');
-                                                                    row.append('<td>' + obj.pr_supplier_supplier + '</td>');
-                                                                    row.append('<td>' + obj.order_placed_rate + '</td>');
-                                                                    row.append('<td>' + obj.order_placed_supplier + '</td>');
-                                                                    $('#crud_table tbody').append(row);
+                                                            $(".prsno").click(function () {
+                                                                //I need to get the child of this-> then I need to fetch prsno attr
+                                                                var pr_srno = $(this).attr('prsno');
+                                                                var pr_srnumber = pr_srno.trim();
+                                                                $.ajax({
+                                                                    url: "<?php echo base_url(); ?>index.php/purchase_request/display_pr_list",
+                                                                    method: "POST",
+                                                                    data: {
+                                                                        pr_srnumber: pr_srnumber
+                                                                    },
+                                                                    success: function (data) {
+                                                                        $('#crud_table tbody').empty();
+                                                                        data = JSON.parse(data);
+                                                                        var objList = data['pr_list'];
+                                                                        $.each(objList, function (index, obj) {
+                                                                            var row = $('<tr>');
+                                                                            row.append('<td>' + eval(index + 1) + '</td>');
+                                                                            row.append('<td>' + obj.sr_no + '</td>');
+                                                                            row.append('<td>' + obj.pr_description + '</td>');
+                                                                            row.append('<td>' + obj.units + '</td>');
+                                                                            row.append('<td>' + obj.avg_cods + '</td>');
+                                                                            row.append('<td>' + obj.qty_in_stock + '</td>');
+                                                                            row.append('<td>' + obj.reorder_point + '</td>');
+                                                                            row.append('<td>' + obj.reorder_quantity + '</td>');
+                                                                            row.append('<td>' + obj.qty_req + '</td>');
+                                                                            // row.append('<td><span class="label label-warning">' + obj.status + '</span></td>');
+                                                                            row.append('<td>' + obj.pr_supplier_rate + '</td>');
+                                                                            row.append('<td>' + obj.pr_supplier_supplier + '</td>');
+                                                                            row.append('<td>' + obj.order_placed_rate + '</td>');
+                                                                            row.append('<td>' + obj.order_placed_supplier + '</td>');
+                                                                            $('#crud_table tbody').append(row);
+                                                                        });
+                                                                        // Display Modal
+                                                                        // ('#prQuot').modal('show'); 
+                                                                    },
+                                                                    error: function (data) {
+
+                                                                        alert("error");
+                                                                    }
                                                                 });
-                                                                // Display Modal
-                                                                // ('#prQuot').modal('show'); 
-                                                            },
-                                                            error: function (data) {
 
-                                                                alert("error");
-                                                            }
+
+
+                                                            });
+
+
+                                                            //Approve Reject model opening
+                                                            $('#exampleModal').on('show.bs.modal', function (e) {
+
+                                                                // alert('hello');
+                                                                var $modal = $(this);
+                                                                $modal.find('#prIdForDecision').text('');
+                                                                var prId = $(e.relatedTarget).attr('prid');
+
+                                                                //alert(prId);
+
+                                                                $modal.find('#prIdForDecision').text(prId);
+
+
+                                                            });
+                                                            //Approve reject ends
                                                         });
 
 
 
-                                                    });
+                                                        function confirmation() {
+                                                            $("#prIdForDecision").hide();
+                                                            var status = $("input:radio[name=optradio]:checked").val();
+                                                            var pr_srno = $('#prIdForDecision').text();
+                                                            var remarks = $('#remarks').val();
+                                                            $.ajax({
+                                                                url: "<?php echo base_url(); ?>index.php/purchase_request/update_pr_status/" + pr_srno,
+                                                                method: "POST",
+                                                                data: {status: status, remarks: remarks},
+                                                                success: function (data) {
+                                                                    $('#exampleModal').modal('hide');
+                                                                    window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
 
-
-                                                    //Approve Reject model opening
-                                                    $('#exampleModal').on('show.bs.modal', function (e) {
-
-                                                        // alert('hello');
-                                                        var $modal = $(this);
-                                                        $modal.find('#prIdForDecision').text('');
-                                                        var prId = $(e.relatedTarget).attr('prid');
-
-                                                        //alert(prId);
-
-                                                        $modal.find('#prIdForDecision').text(prId);
-
-
-                                                    });
-                                                    //Approve reject ends
-                                                });
-
-
-
-                                                function confirmation() {
-                                                    $("#prIdForDecision").hide();
-                                                    var status = $("input:radio[name=optradio]:checked").val();
-                                                    var pr_srno = $('#prIdForDecision').text();
-                                                    var remarks = $('#remarks').val();
-                                                    $.ajax({
-                                                        url: "<?php echo base_url(); ?>index.php/purchase_request/update_pr_status/" + pr_srno,
-                                                        method: "POST",
-                                                        data: {status: status, remarks: remarks},
-                                                        success: function (data) {
-                                                            $('#exampleModal').modal('hide');
-                                                            window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
+                                                                }
+                                                            });
 
                                                         }
-                                                    });
-
-                                                }
 </script>
 <!-- /#wrapper -->
 

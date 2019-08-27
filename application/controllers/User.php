@@ -108,7 +108,8 @@ class User extends CI_Controller {
     // Edit user	
     public function edit_user() {
         if ($this->input->post('username')) {
-            $user_id=$this->input->post('userid');
+            //$user_id=$this->input->post('userid');
+            $user_id=$this->input->post('uid');
             $data = array(
                 'username' => $this->input->post('username'),
                 'password' => $this->input->post('password'),

@@ -50,18 +50,18 @@ class Purchase_request extends CI_Controller {
 	}
 	
 	// Add department
-		public function add_department()
-		{   
+        public function add_department()
+        {   
         $data['result'] = $this->purchase_model->add_department();
 		echo json_encode($data['result']);
-		}
+	}
 	
 	// Add supplier
-		public function add_supplier()
-		{   
+        public function add_supplier()
+        {   
         $data['result'] = $this->purchase_model->add_supplier();
 		echo json_encode($data['result']);
-		}
+        }
 	
 	
 	// Checklist for CAPEX / PR SOP 
@@ -89,6 +89,7 @@ class Purchase_request extends CI_Controller {
 	
 	// add purchase request 
 	public function add_purchase_request() {
+            echo "<pre/>"; print_r($_POST); die;
             $request_data=$_POST;            
             $data=$message=array();
             if(empty($request_data['pr_dept_id'])  && $request_data['pr_dept_id'] == ''){
@@ -201,10 +202,14 @@ class Purchase_request extends CI_Controller {
 		// for editing PR
 	  function edit_purchase_request() {
 	  $sr_no = $_GET['sr_no'];
-	  //echo $sr_no; die;
+          $data['purchase_request_list']=$this->purchase_model->display_pr_list($sr_no);
+	  //echo "<pre/>"; print_r($data); die;
+          $data['units_region']=$this->purchase_model->display_unit_region($id);
+          $data['departments']=$this->purchase_model->display_department(NULL);
+          $data['suppliers']=$this->purchase_model->display_supplier($id);
+          $data['actionTakenBy']=$this->purchase_model->employee_types();
 	  $data['pr_list']=$this->purchase_model->display_pr($sr_no);
-		  
-	  $data['purchase_request_list']=$this->purchase_model->display_pr_list($sr_no);
+	  
 	  //echo "<pre/>"; print_r($data); die;
 	  $this->load->view('edit_purchase_request',$data);
 	   

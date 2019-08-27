@@ -10,12 +10,12 @@
 			<!-- start-->
 			<?php // echo $_GET['sr_no'];?>
 			<form action="" method="post" name="Formulaire">  
-								<?php 
-								 foreach ($pr_list as $list) {?>
+                            <?php 
+                             foreach ($pr_list as $list) {?>
 					<!--	here fetch data from database-->
 								
        
-        <div class="row">
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Unit</label>
@@ -114,13 +114,7 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for=""><a href="#" onclick="createPurchaseRequest()" data-toggle="modal" data-target="#prModal"><span class="fa fa-plus"> &nbsp;</span>PURCHASE REQUISITION</a></label>
-                        </div>
-                    </div>
-                </div>
+             
 			<br/>	
 	<?php } ?>				
 				
@@ -190,7 +184,7 @@
 													<td>
  <input class="form-control" type="text" name="order_placed_supplier[]" id="order_placed_supplier" value="<?php echo $purchase_request_list[$i]['order_placed_supplier'];?>"/>
 	</td>
-												<td><i class="glyphicon glyphicon-pencil"></i></td>
+	<td onclick="edit_pr();"><a><i class="glyphicon glyphicon-pencil"></i></a></td>
 		<!--  <td><input class="form-control" type="button" value="Delete" onclick="delRow(this)"></td> -->
 											</tr>
 											
@@ -202,12 +196,10 @@
 				
 	 				
 	  <div class="row">
-      <div class="col-md-3">
-	  <input type="button" class="btn btn-info" name="pr_submit" value="Edit Request" onclick="edit_pr();"/>
-	  </div>
-	  <div class="col-md-3">
+         <div class="col-md-2">
 	  <span class="activity pull-right"><a href="<?php echo base_url();?>index.php/purchase_request/purchase_request_list" class="btn btn-info">Back to PR List</a></span>
 	  </div>
+	 
       </div>
 	  <br/>
 		 
@@ -221,7 +213,7 @@
 <script>
 
 function edit_pr() {
-alert("in");
+//alert("in");
 var sr_no = "<?php echo $_GET['sr_no'];?>";
 var department_id = $("#departmentsDropdownSelect option:selected").val();
 var issuing_date = $('#issuing_date').val();

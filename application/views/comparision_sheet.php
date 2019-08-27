@@ -15,7 +15,7 @@
                     <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                               Add Comparision Sheet - <?php echo $_GET['sr_no'];?>
+                               Add Comparison Sheet - <?php echo $_GET['sr_no'];?>
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
@@ -44,7 +44,7 @@
                                         <tbody>
 
                                             <tr class="even gradeC">
-                                                <td class="srno" contenteditable="true">1.</td>
+                                                <td class="srno" contenteditable="true">1</td>
                                                 <td class="item_desp" contenteditable="true"></td>
                                                 <td class="unit" contenteditable="true"></td>
                                                 <td class="qty" contenteditable="true"></td>
@@ -98,7 +98,7 @@
 				//alert("in");
                     count = count + 1;
                     var html_code = "<tr id='row" + count + "'>";
-                    html_code += "<td class='srno' contenteditable='true'></td>";
+                    html_code += "<td class='srno' contenteditable='true'>" + count + "</td>";
                     html_code += "<td class='item_desp' contenteditable='true'></td>";
                     html_code += "<td class='unit' contenteditable='true'></td>";
                     html_code += "<td class='qty' contenteditable='true'></td>";
