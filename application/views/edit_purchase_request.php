@@ -11,7 +11,7 @@
 			<?php // echo $_GET['sr_no'];?>
 			<form action="" method="post" name="Formulaire">  
                             <?php 
-                             foreach ($pr_list as $list) {?>
+                             foreach ($pr_list as $list) { //print_r($list);?>
 					<!--	here fetch data from database-->
 								
        
@@ -19,10 +19,10 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Unit</label>
-                            <select id="unitDropdownSelect" class="form-control select2 select2-hidden-accessible" name="unit">
+                            <select disabled id="unitDropdownSelect" class="form-control select2 select2-hidden-accessible" name="unit">
                                 <option hidden value="" >--Select Units--</option>
                                 <?php foreach ($units_region as $units) { ?>
-                                    <option id="departmentsDropdown" value="<?php echo $units['unit_region_id']; ?>"><?php echo $units['unit_region_name']; ?></option>
+                                    <option id="departmentsDropdown"   <?php if($units['unit_region_id'] == $list['unit_region_id']){ echo "selected"; } ?>  value="<?php echo $units['unit_region_id']; ?>"><?php echo $units['unit_region_name']; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -40,10 +40,10 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Indenting Department</label>
-                            <select id="departmentsDropdownSelect" class="form-control select2 select2-hidden-accessible" name="department">
+                            <select disabled id="departmentsDropdownSelect" class="form-control select2 select2-hidden-accessible" name="department">
                                 <option hidden value="" >--Select Department--</option>
                                 <?php foreach ($departments as $department) { ?>
-                                    <option id="departmentsDropdown" value="<?php echo $department['department_id']; ?>"><?php echo $department['department_name']; ?></option>
+                                    <option id="departmentsDropdown" <?php if($department['department_id'] == $list['department_id']){ echo "selected"; } ?> value="<?php echo $department['department_id']; ?>"><?php echo $department['department_name']; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -73,7 +73,7 @@
                             <label for="exampleInputEmail1">Action Taken by</label>
                             <select id="action_taken_by" class="form-control select2 select2-hidden-accessible" name="action_taken_by">
                                 <?php foreach ($actionTakenBy as $action) { ?>
-                                    <option value="<?php echo $action['type_id']; ?>"><?php echo $action['type_name']; ?></option>
+                                    <option <?php if($action['type_id'] == $list['action_taken_by']){ echo "selected"; } ?> value="<?php echo $action['type_id']; ?>"><?php echo $action['type_name']; ?></option>
                                 <?php } ?>
                             </select>
                             <span id="errMsg" class="text-danger"></span>

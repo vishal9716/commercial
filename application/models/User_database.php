@@ -103,7 +103,6 @@ Class User_Database extends CI_Model {
     }
     
     public function user_info_by_type($typeid) {
-        
         $this->db->select('*');
         $this->db->from('users');
         $this->db->where('type', $typeid);

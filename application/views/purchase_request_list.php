@@ -74,6 +74,7 @@
                                         } else {
                                             $classname = "even gradeC";
                                         }
+                                        $review_list=explode(",",$list['approver_user_id']);
                                         ?>
 
                                         <tr class="<?php echo $classname; ?>">
@@ -93,6 +94,7 @@
                                             <td>									
 											<?php 
 												$quatcount = quotationlist($list['pr_id']);
+                                                                                                print_r($quatcount);
 												$qtcount = count($quatcount);
 												if($qtcount > 0)
 												{
@@ -116,60 +118,85 @@
                                                 <?php
                                                 $hello = "";
                                                 $flag = 0;
+                                                $showStatus =0;
+//                                                foreach ($list['statushistory'] as $history) {
+//                                                    if ($username == $history['status_by']) {
+//                                                        $flag = 1;
+//                                                    }
+//                                                    $hello .= $status_list[$history['pr_status']] . " on : " . date('Y-m-d', strtotime($history['pr_status_date'])) . " by : " . $history['status_by'] . "\n";                                                                                                        
+//                                                    }
+                                                
                                                 foreach ($list['statushistory'] as $history) {
-
-                                                    if ($username == $history['status_by']) {
+                                                    if ($session_data['uid'] != $history['action_first_user_id']) {
                                                         $flag = 1;
+                                                        $showStatus= 1;
                                                     }
-                                                    $hello .= $history['pr_status'] . " on : " . date('Y-m-d', strtotime($history['pr_status_date'])) . " by : " . $history['status_by'] . "\n";
-                                                }
+                                                    $hello .= $status_list[$history['pr_status']] . " on : " . date('Y-m-d', strtotime($history['pr_status_date'])) . " by : " . $history['status_by'] . "\n";                                                                                                        
+                                                    }
                                                 ?>
-
+                       
                                                 <?php
-                                                if ($flag == 1) {
+                                                if ($flag == 1 && $showStatus ==1) {
                                                     if ($list['status'] == 1) {
                                                         $class = 'success disabled';
                                                     } else if ($list['status'] == 2) {
                                                         $class = 'danger disabled';
-                                                    } else if ($list['status'] == 0 && $username != 'konain') {
+                                                    } else if ($list['status'] == 0 && $list['user_id'] = $session_data['uid']) {
                                                         $class = 'warning disabled';
-                                                    } else if ($username == 'konain' && $list['status'] == 'Pending1') {
-                                                        $class = 'warning disabled';
-                                                    }
+                                                    } 
                                                 } else {
-                                                    if ($list['status'] == 1) {
+                                                    if ($list['status'] == 1 && $showStatus == 1 ) {
                                                         $class = 'success';
                                                     } else if ($list['status'] == 2) {
                                                         $class = 'danger';
-                                                    } else if ($list['status'] == 0 && $username != 'konain') {
+                                                    }else if($list['status'] == 1 && $showStatus != 1){
                                                         $class = 'warning';
-                                                    } else if ($username == 'konain' && $list['status'] == 'Pending2') {
-                                                        $class = 'warning disabled';
+                                                    }else if ($list['status'] == 0 && $list['user_id'] = $session_data['uid']) {
+                                                        $class = 'warning';
                                                     }
                                                 }
                                                 ?>
-
-
-
-                                <!--<span class="label label-danger">Reject</span>-->
-                                                <?php if ($list['status'] != 0) { ?>
-                                                    <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "4" . $status_list[$list['status']]; ?></span></span>
-                                                <?php } else if ($session_data['uid'] == $list[user_id]) { ?>
+                                                <?php if( ($list['status'] == 0) &&($session_data['uid'] == $list[user_id])){ echo "1"; ?>
+                                                     <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php  echo $status_list[$list['status']]; ?></span></span>
+                                                <?php } else if ($list['status'] != 0 && $showStatus == 1) { echo "2";?>
+<!--                                                    <span title="<?php //echo $hello; ?>">  <span class="show_status label label-<?php //echo $class; ?>" prid="<?php //echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php //echo "4" . $status_list[$list['status']]; ?></span></span>-->
+                                                    <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" ><?php echo $status_list[$showStatus]; ?></span></span>
+                                                <?php } else if ($session_data['uid'] == $list[user_id]) { echo "3";
+                                                    // Self Created user check
+                                                    ?>
                                                     <span  prid="<?php echo $list['sr_no']; ?>" class="label label-<?php echo $class; ?>"><?php echo $status_list[$list['status']]; ?></span>                                                    
-                                                <?php } else { ?> 
-                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo "6" . $status_list[$list['status']]; ?></span>
-                                                <?php } ?>
+                                                <?php } elseif( (in_array ($session_data['uid'], $review_list)) && ($showStatus ==1) ) { echo "4" ;?> 
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo $status_list[$showStatus]; ?></span>
+                                                <?php }elseif((in_array ($session_data['uid'], $review_list)) && ($showStatus != 1) && $list['status'] != 0){ echo"5"; ?>
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title=""  class="label label-<?php echo $class; ?>"><?php echo $status_list[$showStatus]; ?></span>
+                                                <?php } elseif((in_array ($session_data['uid'], $review_list)) && ($showStatus != 1)){ echo "6";?>
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo $status_list[$showStatus]; ?></span>
+                                                <?php } elseif((in_array ($session_data['uid'], $review_list)) && ($showStatus != 1) && ($session_data['uid'] != $list['statushistory'][0]['action_first_user_id'])){ echo "7";?>
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo $status_list[$showStatus]; ?></span>
+                                                <?php } ?>  
+                                                    
+                                                    
                                             </td>
                                             <?php echo $list['phone_person']; ?>
 
                                             <?php if (($session_data['uid'] == $list[user_id]) && $list['status'] == '0') { ?>
                                                 <td class="text-center"><a href="<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request?sr_no=<?php echo $list['sr_no']; ?>">Edit</a> 
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a></td>
-
-                                            <?php } else if ($list['uid'] != '' && ($session_data['uid'] == $list['uid']) && ($list['status'] == '0')) { ?>
+                                            <?php } elseif(in_array ($session_data['uid'], $review_list))  { ?>
                                                 <td><a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> </td>
-                                            <?php } ?>
-                                            <?php if (($username == 'test') && $list['status'] == '0') {
+                                            <?php } elseif ( (in_array ($session_data['uid'], $review_list)) && ($session_data['department_id'] == 5) ){ ?> 
+                                                    <!-- For Purchase Department -->
+                                                    <td class="text-center">
+                                                        <a disabled="disabled" href="<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request?sr_no=<?php echo $list['sr_no']; ?>">Edit</a> 
+                                                    | <a disabled="disabled" href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> 
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation/?pr_id=<?php echo $list['pr_id']; ?>&sr_no=<?php echo $list['sr_no']; ?>">Quotation</a>
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/checklist?sr_no=<?php echo $list['sr_no']; ?>">Checklist</a>
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/negotiation?sr_no=<?php echo $list['sr_no']; ?>">Negotiation</a> 
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit_checklist?sr_no=<?php echo $list['sr_no']; ?>">Audit</a></td>
+                                                <? } ?>
+                                               <?php// } ?>
+                                            <?php /* if (($username == 'test') && $list['status'] == '0') {
                                                 ?>  <td class="text-center"><a href="<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request?sr_no=<?php echo $list['sr_no']; ?>">Edit</a> 
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> 
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation/?pr_id=<?php echo $list['pr_id']; ?>&sr_no=<?php echo $list['sr_no']; ?>">Quotation</a>
@@ -178,7 +205,7 @@
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit_checklist?sr_no=<?php echo $list['sr_no']; ?>">Audit</a></td>
                                             <?php } else if (($username == 'parul') || ($username == 'vikas') || ($username == 'pooja') && ($list['status'] == 'Pending3' || $list['status'] == 'Approved' || $list['status'] == 'Rejected')) { ?>  <td><a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>">Edit Memo</a>  </td> 
-                                            <?php } ?>											
+                                            <?php } */?>											
 
                                             <!-- Status updation code starts -->
 
@@ -197,8 +224,8 @@
                                                         <div class="form-group">
 
                                                             <div id="prIdForDecision" style="visibility: hidden;"></div>
-                                                            <label><input type="radio" name="optradio" value="Approved"> Approved &nbsp;&nbsp;
-                                                                <input type="radio" name="optradio" value="Rejected"> Rejected</label>
+                                                            <label><input type="radio" name="optradio" value="1"> Approved &nbsp;&nbsp;
+                                                                <input type="radio" name="optradio" value="0"> Rejected</label>
 
                                                             <span id="errMsg" class="text-danger"></span>
                                                         </div>

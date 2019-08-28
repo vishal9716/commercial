@@ -171,18 +171,22 @@ class Purchase_model extends CI_Model {
         //return $result;
     }
 
-    function display_purchase_request($id) {
-        //  echo "--".$id; die;
-        if ((!empty($id))) {
+    function display_purchase_request($parms) {
+        if ($parms['pr_id'] != '') {
+            $id=$parms['pr_id'];
             $sql = "select * from purchase_request where pr_id='" . $id . "'";
-        } else {
-
+        } elseif ($parms['department_id'] != '' && $parms['department_id'] != ADMIN_DEPT_ID) {
+            $dep_id=$parms['department_id'];
+            $uId=$parms['uid'];
             //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
-            $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name,pr.pr_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
-
+            // failing distinct here becuase of users table join 
+            //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name,pr.pr_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
+            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.department_id='" . $dep_id . "' and (ac.approver_user_id IN(".$uId.") OR pr.user_id = ".$uId.")";
             /* $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) order by pr.pr_issue_date desc"; */
+        }else{
+            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
         }
-        //echo $sql; die;
+       //echo $sql; //die;
         $result = $this->db->query($sql)->result_array();
         foreach ($result as $key => $pr) {
             $srno = $pr['sr_no'];
@@ -210,7 +214,7 @@ class Purchase_model extends CI_Model {
     function display_pr($pr_srno) {
         //echo "---".$pr_srno; 
         $pr_srno = trim($pr_srno);
-        $sql = "select distinct d.department_name,pr.department_id,pr_issue_date,supplier_name,expense,pr_recd_on,order_placed_by,action_taken_by,phone_person from purchase_request pr join department d on(pr.department_id=d.department_id) where sr_no= '" . $pr_srno . "'";
+        $sql = "select distinct d.department_name,pr.unit_region_id,pr.department_id,pr_issue_date,supplier_name,expense,pr_recd_on,order_placed_by,action_taken_by,phone_person from purchase_request pr join department d on(pr.department_id=d.department_id) where sr_no= '" . $pr_srno . "'";
         //echo $sql; die;
         $result = $this->db->query($sql)->result_array();
         //echo "<pre/>"; print_r($result); die;
@@ -552,25 +556,15 @@ class Purchase_model extends CI_Model {
         return $result;
     }
 
-    function update_pr_status($pr_srno) {
-        // print_r($_POST); die;
-        //echo $status; die;
-        $session_data = $this->session->userdata('logged_in');
-        $username = $session_data['username'];
-        $remarks = $_POST['remarks'];
-        $status = $_POST['status'];
-
-        $sql1 = "update purchase_request set status = '" . $status . "' where sr_no ='" . $pr_srno . "'";
-        //echo $sql1;
-        //die;
+    function update_pr_status($params) {       
+        $status = $params['pr_status'];
+        $pr_srno = $params['pr_no'];
+        $sql1 = "update purchase_request set status = '" . $status . "' where sr_no ='" . $pr_srno . "'";       
         $result1 = $this->db->query($sql1);
-        if ($result1) {
-            $sql = "insert into pr_status(pr_no,pr_status,status_by,pr_status_date,remarks) values('" . $pr_srno . "','" . $status . "','" . $username . "',now(),'" . $remarks . "')";
-            //echo $sql; 
-            //die;
-            $result = $this->db->query($sql);
-        }
-        //echo $sql1;
+        if ($result1) {           
+           $this->db->insert('pr_status', $params);
+           $result = $this->db->insert_id();
+        }       
         return $result;
     }
 
@@ -605,6 +599,40 @@ class Purchase_model extends CI_Model {
 			return $query->result_array();
 		} 
 	}
+        
+        // Not in use any more
+        function display_purchase_request_old($parms) {
+        //  echo "--".$id; die;
+        //print_r($parms);
+        if ($parms['pr_id'] != '') {
+            $id=$parms['pr_id'];
+            $sql = "select * from purchase_request where pr_id='" . $id . "'";
+        } elseif ($parms['department_id'] != '' && $parms['department_id'] != ADMIN_DEPT_ID) {
+            $dep_id=$parms['department_id'];
+            $uId=$parms['uid'];
+            //echo "okk";
+            //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
+            // failing distinct here becuase of users table join 
+            //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name,pr.pr_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
+            $sql="select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.department_id='" . $dep_id . "' and (ac.approver_user_id IN('".$uId."') OR pr.user_id = '".$uId."')";
+            /* $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) order by pr.pr_issue_date desc"; */
+        }else{
+            $sql="select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
+        }
+       echo $sql; die;
+        $result = $this->db->query($sql)->result_array();
+        foreach ($result as $key => $pr) {
+            $srno = $pr['sr_no'];
+            $sqlforstatushistory = "select * from pr_status where pr_no='" . $srno . "'";
+            $statushistory = $this->db->query($sqlforstatushistory)->result_array();
+            $result[$key]['statushistory'] = $statushistory;
+            // echo "<pre/>"; print_r($statushistory); die;
+            // $pr['statushistory'] = $statushistory[0];
+            //echo "<pre/>"; print_r($pr); die;
+        }
+//		echo "<pre/>"; print_r($result); die;
+        return $result;
+    }
 	
 // end Quotation
     

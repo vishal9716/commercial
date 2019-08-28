@@ -27,7 +27,7 @@
                                           <label>To</label>
                                             <select class="form-control" name="to" id="to" required>
                                               <?php foreach ($actionTakenBy as $action) { ?>
-                                                    <option value="<?php echo $action['type_id']; ?>"><?php echo $action['type_name']; ?></option>
+                                                    <option <?php if($action['type_id'] == $list['pr_to']){ echo "selected"; } ?>  value="<?php echo $action['type_id']; ?>"><?php echo $action['type_name']; ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
