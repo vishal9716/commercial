@@ -25,7 +25,7 @@
                                 <option hidden value="" >--Select Units--</option>
                                 <?php foreach ($units_region as $units) { ?>
 
-                                    <option id="departmentsDropdown" selected value="<?php echo $units[$purchase_request_list->unit_region_id]; ?>"><?php echo $units['unit_region_name']; ?></option>
+                                    <option id="departmentsDropdown" selected value="<?php echo $units['unit_region_id']; ?>"><?php echo $units['unit_region_name']; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -358,7 +358,6 @@
     </div>
     <!--Department Modal End-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
     <script>
                             function createPurchaseRequest() {
 

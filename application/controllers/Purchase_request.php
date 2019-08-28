@@ -25,6 +25,7 @@ class Purchase_request extends CI_Controller {
             $this->load->model('type_model');
             $this->load->model('unit_region_model');
             $this->load->model('department_model');
+            $this->load->model('user_database');
             $this->load->helper('string');
             error_reporting(0);		 
     }
@@ -40,7 +41,7 @@ class Purchase_request extends CI_Controller {
 		
 	}
 	public function internal()
-	{
+	{ 
             $data['units_region']=$this->purchase_model->display_unit_region($id);
             $data['departments']=$this->purchase_model->display_department(NULL);
             $data['suppliers']=$this->purchase_model->display_supplier($id);
@@ -88,10 +89,11 @@ class Purchase_request extends CI_Controller {
 		}
 	
 	// add purchase request 
-	public function add_purchase_request() {
-            echo "<pre/>"; print_r($_POST); die;
-            $request_data=$_POST;            
-            $data=$message=array();
+	public function add_purchase_request() {           
+            $request_data=$_POST;      
+            $data=array();
+            $message=array();
+            $currentDate =date('Y-m-d H:i:s');
             if(empty($request_data['pr_dept_id'])  && $request_data['pr_dept_id'] == ''){
                 $message['error'] = "Invalid Pr num, please select Department and unit";
                 echo json_encode($message);
@@ -111,7 +113,10 @@ class Purchase_request extends CI_Controller {
                 $data['reorder_quantity'] = $value['pr_reorder_qty'];
                 $data['qty_req'] = $value['pr_qty_req'];
                 $data['order_placed_rate'] = $value['pr_order_rate'];
+                $data['pr_supplier_rate'] = $value['pr_supplier_rate'];
+                $data['pr_supplier_supplier'] = $value['pr_supplier_supplier'];
                 $data['order_placed_supplier'] = $value['pr_order_supplier'];
+                $data['created_date'] = $currentDate;
                 $inserted_id=$this->purchase_model->add_purchase_request($data);               
                 $last_inserted_id[]=$inserted_id;
 		}
@@ -141,9 +146,6 @@ class Purchase_request extends CI_Controller {
               $data['status_list']= $this->purchase_model::$actionstatus;
               $data['session_data'] = $this->session->userdata('logged_in');               
             
-//              echo "<pre>";
-//              print_r($data);
-//              die(99);
 		$this->load->view('purchase_request_list',$data);
 	   
 		}
@@ -159,30 +161,50 @@ class Purchase_request extends CI_Controller {
 		}
 	
 	  // Internal Memo
-	  function internal_memo() {
-	  $sr_no = $_GET['sr_no'];
-	  $data['pr_list']=$this->purchase_model->display_memo($sr_no);
-		 // echo $data['pr_list'][0]['count']; die;
-		  if(($data['pr_list'][0]['count']) > 0){
-			$data['pr_list']=$this->purchase_model->view_memo($sr_no);
-			$this->load->view('display_memo',$data);
-		  }else{
-			  echo "create";
-			  $this->load->view('internal_memo',$data);
-		  }
-	 // echo "<pre/>"; print_r($data); die;
-	  //echo $sr_no; die;
-	   
-	   
-		}
+          public function internal_memo() {
+            
+            $sr_no = $_GET['sr_no'];
+            $data['pr_list']=$this->purchase_model->display_memo($sr_no);
+            $data['actionTakenBy']=$this->purchase_model->employee_types();
+            if(($data['pr_list'][0]['count']) > 0){
+                  $data['pr_list']=$this->purchase_model->view_memo($sr_no);
+                  $this->load->view('display_memo',$data);
+            }else{
+                    echo "create";
+                    $this->load->view('internal_memo',$data);
+            }
+	}
 	
-	  public function add_internal_memo($pr_sr_no)
-	{
-	  // echo "controller"; die;
-      // echo "<pre/>";
-      // print_r($_POST); die;
-        $data['result'] = $this->purchase_model->add_internal_memo($pr_sr_no);
-		
+	public function add_internal_memo()
+	{            
+            $request_data=$_POST;
+            $session_data = $this->session->userdata('logged_in');
+            $addMemodata = array();
+            $currentDate =date('Y-m-d H:i:s');
+            $addMemodata['pr_sr_no'] = $request_data['sr_no']; 
+            $addMemodata['pr_date'] = $request_data['date']; 
+            $addMemodata['pr_to'] = $request_data['to']; 
+            $addMemodata['pr_from'] = $request_data['order_placed_by']; 
+            $addMemodata['pr_sr_no'] = $request_data['sr_no']; 
+            $addMemodata['subject'] = $request_data['subject']; 
+            $addMemodata['description'] = $request_data['editor']; 
+            $addMemodata['created_by'] = $request_data['order_placed_by']; 
+            $addMemodata['pr_from_user_id'] = $request_data['pr_from_user_id']; 
+            $addMemodata['created_date'] = $currentDate; 
+            $inserted_id = $this->purchase_model->add_internal_memo($addMemodata);           
+            // Send mail
+            $userData=$this->user_database->user_info_by_type($request_data['to']);
+           
+            $email_id=$userData[0]['email_id'];
+            $sendEmailData=array(
+                'from_email'=>$session_data['email'],
+                'from_name'=>$session_data['firstname'] .' '. $session_data['lastname'],
+                'to_email' => $email_id,
+                'subject' => $request_data['subject'],
+                'message' => $request_data['description']
+            );
+            $this->sendmail($sendEmailData);
+            exit;
 	}
 	public function edit_internal_memo($pr_sr_no)
 	{
@@ -318,11 +340,12 @@ class Purchase_request extends CI_Controller {
 	}
 	
 	
-	public function update_pr_status($pr_srno){
+	public function update_pr_status(){
 		//echo "--->".$pr_srno; die;
 		// this function will update pr_status whether it is approved or rejected.
 		//echo "---".$status; die;
 		// print_r($_POST); die;
+            $pr_srno=$_POST['pr_srno'];
 		 $this->purchase_model->update_pr_status($pr_srno);
 		
 	}
@@ -349,6 +372,33 @@ class Purchase_request extends CI_Controller {
             echo THOMSAN_DIGITAL . "-" . $unit->unit_region_code . "/". $issue_session ."/".$dep->department_code."/".$random;
             exit;
            
+        }
+        
+        private function sendmail($param) {
+            
+            $config = Array(
+                'protocol' => 'smtp',
+                'smtp_host' => 'ssl://smtp.googlemail.com',
+                'smtp_port' => 465,
+                'smtp_user' => 'versatilevishal99@gmail.com', // change it to yours
+                'smtp_pass' => 'vishu2010pc', // change it to yours
+                'mailtype' => 'html',
+                'charset' => 'iso-8859-1',
+                'wordwrap' => TRUE
+            );
+            $this->load->library('email', $config);
+            $this->email->from($param['from_email'], $param['from_name']);
+            $this->email->to($param['to_email']);
+            $this->email->subject($param['subject']);
+            $this->email->message($param['message']);
+            if($this->email->send())
+            {
+             echo 'Email sent.';
+            }
+            else
+           {
+            show_error($this->email->print_debugger());
+           }
         }
 	
 	

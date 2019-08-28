@@ -57,7 +57,7 @@
                                         <label>Department Role</label>
                                         <select class="form-control" name="type" id="dep_role_type">                                                
                                             <?php foreach ($actionTakenBy as $action) { ?>
-                                                <option value="<?php echo $action['type_id']; ?>"><?php echo $action['type_name']; ?></option>     
+                                                <option value="<?php echo $action['type_id']; ?>"> <?php echo $action['type_name']; ?></option>     
                                             <?php } ?> 
                                         </select>
                                     </div>

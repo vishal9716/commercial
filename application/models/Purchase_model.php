@@ -468,18 +468,10 @@ class Purchase_model extends CI_Model {
         }
     }
 
-    function add_internal_memo($pr_sr_no) {
-        $session_data = $this->session->userdata('logged_in');
-        $username = $session_data['username'];
-        $date = $_POST["date"];
-        $to = $_POST["to"];
-        $from = $_POST["from"];
-        $subject = $_POST["subject"];
-        $description = $_POST["editor"];
-        $sql = "insert into pr_internal_memo(pr_sr_no,pr_date,pr_to,pr_from,subject,description,created_by,created_date) values('" . $pr_sr_no . "','" . $date . "','" . $to . "','" . $from . "','" . $subject . "','" . $description . "','" . $username . "',now())";
-        //echo $sql; die;
-        $result = $this->db->query($sql);
-        if ($result) {
+    function add_internal_memo($addMemodata) {
+        $this->db->insert('pr_internal_memo', $addMemodata);
+        $last_inserted_id = $this->db->insert_id();
+        if ($last_inserted_id > 0 ) {
             echo "Internal Memo Mail sent to Unit Head successfully";
         } else {
             echo "Error in Sending Internal Memo";
@@ -521,14 +513,10 @@ class Purchase_model extends CI_Model {
 
     function display_memo($pr_srno) {
         $pr_srno = trim($pr_srno);
-
         if ((!empty($pr_srno))) {
-            $sql = "select count(*) as count from pr_internal_memo where pr_sr_no= '$pr_srno'";
-            // echo $sql; die;
+            $sql = "select count(*) as count from pr_internal_memo where pr_sr_no= '$pr_srno'";            
             $result = $this->db->query($sql)->result_array();
-            //echo "<pre/>"; print_r($result); die;
         }
-
         return $result;
     }
 

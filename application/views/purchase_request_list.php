@@ -389,9 +389,9 @@
                                                             var pr_srno = $('#prIdForDecision').text();
                                                             var remarks = $('#remarks').val();
                                                             $.ajax({
-                                                                url: "<?php echo base_url(); ?>index.php/purchase_request/update_pr_status/" + pr_srno,
+                                                                url: "<?php echo base_url(); ?>index.php/purchase_request/update_pr_status",
                                                                 method: "POST",
-                                                                data: {status: status, remarks: remarks},
+                                                                data: {status: status, remarks: remarks, pr_srno:pr_srno},
                                                                 success: function (data) {
                                                                     $('#exampleModal').modal('hide');
                                                                     window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";

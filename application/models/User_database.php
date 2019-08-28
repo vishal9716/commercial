@@ -101,4 +101,25 @@ Class User_Database extends CI_Model {
             return $result = $query->result_array();
         }
     }
+    
+    public function user_info_by_type($typeid) {
+        
+        $this->db->select('*');
+        $this->db->from('users');
+        $this->db->where('type', $typeid);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+    }
+    
+     public function vp_info_by_type($typeid) {
+        $this->db->select(array('uid', 'email_id', 'type', 'department_id'));
+        $this->db->from('users');
+        $this->db->where('type', $typeid);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }
+    }
 }
