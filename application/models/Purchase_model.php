@@ -177,7 +177,8 @@ class Purchase_model extends CI_Model {
             $sql = "select * from purchase_request where pr_id='" . $id . "'";
         } else {
 
-            $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
+            //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
+            $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name,pr.pr_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
 
             /* $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) order by pr.pr_issue_date desc"; */
         }
@@ -196,6 +197,16 @@ class Purchase_model extends CI_Model {
         return $result;
     }
 
+//    function display_pr_list($pr_srno) {
+//        //echo "---".$pr_srno; 
+//        $pr_srno = trim($pr_srno);
+//        $sql = "select distinct d.department_name,pr.department_id,pr_issue_date,supplier_name,expense,pr_recd_on,order_placed_by,action_taken_by,phone_person from purchase_request pr join department d on(pr.department_id=d.department_id) where sr_no= '" . $pr_srno . "'";
+//        //echo $sql; die;
+//        $result = $this->db->query($sql)->result_array();
+//      // echo "<pre/>"; print_r($result); die;
+//       return $result;
+//    }
+
     function display_pr($pr_srno) {
         //echo "---".$pr_srno; 
         $pr_srno = trim($pr_srno);
@@ -205,7 +216,7 @@ class Purchase_model extends CI_Model {
         //echo "<pre/>"; print_r($result); die;
         return $result;
     }
-
+    
     function display_pr_list($pr_srno) {
         //echo "---".$pr_srno; 
        $pr_srno = trim($pr_srno);
@@ -276,12 +287,6 @@ class Purchase_model extends CI_Model {
     }
 
 //
-// uploading documents
-    function upload_documents($file_upload, $file_type, $file_size) {
-        echo $file_upload;
-        die;
-    }
-
     function add_negotiation($pr_sr_no) {
         //echo "<pre/>"; print_r($_POST);
         //echo $pr_sr_no;
@@ -469,6 +474,7 @@ class Purchase_model extends CI_Model {
     }
 
     function add_internal_memo($addMemodata) {
+        //echo "<pre/>"; print_r($_POST); die;
         $this->db->insert('pr_internal_memo', $addMemodata);
         $last_inserted_id = $this->db->insert_id();
         if ($last_inserted_id > 0 ) {
@@ -574,6 +580,35 @@ class Purchase_model extends CI_Model {
         $result = $this->db->query($sql)->result_array();
         return $result;
     }
+    
+    // Start Quotation	
+// uploading documents
+    function upload_documents($pathweb,$uploaddocfile_namefinal,$uploaded_by,$doc_type, $insert_ids, $doc_typename, $doc_size) {
+        
+		$query="insert documents set document_name='".$uploaddocfile_namefinal."', document_path='".trim($pathweb)."', uploaded_by='".$uploaded_by."', uploaded_date=now(), document_dept = '".$doc_type."', document_dept_id = '".$insert_ids."', document_size = '".$doc_size."', document_type = '".$doc_typename."'";		
+			$this->db->query($query);
+			
+        
+    }
+	
+		
+	public function documentlist_info_data($id)
+	{
+
+		$condition = "document_id =" . "'" . $id . "'";
+		$this->db->select('*');
+		$this->db->from('documents');
+		$this->db->where($condition);
+		$query = $this->db->get();			
+		if ($query->num_rows() > 0) 
+		{			
+			return $query->result_array();
+		} 
+	}
+	
+// end Quotation
+    
+    
 
 }
 

@@ -90,11 +90,12 @@ class Purchase_request extends CI_Controller {
 	
 	// add purchase request 
 	public function add_purchase_request() {           
-            $request_data=$_POST;      
-            $data=array();
-            $message=array();
+            $request_data=$_POST;
+           $data=array();
+           $message=array();
             $currentDate =date('Y-m-d H:i:s');
             if(empty($request_data['pr_dept_id'])  && $request_data['pr_dept_id'] == ''){
+               
                 $message['error'] = "Invalid Pr num, please select Department and unit";
                 echo json_encode($message);
                 exit;
@@ -178,6 +179,7 @@ class Purchase_request extends CI_Controller {
 	public function add_internal_memo()
 	{            
             $request_data=$_POST;
+            //echo "<pre/>"; print_r($request_data); die;
             $session_data = $this->session->userdata('logged_in');
             $addMemodata = array();
             $currentDate =date('Y-m-d H:i:s');
@@ -185,29 +187,32 @@ class Purchase_request extends CI_Controller {
             $addMemodata['pr_date'] = $request_data['date']; 
             $addMemodata['pr_to'] = $request_data['to']; 
             $addMemodata['pr_from'] = $request_data['order_placed_by']; 
-            $addMemodata['pr_sr_no'] = $request_data['sr_no']; 
+            //$addMemodata['pr_sr_no'] = $request_data['sr_no']; 
             $addMemodata['subject'] = $request_data['subject']; 
             $addMemodata['description'] = $request_data['editor']; 
             $addMemodata['created_by'] = $request_data['order_placed_by']; 
-            $addMemodata['pr_from_user_id'] = $request_data['pr_from_user_id']; 
+            $addMemodata['pr_from_user_id'] = $request_data['from_user_id']; 
             $addMemodata['created_date'] = $currentDate; 
             $inserted_id = $this->purchase_model->add_internal_memo($addMemodata);           
             // Send mail
-            $userData=$this->user_database->user_info_by_type($request_data['to']);
-           
-            $email_id=$userData[0]['email_id'];
-            $sendEmailData=array(
-                'from_email'=>$session_data['email'],
-                'from_name'=>$session_data['firstname'] .' '. $session_data['lastname'],
-                'to_email' => $email_id,
-                'subject' => $request_data['subject'],
-                'message' => $request_data['description']
-            );
-            $this->sendmail($sendEmailData);
-            exit;
+//            $userData=$this->user_database->user_info_by_type($request_data['to']);
+//           
+//            $email_id=$userData[0]['email_id'];
+//            $sendEmailData=array(
+//                'from_email'=>$session_data['email'],
+//                'from_name'=>$session_data['firstname'] .' '. $session_data['lastname'],
+//                'to_email' => $email_id,
+//                'subject' => $request_data['subject'],
+//                'message' => $request_data['description']
+//            );
+//            $this->sendmail($sendEmailData);
+//            exit;
 	}
-	public function edit_internal_memo($pr_sr_no)
+	public function edit_internal_memo()
 	{
+//            echo "<pre/>";
+//            print_r($_POST); die;
+            $pr_sr_no =$_POST['sr_no'];
 		  $data['result'] = $this->purchase_model->edit_internal_memo($pr_sr_no);
 		
 	}
@@ -222,7 +227,8 @@ class Purchase_request extends CI_Controller {
 	   
 		}
 		// for editing PR
-	  function edit_purchase_request() {
+	  
+	 function edit_purchase_request() {
 	  $sr_no = $_GET['sr_no'];
           $data['purchase_request_list']=$this->purchase_model->display_pr_list($sr_no);
 	  //echo "<pre/>"; print_r($data); die;
@@ -237,40 +243,134 @@ class Purchase_request extends CI_Controller {
 	   
 		}
 		
-		function edit_pr($pr_srno) {
+		function edit_pr() {
 	   //echo "--".$pr_srno; die;
+           $pr_srno = $_POST['sr_no'];
 	// echo "<pre/>"; print_r($_POST); die;	
 	  $data['result'] = $this->purchase_model->edit_pr($pr_srno);
 	   
 		}
 	
 	
-	// upload pr quotation
+		// upload pr quotation
 	function pr_quotation(){
+	$pr_id = $_GET['pr_id'];		
 	$this->load->view('pr_quotation');	
 		
 	}
-	function pr_quotation_upload(){
-	//echo "in--"; die;
-	$target_dir = base_url().'index.php/uploads/PR/';
-        $target_file = $target_dir . basename($_FILES["document"]["name"]);	
-	$path = base_url().'index.php/uploads/PR/';
-	$file_name = $_FILES['document']['name'];
-	$file_upload_tmp = $_FILES['document']['tmp_name'];
-	$file_type = $_FILES['document']['type'];
-	$file_size = $_FILES['document']['size'];
-	$file_upload = $path.$file_name;
-	// echo $file_name.'<br/>'; 
-	// echo $file_upload_tmp.'<br/>'; 
-	// echo $file_type.'<br/>'; 
-	// echo $file_size.'<br/>';
-	// echo $file_upload;
-	    if (move_uploaded_file($file_upload_tmp, $target_file)) {
-			echo "inside"; die;
-	$result = $this->purchase_model->upload_documents($file_upload,$file_type,$file_size);
+	
+	function pr_quotation_upload()
+	{
+		
+		$session_data = $this->session->userdata('logged_in');
+		$DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
+		//echo "in--"; die;
+		$prIds = $_POST['pr_id'];
+		$pr_no = $_POST['pr_no'];
+		$pr_nos = explode("/",$pr_no);
+		//print_r($pr_nos);
+		$pr_nos_final = $pr_nos[0]."-".$pr_nos[1]."-".$pr_nos[2]."-".$pr_nos[3];
+		
+						
+		//$DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
+		if($_FILES['pr_quotation']['name'][0] <> "")
+		{
+			
+			
+			$pathweb=$DOCUMENT_ROOT."/commercial/uploads/PR/";
+			
+			$destination_path = $pathweb.$pr_nos_final."/";
+			
+			if( is_dir($destination_path) === false )
+			{
+				mkdir($destination_path);
+				chmod($path, 0777);
+			}
+			
+			//$makedir = "md $destination_path";
+			//system($makedir);
+			//$folderpermission = "chmod 777 $destination_path"; 
+			//system($folderpermission);
+			
+			
+						
+			for($i=0; $i<count($_FILES['pr_quotation']['name']); $i++)
+			{					
+				$randomval = mt_rand(1,9999);
+				$fileupload = $_FILES['pr_quotation']['name'][$i];
+				$fileupload_tmp = $_FILES['pr_quotation']['tmp_name'][$i];
+				$uploaddocype = $_FILES['pr_quotation']['type'][$i];
+				$uploaddocsize = $_FILES['pr_quotation']['size'][$i];
+				$uploaddocfile_namefinal = $randomval.basename($_FILES['pr_quotation']['name'][$i]);
+				if(file_exists($destination_path.$uploaddocfile_namefinal))
+				{
+					unlink($destination_path.$uploaddocfile_namefinal); 
+				}
+				$uploadsfinalpaths = $destination_path.$uploaddocfile_namefinal;
+				if(move_uploaded_file($fileupload_tmp, $uploadsfinalpaths))
+				{
+					$result = $this->purchase_model->upload_documents($destination_path,$uploaddocfile_namefinal,$session_data['username'],"PR",$prIds,$uploaddocype,$uploaddocsize);
+				}
+		
+			}
+			
+			echo '<script>alert("Quotation document has been uploaded successfully.");</script>';
+			$prid='';   
+			$data['purchase_request_list']=$this->purchase_model->display_purchase_request($prid);              
+			$data['type_list']=$this->type_model->typelist_info_by_key_val_arr();
+            $data['status_list']= $this->purchase_model::$actionstatus;
+            $data['session_data'] = $this->session->userdata('logged_in');
+			//$data['quotation_list']=$this->purchase_model->documentlist_info($prIds);	
+			
+			
+			$this->load->view('purchase_request_list',$data);
+		}	
+		
+	}
+	// download Quotation
+	public function download()
+	{
+		$docid = $_GET['doc'];
+		$resultdoclist = $this->purchase_model->documentlist_info_data($docid);
+		$document_name = $resultdoclist[0]['document_name'];
+		$document_path = $resultdoclist[0]['document_path'];
+		
+		//print_r($resultdoclist);
+		//die;
+		
+		ignore_user_abort(true);
+		set_time_limit(0); // disable the time limit for this script
+		 
+		$path = $document_path; // change the path to fit your websites document structure
+		 
+		$dl_file = preg_replace("([^\w\s\d\-_~,;:\[\]\(\).]|[\.]{2,})", '', $document_name); // simple file name validation
+		$dl_file = filter_var($dl_file, FILTER_SANITIZE_URL); // Remove (more) invalid characters
+		$fullPath = $path.$dl_file;
+		 
+		if ($fd = fopen ($fullPath, "r")) {
+			$fsize = filesize($fullPath);
+			$path_parts = pathinfo($fullPath);
+			$ext = strtolower($path_parts["extension"]);
+			switch ($ext) {
+				case "pdf":
+				header("Content-type: application/pdf");
+				header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a file download
+				break;
+				// add more headers for other content types here
+				default;
+				header("Content-type: application/octet-stream");
+				header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
+				break;
+			}
+			header("Content-length: $fsize");
+			header("Cache-control: private"); //use this to open files directly
+			while(!feof($fd)) {
+				$buffer = fread($fd, 2048);
+				echo $buffer;
+			}
 		}
-	// die;
-	 echo "<pre/>"; print_r($_POST);
+		fclose ($fd);
+		exit; 
 		
 	}
         

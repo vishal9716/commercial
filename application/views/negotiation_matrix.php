@@ -47,17 +47,16 @@
                                                 <td class="remarks" contenteditable="true"></td>
                                                 <td class="signature" contenteditable="true"></td>
                                                 <td>
+													<button type="button" name="add" id="add" class="btn btn-success">+</button>
                                                 </td>
 
                                             </tr>
 
                                         </tbody>
                                     </table>
-                                    <span style="float:right;">
-                                        <button type="button" name="add" id="add" class="btn btn-success btn-xs">+</button>
-                                    </span>
+                                   
                                     <span style="float: center;">
-                                        <button type="button" name="save_nego" id="save_nego" class="btn btn-info">Save</button>
+                                        <button type="button" name="save_nego" id="save_nego" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
                                     </span>
                                     <br />
                                     <!-- /.table-responsive -->
@@ -100,7 +99,7 @@
                     html_code += "<td class='remarks' contenteditable='true'></td>";
                     html_code += "<td class='signature' contenteditable='true'></td>";
 
-                    html_code += "<td><button type='button' name='remove' data-row='row" + count + "' class='btn btn-danger btn-xs remove'>-</button></td>";
+                    html_code += "<td><button type='button' name='remove' data-row='row" + count + "' class='btn btn-danger remove'>-</button></td>";
                     html_code += "</tr>";
                     $('#crud_table').append(html_code);
                 });

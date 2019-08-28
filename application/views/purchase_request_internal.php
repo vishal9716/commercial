@@ -25,7 +25,7 @@
                                 <option hidden value="" >--Select Units--</option>
                                 <?php foreach ($units_region as $units) { ?>
 
-                                    <option id="departmentsDropdown" selected value="<?php echo $units['unit_region_id']; ?>"><?php echo $units['unit_region_name']; ?></option>
+                                    <option id="departmentsDropdown"  value="<?php echo $units['unit_region_id']; ?>"><?php echo $units['unit_region_name']; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -492,6 +492,7 @@
                                 });
 
                                 $('#save_pr').click(function () {
+                                    
                                     var sr_no = $('#sr_no').val();
                                     var pr_dept_id = $('.pr_dept_id').text();
                                     var memo_items = [];
@@ -516,7 +517,7 @@
                                             pr_dept_id: pr_dept_id
                                         },
                                         success: function (data) {
-                                            alert(data);
+                                            //alert(data);
                                             var result = jQuery.parseJSON(data);
                                             console.log(result);
 
@@ -556,7 +557,7 @@
                                     data: {pr_srno: pr_srno, department_id: department_id, unit_id: unit_id, issuing_date: issuing_date, phone_person: phone_person, supplier_name: supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on, order_placed_by: order_placed_by, selectedOption: selectedOption},
                                     success: function (data) {
                                         alert(data);
-                                        window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
+                                        window.location.href = "<?php echo base_url(); ?>purchase_request/purchase_request_list";
                                         $('#departmentModal').modal('hide');
                                         $('#department_name').val('');
                                         $('#department_descp').val('');

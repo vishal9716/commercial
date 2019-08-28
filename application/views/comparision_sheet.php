@@ -1,11 +1,16 @@
 <?php echo $this->load->view("common/top"); ?>
+<style>
+	 table, th, td  {
+  text-align: left;
+}
+</style>
 
                 <?php $this->load->view('header_message'); ?>
                 <?php $this->load->view('left_message'); ?>
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">Comparision Sheet</h1>
+                        <h1 class="page-header">Comparison Sheet</h1>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -15,7 +20,7 @@
                     <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                               Add Comparison Sheet - <?php echo $_GET['sr_no'];?>
+                               Add Comparision Sheet - <?php echo $_GET['sr_no'];?>
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
@@ -55,17 +60,132 @@
 												<td class="final_quoted_unit_price" contenteditable="true"></td>
                                                 <td class="final_quoted_total_price" contenteditable="true"></td>
                                                 <td>
+													<button type="button" title="Add PR" name="add" id="add" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></button>
                                                 </td>
 
                                             </tr>
 
                                         </tbody>
+										<tfoot>
+											<tr style="background:#e3e3e3;">
+										<th colspan="1" class="" style="text-align: left;">Amount</th>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+	 									<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td>
+                                                </td>
+                                        </tr>
+										</tfoot>
                                     </table>
-                                    <span style="float:right;">
-                                        <button type="button" name="add" id="add" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></button>
-                                    </span>
-                                    <span style="float: center;">
-                                        <button type="button" name="save_comp" id="save_comp" class="btn btn-info btn-sm">Save</button>
+									
+<table class="table table-bordered table-responsive-md table-striped text-center mb-0 bottomTbl" id="fixAtPositionForSignature">
+                                        <tbody>
+										
+										
+											
+										<tr>
+										 <td colspan="12" class="" contenteditable="true"></td>
+									   </tr>
+										<tr>
+										<th colspan="1" class="" contenteditable="true" style="text-align: left;">Terms and conditions</th>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+	 									<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+                                         </tr>
+										<tr>
+										<td colspan="1" class="" contenteditable="true">IGST @18%</td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+	 									<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+                                         </tr>
+											 <tr>
+										<td colspan="1" class="" contenteditable="true">Payment terms</td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+	 									<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+                                         </tr>
+											 <tr>
+										<td colspan="1" class="" contenteditable="true">Delivery</td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+	 									<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+                                         </tr>
+											 <tr>
+										<td colspan="1" class="" contenteditable="true">Installation</td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+	 									<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+                                         </tr>
+											 <tr>
+										<td colspan="1" class="" contenteditable="true">Total Amount</td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+	 									<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+										<td colspan="1" class="" contenteditable="true"></td>
+                                         </tr>
+									    
+											
+										
+									  <tr >
+										  <td class="" colspan="12" style="padding:15px !important;"><b>Comments:</b> As the above statement shows, it is recommended to release the order to M/s Shining Star Services</td>
+			</tr>
+											 <tr>
+										 <td colspan="12" class="" contenteditable="true"></td>
+									   </tr>
+											<tr>
+										<td colspan="4" class="" contenteditable="true">Ramesh Datt</td>
+										<td colspan="4" class="" contenteditable="true">Mohan Bansal</td>
+										<td colspan="4" class="" contenteditable="true">MS Vinod</td>
+										
+                                         </tr>
+                                         </tbody>
+                                    </table>
+									
+									
+                                     
+                                    <span style="float: left;margin-top:10px;">
+                                        <button type="button" name="save_comp" id="save_comp" class="btn btn-info btn-sm"><i class="fa fa-save"></i> Save</button>
                                     </span>
                                     <br />
                                     <!-- /.table-responsive -->
@@ -108,7 +228,7 @@
                     html_code += "<td class='final_quoted_total_price' contenteditable='true'></td>";
 					html_code += "<td class='' contenteditable='true'></td>";
                     html_code += "<td class='' contenteditable='true'></td>";
-                    html_code += "<td><button type='button' name='remove' data-row='row" + count + "' class='btn btn-danger btn-xs remove'>-</button></td>";
+                    html_code += "<td><button title='Remove Item' type='button' name='remove' data-row='row" + count + "' class='btn btn-danger remove'>-</button></td>";
                     html_code += "</tr>";
                     $('#crud_table').append(html_code);
                 });

@@ -10,25 +10,27 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-		 <form role="form" name="frm-pr" method="post" action="pr_quotation_upload" enctype="multipart/form-data">
+           <form role="form" name="frm-pr" method="post" action="<?php echo base_url();?>purchase_request/pr_quotation_upload" enctype="multipart/form-data">
 			<div class="row">
 					<div class="col-md-6">
 		    <div class="form-group">
-                                            <label>Upload Documents</label>
-                                            <input type="file" name="document" />
+                                            <label>Upload Documents </label>                                            
+											<input type="file" name="pr_quotation[]" id="pr_quotation" multiple>
+											<input type="hidden" name="pr_id" value="<?php echo $_GET['pr_id'];?>">
+											<input type="hidden" name="pr_no" value="<?php echo $_GET['sr_no'];?>">
                                         </div>								
 				</div>		
 				 </div>
 
             
 			<div class="row">
-	 <div class="col-md-2">
-     <button type="submit" name="submit" class="btn btn-default">Upload Quotation</button>
-		</div>
-		 <div class="col-md-2">
-		<button type="reset" name="cancel" class="btn btn-default" onclick="location='<?php echo base_url(); ?>/index.php/Purchase_request/pr_quotation'">Cancel</button>
-		</div>
-	</div>
+				<div class="col-md-2">
+					<button type="submit" name="submit" class="btn btn-default">Upload Quotation</button>
+				</div>
+				<div class="col-md-2">
+					<button type="reset" name="cancel" class="btn btn-default" onclick="location='<?php echo base_url(); ?>/index.php/Purchase_request/pr_quotation'">Cancel</button>
+				</div>
+			</div>
 		 </form>
         </div>
         <!-- /#page-wrapper -->

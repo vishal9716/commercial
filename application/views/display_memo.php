@@ -23,14 +23,15 @@
                                     ?>
 			<div class="row">
 			<div class="col-md-6">
-            <div class="form-group">
+                        <div class="form-group">
                                           <label>To</label>
-                                            <select class="form-control" name="to" id="to" required>                                                			   <option value="">Admin Head</option>
-                                              <option value="">Utitility Head</option>  
-											  <option value="">IT Head</option>  
+                                            <select class="form-control" name="to" id="to" required>
+                                              <?php foreach ($actionTakenBy as $action) { ?>
+                                                    <option value="<?php echo $action['type_id']; ?>"><?php echo $action['type_name']; ?></option>
+                                                <?php } ?>
                                             </select>
                                         </div>
-          </div> 
+          </div>  
 				 <?php
 					//echo "<pre/>"; print_r($_SESSION) ; die;
                     $session_data = $this->session->userdata('logged_in');
@@ -169,9 +170,9 @@ angular
                   
 			       //alert(editor);
                     $.ajax({
-                    url: "<?php echo base_url(); ?>index.php/purchase_request/edit_internal_memo/"+sr_no,
+                    url: "<?php echo base_url(); ?>purchase_request/edit_internal_memo",
                     method: "POST",
- data: {to: to, date: date, from: from, subject: subject, editor: editor},
+                    data: {to: to, date: date, from: from, subject: subject, editor: editor, sr_no:sr_no },
                         success: function (data) {
                           //  console.log(data);
 							alert(data);

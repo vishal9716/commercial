@@ -52,6 +52,7 @@
                                         <th>Supplier</th>
                                         <th>Order Placed</th>
                                         <th>Action Taken</th>
+                                        <th>Quotation</th>
                                         <th>Status</th>
 
                                         <?php
@@ -88,6 +89,28 @@
                                             <!--<td><?php // echo $list['pr_recd_on'];    ?></td>-->
                                             <td><?php echo $list['order_placed_by']; ?></td>
                                             <td><?php echo $type_list[$list['action_taken_by']]; ?></td>
+                                            
+                                            <td>									
+											<?php 
+												$quatcount = quotationlist($list['pr_id']);
+												$qtcount = count($quatcount);
+												if($qtcount > 0)
+												{
+													for($i=1; $i<=$qtcount;$i++)
+													{												
+														
+											?>		
+													<a href="<?php echo base_url(); ?>purchase_request/download?doc=<?php echo $quatcount[$i-1];?>"><?php echo $i;?></a>
+														
+											<?php
+													}
+												}
+											
+											?>
+																					
+											
+											
+											</td>
                                             <td>
 
                                                 <?php
@@ -149,7 +172,7 @@
                                             <?php if (($username == 'test') && $list['status'] == '0') {
                                                 ?>  <td class="text-center"><a href="<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request?sr_no=<?php echo $list['sr_no']; ?>">Edit</a> 
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> 
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation">Quotation</a>
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation/?pr_id=<?php echo $list['pr_id']; ?>&sr_no=<?php echo $list['sr_no']; ?>">Quotation</a>
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/checklist?sr_no=<?php echo $list['sr_no']; ?>">Checklist</a>
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/negotiation?sr_no=<?php echo $list['sr_no']; ?>">Negotiation</a> 
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
@@ -194,9 +217,22 @@
                                         </div>
                                     </div>
                                     <!-- Status updation code ends -->
+                                    
                                     <?php
                                 }
                             }
+                            
+                            function quotationlist($dpt_id)
+				{
+					$conn = @mysqli_connect("localhost", "root", "", "commercial");
+					$query2 = "select document_id from documents where document_dept = 'PR' and document_dept_id= $dpt_id";
+					$exes = @mysqli_query($conn,$query2);
+					while($records = @mysqli_fetch_array($exes))
+					{
+						$documentids[] = $records['document_id'];
+					}
+					return $documentids;
+				}
                             ?>
 
 

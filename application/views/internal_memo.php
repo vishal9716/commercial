@@ -14,7 +14,7 @@
             </div>
 		
 			<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-4">
             <div class="form-group">
                                           <label>To</label>
                                             <select class="form-control" name="to" id="to" required>
@@ -30,31 +30,30 @@
                     $fname = $session_data['firstname'];
                     $uid = $session_data['uid'];
                     ?>             
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="exampleInputEmail1">From</label>
                             <input type="hidden" id="from_user_id" name="from_user_id" value="<?php echo $uid ;?>"></input>
                             <input class="form-control auto ui-autocomplete-input" placeholder="Enter From" value="<?php echo ucfirst($fname); ?>" name="order_placed_by" id="order_placed_by">
                         </div>
                     </div>
-             
-                <!-- /.col-lg-12 -->
-            </div>
-		<div class="row">
-			<div class="col-md-6">
+                            
+                  <div class="col-md-4">
             <div class="form-group">
              <label for="">Date</label>
              <input class="form-control" placeholder="Enter Date"  value="<?php echo date("Y-m-d"); ?>" type="date" id="date" name="date">
               <span id="errMsg" class="text-danger"></span>
             </div>
-          </div> 
-	
-        </div>
+          </div>
+             
+                <!-- /.col-lg-12 -->
+            </div>
+		
 		   <div class="row">
 			<div class="col-md-12">
             <div class="form-group">
              <label for="">Subject</label>
-             <input class="form-control" id="subject" placeholder="Enter Subject" name="date">
+             <input class="form-control" id="subject" placeholder="Enter Subject" name="subject">
               <span id="errMsg" class="text-danger"></span>
             </div>
           </div> 
@@ -105,7 +104,7 @@
 
     <!-- jQuery -->
     <script src="<?php echo base_url(); ?>vendor/jquery/jquery.min.js"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="<?php echo base_url(); ?>vendor/bootstrap/js/bootstrap.min.js"></script>
 
@@ -152,7 +151,7 @@ angular
                     var editor = CKEDITOR.instances.editor.getData();
                   
                     $.ajax({
-                    url: "<?php echo base_url(); ?>index.php/purchase_request/add_internal_memo",
+                    url: "<?php echo base_url(); ?>purchase_request/add_internal_memo",
                     method: "POST",
                     data: {
                         to: to, 
@@ -166,7 +165,7 @@ angular
                     },
                         success: function (data) {
                             alert(data);
-                           return false;
+                           
 window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
                         }
 					  });

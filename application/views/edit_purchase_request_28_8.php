@@ -119,12 +119,12 @@
 	<?php } ?>				
 				
 								
-										<div class="table-responsive" style="border:1px solid; color:#555; padding:5px;">
+										<div class="form-group" style="border:1px solid; color:#555; padding:5px;">
                                    		
 											
-										 <table class="table table-striped table-bordered table-hover mb-0 customTable" id="dataTables-example">
+										 <table class="table table-striped table-bordered table-hover mb-0" id="dataTables-example">
 											  <thead>
-                                            <tr style="white-space:nowrap">
+                                            <tr>
                                               <!--  <th rowspan="2">S.No.</th> -->
                                                 <th rowspan="2">Description</th>
                                                 <th rowspan="2">Unit</th>
@@ -133,8 +133,8 @@
                                                 <th rowspan="2">Reorder Point</th>
                                                 <th rowspan="2">Reorder Quantity</th>
                                                 <th rowspan="2">Qty. Req.</th>
-                                                <th colspan="2" style="text-align:center">Previous Supplier</th>
-                                                <th colspan="2" style="text-align:center">Order Placed on</th>
+                                                <th colspan="2">Previous Supplier</th>
+                                                <th colspan="2">Order Placed on</th>
                                                 <th rowspan="2">Edit</th>
                                             </tr>
                                             <tr>
@@ -152,10 +152,10 @@
 											<tr>
 						<!--<td><input class="form-control" type="text" id="" value="<?php echo $i; ?>"/></td> -->
 	<td>
-   <textarea class="form-control" cols="7"  style="width:200px;resize:none;" name="pr_description[]" id="pr_description"><?php echo $purchase_request_list[$i]['pr_description'];?></textarea>
+   <textarea class="form-control" cols="7" rows="1" name="pr_description[]" id="pr_description"><?php echo $purchase_request_list[$i]['pr_description'];?></textarea>
    </td>
  <td>
-	<input class="form-control" type="text" style="width:50px;" name="units[]" id="units" value="<?php echo $purchase_request_list[$i]['units'];?>"/>
+	<input class="form-control" type="text" name="units[]" id="units" value="<?php echo $purchase_request_list[$i]['units'];?>"/>
   </td>
  <td>
  <input class="form-control" type="text" name="avg_cods[]" id="avg_cods" value="<?php echo $purchase_request_list[$i]['avg_cods'];?>"/>
@@ -174,15 +174,15 @@
  <input class="form-control" type="text" name="qty_req[]" id="qty_req" value="<?php echo $purchase_request_list[$i]['qty_req'];?>"/>
 	</td>
 												 <td>
- <input class="form-control" style="width:100px;" type="text" name="pr_supplier_rate[]" id="pr_supplier_rate" value="<?php echo $purchase_request_list[$i]['pr_supplier_rate'];?>"/>
+ <input class="form-control" type="text" name="pr_supplier_rate[]" id="pr_supplier_rate" value="<?php echo $purchase_request_list[$i]['pr_supplier_rate'];?>"/>
 	</td>
 												<td>
- <input class="form-control" style="width:100px;" type="text" name="pr_supplier_supplier[]" id="pr_supplier_supplier" value="<?php echo $purchase_request_list[$i]['pr_supplier_supplier'];?>"/>
+ <input class="form-control" type="text" name="pr_supplier_supplier[]" id="pr_supplier_supplier" value="<?php echo $purchase_request_list[$i]['pr_supplier_supplier'];?>"/>
 	</td>
 												<td>
- <input class="form-control" style="width:100px;" type="text" name="order_placed_rate[]" id="order_placed_rate" value="<?php echo $purchase_request_list[$i]['order_placed_rate'];?>"/>
+ <input class="form-control" type="text" name="order_placed_rate[]" id="order_placed_rate" value="<?php echo $purchase_request_list[$i]['order_placed_rate'];?>"/>
 													<td>
- <input class="form-control" style="width:100px;" type="text" name="order_placed_supplier[]" id="order_placed_supplier" value="<?php echo $purchase_request_list[$i]['order_placed_supplier'];?>"/>
+ <input class="form-control" type="text" name="order_placed_supplier[]" id="order_placed_supplier" value="<?php echo $purchase_request_list[$i]['order_placed_supplier'];?>"/>
 	</td>
 	<td onclick="edit_pr();"><a><i class="glyphicon glyphicon-pencil"></i></a></td>
 		<!--  <td><input class="form-control" type="button" value="Delete" onclick="delRow(this)"></td> -->
@@ -245,8 +245,8 @@ var order_placed_supplier = $('#order_placed_supplier').val();
 	//alert("<?php echo base_url(); ?>index.php/`	/update_pr/"+sr_no);
          $.ajax({
             method: "POST",
-            url: "<?php echo base_url(); ?>index.php/purchase_request/edit_pr",
-            data: {sr_no:sr_no, department_id:department_id,issuing_date: issuing_date,phone_person: phone_person, supplier_name:supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on,order_placed_by:order_placed_by, pr_description:pr_description,units:units,avg_cods:avg_cods,qty_in_stock:qty_in_stock,reorder_point:reorder_point,reorder_quantity:reorder_quantity,qty_req:qty_req,pr_supplier_rate:pr_supplier_rate,pr_supplier_supplier:pr_supplier_supplier,order_placed_rate:order_placed_rate,order_placed_supplier:order_placed_supplier,pr_description:pr_description},
+            url: "<?php echo base_url(); ?>index.php/purchase_request/edit_pr/"+sr_no,
+            data: {department_id:department_id,issuing_date: issuing_date,phone_person: phone_person, supplier_name:supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on,order_placed_by:order_placed_by, pr_description:pr_description,units:units,avg_cods:avg_cods,qty_in_stock:qty_in_stock,reorder_point:reorder_point,reorder_quantity:reorder_quantity,qty_req:qty_req,pr_supplier_rate:pr_supplier_rate,pr_supplier_supplier:pr_supplier_supplier,order_placed_rate:order_placed_rate,order_placed_supplier:order_placed_supplier,pr_description:pr_description},
             success: function(data) {
 		   alert(data);
 		//data = JSON.parse(data);	

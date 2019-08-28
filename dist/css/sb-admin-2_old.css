@@ -493,7 +493,7 @@ table.dataTable thead .sorting:after {
 	background:rgba(0, 0, 0, 0.3);
 	
 }
-.topband .navbar-top-links li a.notification{ min-height:64px; /*line-height:64px;*/ padding:18px 10px; color:#fff; font-size:22px;
+.topband .navbar-top-links li a.notification{ min-height:64px; line-height:64px; padding:0 10px; color:#fff; font-size:22px;
 	border-right: 1px solid rgba(255, 255, 255, 0.4);
 	border-left: 1px solid rgba(255, 255, 255, 0.4);
 	cursor: pointer;
@@ -657,7 +657,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0f7e7d', end
     left: 0;
     z-index: 1030;
 }
-4
+
 /*content_box*/
 .content_box {
   position: relative;
@@ -744,6 +744,3 @@ text-shadow: none;
 }
 
 .close:hover{color: #fff; text-shadow: none; background:#000 !important; opacity: 1;}
-.customTable tr td input{padding:2px;}
-.bottomTbl tr td, .bottomTbl tr th{padding:2px 8px !important;}
-
