@@ -31,6 +31,8 @@ class Purchase_model extends CI_Model {
         REJECTED => 'Rejected'
     );
 
+   
+    
     // Add department
     function add_department() {
         //echo "<pre/>"; print_r($_POST); die;	
@@ -175,18 +177,18 @@ class Purchase_model extends CI_Model {
         if ($parms['pr_id'] != '') {
             $id=$parms['pr_id'];
             $sql = "select * from purchase_request where pr_id='" . $id . "'";
-        } elseif ($parms['department_id'] != '' && $parms['department_id'] != ADMIN_DEPT_ID) {
+        } elseif ($parms['department_id'] != '' && $parms['department_id'] != ADMIN_DEPT_ID && $parms['department_id'] != PU_DEPT_ID) {
             $dep_id=$parms['department_id'];
             $uId=$parms['uid'];
             //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
             // failing distinct here becuase of users table join 
             //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name,pr.pr_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
-            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.department_id='" . $dep_id . "' and (ac.approver_user_id IN(".$uId.") OR pr.user_id = ".$uId.")";
+            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id, ac.approved_by_user_id, ac.rejected_by_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.department_id='" . $dep_id . "' and (ac.approver_user_id IN(".$uId.") OR pr.user_id = ".$uId.")";
             /* $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) order by pr.pr_issue_date desc"; */
         }else{
-            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
+            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id, ac.approved_by_user_id, ac.rejected_by_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.status !='" . 2 . "'" ;
         }
-       //echo $sql; //die;
+       //echo $sql; die;
         $result = $this->db->query($sql)->result_array();
         foreach ($result as $key => $pr) {
             $srno = $pr['sr_no'];
@@ -259,7 +261,7 @@ class Purchase_model extends CI_Model {
 
 // For editing PR 
 
-    function edit_pr($pr_id) {
+    function edit_pr($sr_no,$pr_id) {
 
         $issuing_date = trim($_POST['issuing_date']);
         $phone_person = trim($_POST['phone_person']);
@@ -281,8 +283,7 @@ class Purchase_model extends CI_Model {
         $order_placed_supplier = trim($_POST['order_placed_supplier']);
         $pr_description = trim($_POST['pr_description']);
         //$expense = trim($_POST['selectedOption']);
-//echo $pr_description; die;
-        $query = "update purchase_request set supplier_name='" . $supplier_name . "', pr_issue_date='" . $issuing_date . "',phone_person='" . $phone_person . "',action_taken_by='" . $action_taken_by . "', pr_recd_on='" . $pr_reacd_on . "',order_placed_by='" . $order_placed_by . "',pr_description='" . $pr_description . "',units='" . $units . "', avg_cods='" . $avg_cods . "',qty_in_stock='" . $qty_in_stock . "',reorder_point='" . $reorder_point . "',reorder_quantity='" . $reorder_quantity . "',qty_req='" . $qty_req . "',pr_supplier_rate='" . $pr_supplier_rate . "',pr_supplier_supplier='" . $pr_supplier_supplier . "',order_placed_rate='" . $order_placed_rate . "',order_placed_supplier='" . $order_placed_supplier . "',pr_description ='" . $pr_description . "' where sr_no='" . $pr_id . "'";
+        $query = "update purchase_request set supplier_name='" . $supplier_name . "', pr_issue_date='" . $issuing_date . "',phone_person='" . $phone_person . "',action_taken_by='" . $action_taken_by . "', pr_recd_on='" . $pr_reacd_on . "',order_placed_by='" . $order_placed_by . "',pr_description='" . $pr_description . "',units='" . $units . "', avg_cods='" . $avg_cods . "',qty_in_stock='" . $qty_in_stock . "',reorder_point='" . $reorder_point . "',reorder_quantity='" . $reorder_quantity . "',qty_req='" . $qty_req . "',pr_supplier_rate='" . $pr_supplier_rate . "',pr_supplier_supplier='" . $pr_supplier_supplier . "',order_placed_rate='" . $order_placed_rate . "',order_placed_supplier='" . $order_placed_supplier . "',pr_description ='" . $pr_description . "' where pr_id = ".$pr_id. " and sr_no='" . $sr_no . "'";
 //echo $query; die;
         $result = $this->db->query($query);
         if ($result) {
@@ -333,6 +334,19 @@ class Purchase_model extends CI_Model {
     }
 
     // Audit Checklist
+	
+	// for checking count 
+	 function audit_count($pr_srno) {
+        $pr_srno = trim($pr_srno);
+        if ((!empty($pr_srno))) {
+            $sql = "select count(*) as count from pr_audit_checklist where pr_srno= '$pr_srno'";     
+			//echo $sql; die;
+            $result = $this->db->query($sql)->result_array();
+        }
+		// echo "<pre/>"; print_r($result); die;
+        return $result;
+    }
+	
     function add_audit_checklist($pr_sr_no) {
 //  echo "<pre/>"; print_r($_POST); die;
         //echo $pr_sr_no; die;
@@ -482,7 +496,7 @@ class Purchase_model extends CI_Model {
         $this->db->insert('pr_internal_memo', $addMemodata);
         $last_inserted_id = $this->db->insert_id();
         if ($last_inserted_id > 0 ) {
-            echo "Internal Memo Mail sent to Unit Head successfully";
+            echo "Internal Memo Mail sent successfully";
         } else {
             echo "Error in Sending Internal Memo";
         }
@@ -567,6 +581,38 @@ class Purchase_model extends CI_Model {
         }       
         return $result;
     }
+    
+    function create_pr_status($params) {  
+        $this->db->insert('pr_status', $params);
+        $result = $this->db->insert_id();
+        return $result;
+    }
+    
+    public function update_status($params) { 
+        $data=array(
+            'pr_status' => $params['pr_status']
+        );       
+        $this->db->update('pr_status', $data, array('pr_status_id' => $params['pr_status_id']));        
+    }
+    
+    public function update_order_status($params) { 
+        $data=array(
+            'status' => $params['status']
+        );       
+        $this->db->update('purchase_request', $data, array('sr_no' => $params['sr_no']));        
+    }
+    
+    function get_status_by_id($pr_srno){
+        $this->db->select('*');
+        $this->db->from('pr_status');		
+        $this->db->where('pr_no', $pr_srno);
+        $this->db->order_by('created_date', "desc");
+        $query = $this->db->get();			
+        if ($query->num_rows() > 0) 
+        {		
+            return $query->result_array();
+        } 
+    }
 
     function show_pr_status($pr_srno) {
         $sql = "select * from pr_status where pr_no = '" . $pr_srno . "'";
@@ -619,7 +665,7 @@ class Purchase_model extends CI_Model {
         }else{
             $sql="select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
         }
-       echo $sql; die;
+       //echo $sql; die;
         $result = $this->db->query($sql)->result_array();
         foreach ($result as $key => $pr) {
             $srno = $pr['sr_no'];
@@ -636,7 +682,24 @@ class Purchase_model extends CI_Model {
 	
 // end Quotation
     
-    
+     function display_purchase_order($sr_no) {
+      //  echo $sr_no; die;
+    $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.pr_description,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where sr_no ='$sr_no'";
+        
+      // echo $sql; //die;
+        $result = $this->db->query($sql)->result_array();
+        foreach ($result as $key => $pr) {
+            $srno = $pr['sr_no'];
+            $sqlforstatushistory = "select * from pr_status where pr_no='" . $srno . "'";
+            $statushistory = $this->db->query($sqlforstatushistory)->result_array();
+           // $result[$key]['statushistory'] = $statushistory;
+            // echo "<pre/>"; print_r($statushistory); die;
+            // $pr['statushistory'] = $statushistory[0];
+            //echo "<pre/>"; print_r($pr); die;
+        }
+//		echo "<pre/>"; print_r($result); die;
+        return $result;
+    }  
 
 }
 

@@ -1,7 +1,12 @@
        <?php echo $this->load->view("common/top"); ?>
 		<?php $this->load->view('header_message');?>
 		<?php $this->load->view('left_message');?>
-
+<?php
+					//echo "<pre/>"; print_r($_SESSION) ; die;
+                    $session_data = $this->session->userdata('logged_in');
+                    $fname = $session_data['firstname'];
+                    $uid = $session_data['uid'];
+                    ?>   
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
@@ -32,9 +37,7 @@
 				<div class="col-md-6">
             <div class="form-group">
                                             <label>From</label>
-                                            <select class="form-control" name="from" id="from" required>                                                			   <option value="Mohan Kumar Bansal">Mohan Kumar Bansal</option>
-                                              <option value="Shipra Garg">Shipra Garg</option>                          
-                                            </select>
+                                           <input class="form-control auto ui-autocomplete-input" placeholder="Enter From" value="<?php echo ucfirst($fname); ?>" name="from" id="from">
                                         </div>
           </div> 
              
@@ -44,7 +47,7 @@
 				<div class="col-md-4">
             <div class="form-group">
                 <label for="">PR Date:</label>
-              <input class="form-control" type="date" placeholder="Enter Date" id="pr_date" name="pr_date">
+              <input class="form-control" type="date" value="<?php echo date("Y-m-d"); ?>" id="pr_date" name="pr_date">
                 <span id="errMsg" class="text-danger"></span>
             </div>
           </div> 
@@ -267,12 +270,12 @@
 			  // alert("<?php echo base_url(); ?>index.php/purchase_request/add_audit_checklist/"+sr_no);
 			   
                     $.ajax({
-                    url: "<?php echo base_url(); ?>index.php/purchase_request/add_audit_checklist/"+sr_no,
+                    url: "<?php echo base_url(); ?>index.php/purchase_request/add_audit_checklist",
                     method: "POST",
- data:{to:to, from:from, pr_chk_date:pr_chk_date, pr_date:pr_date, unit:unit, vendor_selection:vendor_selection, brand_selection:brand_selection, bids:bids, negotiation_rounds:negotiation_rounds, sla_agreement:sla_agreement, agreement_late_delivery:agreement_late_delivery, payment_agreement:payment_agreement, service_agreement:service_agreement, amc_negotiation:amc_negotiation, delivery_agreement:delivery_agreement, insurance:insurance, special_point:special_point},
+ data:{sr_no:sr_no, to:to, from:from, pr_chk_date:pr_chk_date, pr_date:pr_date, unit:unit, vendor_selection:vendor_selection, brand_selection:brand_selection, bids:bids, negotiation_rounds:negotiation_rounds, sla_agreement:sla_agreement, agreement_late_delivery:agreement_late_delivery, payment_agreement:payment_agreement, service_agreement:service_agreement, amc_negotiation:amc_negotiation, delivery_agreement:delivery_agreement, insurance:insurance, special_point:special_point},
                         success: function (data) {
                           alert(data);
-	window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/audit_checklist_listing";  
+ window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/audit_checklist_listing";  
                         }
 					  });
 		  }

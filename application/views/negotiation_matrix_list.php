@@ -1,5 +1,9 @@
 <?php echo $this->load->view("common/top"); ?>
-
+<style>
+	table thead tr th{
+text-align: center;
+	}
+</style>
        
 		<?php $this->load->view('header_message');?>
 		<?php $this->load->view('left_message');?>
@@ -30,7 +34,8 @@
                                 <thead>
                                     <tr>
                                         <th>Sr. No</th>
-                                        <th>Negotiation Matrix Date</th>
+										<th style="text-align: center;">PR No.</th>
+                                        <th style="text-align: center;">Date</th>
                                         <th>Vendor Person</th>
                                         <th>Contact Person</th>
 										 <th>Number</th>
@@ -57,10 +62,12 @@
 									}
 								?>
 								
-                                    <tr class="<?php echo $classname; ?>">
-                                        <td><?php echo $i; ?></td>
-                                        <td><?php echo $list['negotiation_matrix_date'];?></td>
-                                        <td><?php echo $list['vendor_person'];?></td>
+                                <tr class="<?php echo $classname; ?>">
+                                <td><?php echo $i; ?></td>
+							<td style="text-align: center;"><?php echo $list['pr_sr_no'];?></td>
+	<td style="text-align: center;"><?php echo date("d-m-Y", strtotime($list['negotiation_matrix_date'])); ?></td>
+                                        
+                                        <td style="text-align: center;"><?php echo $list['vendor_person'];?></td>
                                         <td><?php echo $list['contact_person'];?></td>
 										<td><?php echo $list['number'];?></td>
 										<td><?php echo $list['negotiation'];?></td>

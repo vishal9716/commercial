@@ -24,7 +24,7 @@
                                 <thead>
                                     <tr>
 										<th>SrNo.</th>
-                                        
+                                        <th style="text-align: center;">PR No.</th>
 										<th>Item Description</th>
                                         <th>Unit</th>
                                         <th>Quantity</th>
@@ -54,6 +54,7 @@
 								
                                     <tr class="<?php echo $classname; ?>">
                                         <td><?php echo $i; ?></td>
+										<td style="text-align: center;"><?php echo $list['pr_srno'];?></td>
                                         <td><?php echo $list['desp'];?></td>
                                         <td><?php echo $list['unit'];?></td>
                                         <td><?php echo $list['quantity'];?></td>

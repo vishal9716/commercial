@@ -1,6 +1,6 @@
 <?php
 if(!isset($this->session->userdata['logged_in'])) {
-	header("location: http://localhost/commercial/login/");
+	header("location: http://localhost/commercial/index.php/login/");
         //redirect('login','refresh');
 }
 

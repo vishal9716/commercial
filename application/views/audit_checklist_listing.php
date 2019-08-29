@@ -30,6 +30,7 @@
                                 <thead>
                                     <tr>
                                         <th>SNo</th>
+										<th style="text-align: center;">PR No.</th>
                                         <th>Vendor selection</th>
                                         <th>Brand selection</th>
                                         <th>Bids</th>
@@ -65,6 +66,7 @@
 								
                                     <tr class="<?php echo $classname; ?>">
                                         <td><?php echo $i; ?></td>
+										<td style="text-align: center;"><?php echo $list['pr_srno'];?></td>
                                         <td><?php echo $list['vendor_selection'];?></td>
                                         <td><?php echo $list['brand_selection'];?></td>
                                         <td><?php echo $list['bids'];?></td>

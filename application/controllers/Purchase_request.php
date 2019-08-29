@@ -18,6 +18,7 @@ class Purchase_request extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
+    
 	 function __construct() {
         // Call the Model constructor
         parent::__construct();
@@ -25,8 +26,9 @@ class Purchase_request extends CI_Controller {
             $this->load->model('type_model');
             $this->load->model('unit_region_model');
             $this->load->model('department_model');
-            $this->load->model('user_database');
             $this->load->model('approval_chain_model');
+            $this->load->model('user_database');
+            //$this->load->model('approval_chain_model');
             $this->load->helper('string');
             error_reporting(0);		 
     }
@@ -127,8 +129,7 @@ class Purchase_request extends CI_Controller {
 	}
 	
 	// purchase request listing
-	public function purchase_request_list() {                  
-            //$prid=''; 
+	public function purchase_request_list() {  
             $session_data=$this->session->userdata('logged_in');
             $pu_list_param=array(
                 'department_id' => $session_data['department_id'],
@@ -136,14 +137,14 @@ class Purchase_request extends CI_Controller {
                 'uid'=>$session_data['uid']
             );
             $data['purchase_request_list']=$this->purchase_model->display_purchase_request($pu_list_param);                       
-            
-//             echo "<pre>";
-//                print_r($data);
-//                print_r($session_data);
-//                die("55");
+               
             $data['type_list']=$this->type_model->typelist_info_by_key_val_arr();
             $data['status_list']= $this->purchase_model::$actionstatus;
-            $data['session_data'] = $session_info;            
+            $data['session_data'] = $session_info; 
+            
+//            echo"<pre>";
+//            print_r($data);
+//            die("55");
             $this->load->view('purchase_request_list',$data);
 	}
 	
@@ -165,7 +166,7 @@ class Purchase_request extends CI_Controller {
 //               
                 $this->load->view('display_memo',$data);
             }else{
-                echo "create";
+                //echo "create";
                 $this->load->view('internal_memo',$data);
             }
 	}
@@ -179,36 +180,46 @@ class Purchase_request extends CI_Controller {
             $addMemodata['pr_date'] = $request_data['date']; 
             $addMemodata['pr_to'] = $request_data['to'];  // to is the user type id
             $addMemodata['pr_from'] = $request_data['order_placed_by']; 
-            //$addMemodata['pr_sr_no'] = $request_data['sr_no']; 
             $addMemodata['subject'] = $request_data['subject']; 
             $addMemodata['description'] = $request_data['editor']; 
             $addMemodata['created_by'] = $request_data['order_placed_by']; 
             $addMemodata['pr_from_user_id'] = $request_data['from_user_id']; 
-            $addMemodata['created_date'] = $currentDate; 
-            $inserted_id = $this->purchase_model->add_internal_memo($addMemodata);  
-        
-            // Add approval 
-            $userInfo=$this->user_database->user_info_by_type($request_data['to']);
-            $approval_data=array(
-                'pr_sr_no' => $request_data['sr_no'],
-                'type_user_id' => $request_data['to'],
-                'user_id'=>$userInfo[0]['uid']
-            );
-            $this->add_approval_user($approval_data);
-            // Send mail
-//            $userData=$this->user_database->user_info_by_type($request_data['to']);
-//           
-//            $email_id=$userData[0]['email_id'];
-//            $sendEmailData=array(
-//                'from_email'=>$session_data['email'],
-//                'from_name'=>$session_data['firstname'] .' '. $session_data['lastname'],
-//                'to_email' => $email_id,
-//                'subject' => $request_data['subject'],
-//                'message' => $request_data['description']
-//            );
-//            $this->sendmail($sendEmailData);
+            $addMemodata['created_date'] = $currentDate;
+            $inserted_id = $this->purchase_model->add_internal_memo($addMemodata);        
+//            if($inserted_id){
+                // Add approval 
+                $userInfo=$this->user_database->user_info_by_type($request_data['to']);
+                $approval_data=array(
+                    'pr_sr_no' => $request_data['sr_no'],
+                    'type_user_id' => $request_data['to'],
+                    'user_id'=>$userInfo[0]['uid'],
+                    'approval_type' => 0
+                );
+                $this->add_approval_user($approval_data);
+
+                // Insert Into pr Status
+                $create_pr_status=array(
+                    'pr_srno' => $request_data['sr_no'],
+                    'status_by' => $request_data['order_placed_by'],
+                    'from_user_id' =>$request_data['from_user_id'],
+                    'to_user_id' =>$userInfo[0]['uid'],
+                    'pr_status_date' => $request_data['date']
+                );
+                $this->create_pr_status($create_pr_status);
+                // Send mail           
+                /* $email_id=$userData[0]['email_id'];
+                $sendEmailData=array(
+                    'from_email'=>$session_data['email'],
+                    'from_name'=>$session_data['firstname'] .' '. $session_data['lastname'],
+                    'to_email' => $email_id,
+                    'subject' => $request_data['subject'],
+                    'message' => $request_data['description']
+                );
+                $this->sendmail($sendEmailData);*/
+//            }
             exit;
 	}
+        
 	public function edit_internal_memo(){
             $pr_sr_no =$_POST['sr_no'];
             $data['result'] = $this->purchase_model->edit_internal_memo($pr_sr_no);		
@@ -223,10 +234,7 @@ class Purchase_request extends CI_Controller {
         public function edit_purchase_request() {
             $sr_no = $_GET['sr_no'];
             $data['purchase_request_list']=$this->purchase_model->display_pr_list($sr_no);
-            
-//            echo "<pre>";
-//            print_r($data);
-//            die("55");
+                      
             $data['units_region']=$this->purchase_model->display_unit_region($id);
             $data['departments']=$this->purchase_model->display_department(NULL);
             $data['suppliers']=$this->purchase_model->display_supplier($id);
@@ -237,8 +245,12 @@ class Purchase_request extends CI_Controller {
 		
 	public function edit_pr() {
             $pr_srno = $_POST['sr_no'];	
-            $data['result'] = $this->purchase_model->edit_pr($pr_srno);
-	}
+            $pr_id= $_POST['pr_idd'];           
+            $data['result'] = $this->purchase_model->edit_pr($pr_srno,$pr_id);
+          
+            exit;
+            
+        }
 		
 	// upload pr quotation
 	public function pr_quotation(){
@@ -349,10 +361,11 @@ class Purchase_request extends CI_Controller {
         $this->load->view('negotiation_matrix');
 		
 	}
-        public function add_negotiation($pr_sr_no)
+        public function add_negotiation()
 	{
             //echo "<pre/>";
-           // print_r($_POST); die;
+            //print_r($_POST); die;
+			$pr_sr_no = $_POST['sr_no'];
             $data['result'] = $this->purchase_model->add_negotiation($pr_sr_no);
        // $this->load->view('negotiation_matrix');
 		
@@ -373,10 +386,29 @@ class Purchase_request extends CI_Controller {
         $this->load->view('audit_checklist');
 		
 	}
-	public function add_audit_checklist($pr_sr_no)
+	
+	public function audit(){
+		 $sr_no = $_GET['sr_no'];
+		//echo $sr_no; die;
+	 $data['pr_list']=$this->purchase_model->audit_count($sr_no);
+		
+       if(($data['pr_list'][0]['count']) > 0){
+		   
+      $data['audit_checklist_listing']=$this->purchase_model->display_audit_checklist($id);
+		 $this->load->view('audit_checklist_listing',$data);
+            }else{
+          $this->load->view('audit_checklist');
+               
+            }	
+	}
+	
+	
+	public function add_audit_checklist()
 	{
 	 // echo "<pre/>";
-      //print_r($_POST); die;
+      //print_r($_POST); die;\
+	  $pr_sr_no = $_POST['sr_no'];
+		
       $data['result'] = $this->purchase_model->add_audit_checklist($pr_sr_no);
 		
 	}
@@ -390,9 +422,10 @@ class Purchase_request extends CI_Controller {
 	}
 	// Comparision Sheet
 	
-	public function add_comparision($pr_sr_no){
+	public function add_comparision(){
 	//echo "<pre/>";
     //print_r($_POST); die;
+	$pr_sr_no = $_POST['sr_no'];
 	$data['result'] = $this->purchase_model->add_comparision_sheet($pr_sr_no);
 	}
 	
@@ -406,67 +439,162 @@ class Purchase_request extends CI_Controller {
 		$data['checklist_listing']=$this->purchase_model->display_checklist($id);
 		$this->load->view('checklist_listing',$data);		
 	}
-	
-	
+           
+        private function create_pr_status($param) {
+            $currentDate =date('Y-m-d H:i:s');
+            $update_pr_status=array(
+                'pr_no' =>$param['pr_srno'],
+                'pr_status' => '0',
+                'status_by' => $param['status_by'],
+                'pr_status_date' => $param['pr_status_date'],
+                'request_raised_by' =>$param['from_user_id'],
+                'request_approved_by' =>$param['to_user_id'],
+                'created_date' => $currentDate
+            );
+            $this->purchase_model->update_pr_status($update_pr_status);
+        }
+        
 	public function update_pr_status(){
             $request_data=$_POST;
             $pr_srno = $request_data['pr_srno'];
             $session_data = $this->session->userdata('logged_in');
-            $currentDate =date('Y-m-d H:i:s');
+            $currentDate = date('Y-m-d H:i:s');   
+            $status_data=$this->purchase_model->get_status_by_id($request_data['pr_srno']);
+            
+            switch ($request_data['status']) {
+                case 0: // rejection request
+                // Update status of the earlier 
+                $updateRejectStatus=array(
+                    'pr_status_id' => $status_data[0]['pr_status_id'],
+                    'pr_status' => '2' // Rjected value in db
+                );
+                // Update Status of pr
+                $this->purchase_model->update_status($updateRejectStatus);
+                
+                // Update Purchase Request Table
+                $rejectPr=array(
+                    'status' => '2',
+                    'sr_no' => $pr_srno,
+                    'status_by' => $session_data['firstname'].' '. $session_data['lastname']
+                );
+                $this->purchase_model->update_order_status($rejectPr);
+                
+                // Reject 
+                $chain_data=array(
+                    'pr_sr_no' =>$pr_srno,
+                    'approval_type' => 2,
+                    'rejected_by' => $session_data['uid'],
+                );
+                $this->add_approval_user($chain_data);
+                
+                break;
+            case 1: // Approved 
+          
+            // Update Pr Data
             $update_pr_status=array(
                 'pr_no' =>$pr_srno,
-               // 'pr_status' =>$request_data['status'],
-                'pr_status' =>0,
+                'pr_status' =>$request_data['status'],
                 'status_by' =>  $session_data['firstname'] .' '. $session_data['lastname'],
                 'pr_status_date' => $currentDate,
                 'remarks' =>$request_data['remarks'],
-                'action_first_user_id' =>$session_data['uid']
-            );
-            
-            $this->purchase_model->update_pr_status($update_pr_status);
-            
+                'request_raised_by' =>$status_data[0]['request_approved_by'],
+                'created_date' => $currentDate
+            );            
             // Send to Next Approval
             $sessionInfo=$this->session->userdata('logged_in');
             $param=array(
                'pr_sr_no'=>$pr_srno
             );
             $ac_data=$this->approval_chain_model->get_approver_id($param);
+           
             $appr_user_id = $ac_data[0]['approver_user_id'];
-            $apprved_by_uid= $ac_data[0]['approved_by_user_id'];
+            $approved_by_uid= $ac_data[0]['approved_by_user_id'];
             $rejected_by_uid= $ac_data[0]['rejected_by_user_id'];
             
             $appr_uid_arr= explode(",", $appr_user_id);
             $vp_type_id = 1; // Vp type id
-            $pu_type_id = 10; // Purchase Department 
-            $ed_type_id = 11; // Purchase Department 
-            // Send to VP if Only One User in Approval Chain Till Now
+            $pu_type_id = 12; // Purchase Department 
+            $ed_type_id = 11; // Enforcment Director 
+            // 1 Send to VP if Only One User in Approval Chain Till Now
             if(count($appr_uid_arr) == 1 && (in_array($sessionInfo['uid'], $appr_uid_arr)) 
-                    && $sessionInfo['user_type'] != $vp_type_id){
-                $uInfo=$this->user_database->user_info_by_type($vp_type_id);
+                    && $sessionInfo['user_type'] != $vp_type_id){                
+                $uInfo1=$this->user_database->user_info_by_type($vp_type_id);
+                
                 $vp_data=array(
                     'pr_sr_no' =>$pr_srno,
-                    'user_id' => $uInfo[0]['uid']
+                    'user_id' => $uInfo1[0]['uid'],
+                    'approval_type' => $request_data['status'],
+                    'approved_by' => $sessionInfo['uid'],
+                    'rejected_by' => $sessionInfo['uid'],
                 );
-                $this->add_approval_user($vp_data);
+                $this->add_approval_user($vp_data);   
+               
+                // Update status of the earlier 
+                $updateStatusInfo1=array(
+                    'pr_status_id' => $status_data[0]['pr_status_id'],
+                    'pr_status' => $request_data['status']
+                );
+                // Update Status of pr
+                $this->purchase_model->update_status($updateStatusInfo1);
+                
+                // Create new Pr status 
+                $update_pr_status['request_approved_by'] = $uInfo1[0]['uid'];
+                $update_pr_status['pr_status'] = '0';
+                $this->purchase_model->create_pr_status($update_pr_status);                
+                
             }elseif ((count($appr_uid_arr) == 2) && ($sessionInfo['user_type'] == $vp_type_id )){
-                // Send to purchase Department 
-                $uInfo=$this->user_database->user_info_by_type($pu_type_id);
+                // 2 Send to purchase Department 
+                $uInfo2=$this->user_database->user_info_by_type($pu_type_id);
                 $pu_data=array(
                     'pr_sr_no' =>$pr_srno,
-                    'user_id' => $uInfo[0]['uid']
+                    'user_id' => $uInfo2[0]['uid'],
+                    'approval_type' => $request_data['status'],
+                    'approved_by' => $sessionInfo['uid'],
+                    'rejected_by' => $sessionInfo['uid'],
                 );
                 $this->add_approval_user($pu_data);
+                
+                // Update status of the earlier 
+                $updateStatusInfo2=array(
+                    'pr_status_id' => $status_data[0]['pr_status_id'],
+                    'pr_status' => $request_data['status']
+                );
+                // Update Status of pr
+                $this->purchase_model->update_status($updateStatusInfo2);
+                
+                // Create new Pr status 
+                $update_pr_status['request_approved_by'] = $uInfo2[0]['uid'];
+                $update_pr_status['pr_status'] = '0';
+                $this->purchase_model->create_pr_status($update_pr_status); 
                
             }elseif ((count($appr_uid_arr) == 3 && ($sessionInfo['user_type'] == $pu_type_id))) {
-                // Send to ED
-                $uInfo=$this->user_database->user_info_by_type($ed_type_id);
+                // 3 Send to ED
+                $uInfo3=$this->user_database->user_info_by_type($ed_type_id);
                 $ed_data=array(
                     'pr_sr_no' =>$pr_srno,
-                    'user_id' => $uInfo[0]['uid']
+                    'user_id' => $uInfo3[0]['uid'],
+                    'approval_type' => $request_data['status'],
+                    'approved_by' => $sessionInfo['uid'],
+                    'rejected_by' => $sessionInfo['uid'],
                 );
-                $this->add_approval_user($ed_data);                 
+                $this->add_approval_user($ed_data); 
+
+                // Update status of the earlier 
+                $updateStatusInfo3=array(
+                    'pr_status_id' => $status_data[0]['pr_status_id'],
+                    'pr_status' => $request_data['status']
+                );
+                // Update Status of pr
+                $this->purchase_model->update_status($updateStatusInfo3);
+                
+                // Create new Pr status 
+                $update_pr_status['request_approved_by'] = $uInfo3[0]['uid'];
+                $update_pr_status['pr_status'] = '0';
+                $this->purchase_model->create_pr_status($update_pr_status); 
             }
-            		
+            break;
+        }    
+            exit;		
 	}
 	public function show_pr_status($pr_srno){
 		$data['pr_status']=$this->purchase_model->show_pr_status($pr_srno);
@@ -517,18 +645,34 @@ class Purchase_request extends CI_Controller {
            {
             show_error($this->email->print_debugger());
            }
-        }
-	
+        }	
         
-        public function add_approval_user($data){
-            // Add entry in approval chain
-            $currentDate =date('Y-m-d H:i:s');
-            $approval_data=array(
-                'pr_sr_no' => $data['pr_sr_no'],
-                'approver_user_id' => $data['user_id'],
-                'created_date' => $currentDate
-            );
-            return $this->approval_chain_model->add_approvar_user($approval_data);
+    public function add_approval_user($data){
+        // Add entry in approval chain
+        $currentDate =date('Y-m-d H:i:s');
+        $approval_data=array(
+            'pr_sr_no' => $data['pr_sr_no'],
+            'created_date' => $currentDate
+        );
+
+        switch ($data['approval_type']) {
+            case 1: // Approved
+                $approval_data['approved_by_user_id'] = $data['approved_by'];
+                $approval_data['approver_user_id'] = $data['user_id'];
+                $approval_data['status'] = '1';
+                break;
+            case 2: // Rejected
+                $approval_data['rejected_by_user_id'] = $data['rejected_by'];
+                $approval_data['status'] = '2';
+                break;
+            default: // Pending
+                // Send for Approval to user
+                $approval_data['approver_user_id'] = $data['user_id'];
+                $approval_data['status'] = '0';
+                break;
         }
+       
+        return $this->approval_chain_model->add_approvar_user($approval_data);
+    }
 	
 }

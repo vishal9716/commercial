@@ -16,7 +16,7 @@
                     <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                               Add NEGOTIATION - <?php echo $_GET['sr_no'];?>
+								NEGOTIATION MATRIX  - <b> <?php echo $_GET['sr_no'];?> </b>
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
@@ -39,7 +39,7 @@
 
                                             <tr class="even gradeC">
                                                 <td class="srno" contenteditable="true">1</td>
-                                                <td class="date" contenteditable="true"></td>
+                                                <td class="date" contenteditable="true"><?php echo date("Y-m-d"); ?></td>
                                                 <td class="vendor_person" contenteditable="true"></td>
                                                 <td class="contact_person" contenteditable="true"></td>
                                                 <td class="number" contenteditable="true"></td>
@@ -91,7 +91,7 @@
                     count = count + 1;
                     var html_code = "<tr id='row" + count + "'>";
                     html_code += "<td class='srno' contenteditable='true'>" + count + "</td>";
-                    html_code += "<td class='date' contenteditable='true'></td>";
+                    html_code += "<td class='date' contenteditable='true'><?php echo date("Y-m-d"); ?></td>";
                     html_code += "<td class='vendor_person' contenteditable='true'></td>";
                     html_code += "<td class='contact_person' contenteditable='true'></td>";
                     html_code += "<td class='number' contenteditable='true'></td>";
@@ -149,9 +149,9 @@
 		//alert("<?php echo base_url(); ?>index.php/purchase_request/add_negotiation/"+sr_no);
 
                     $.ajax({
-                        url: "<?php echo base_url(); ?>index.php/purchase_request/add_negotiation/"+sr_no,
+                        url: "<?php echo base_url(); ?>index.php/purchase_request/add_negotiation",
                         method: "POST",
- data: {date: date, vendor_person: vendor_person, contact_person: contact_person, number: number, negotiation: negotiation, remarks: remarks, signature: signature},
+ data: {sr_no:sr_no, date: date, vendor_person: vendor_person, contact_person: contact_person, number: number, negotiation: negotiation, remarks: remarks, signature: signature},
                         success: function (data) {
 
                             alert(data);

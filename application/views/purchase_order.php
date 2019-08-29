@@ -1,193 +1,165 @@
-<?php echo $this->load->view("common/top"); ?>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Invoice</title>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<!-- <link rel="stylesheet" href="sass/main.css" media="screen" charset="utf-8"/> -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta http-equiv="content-type" content="text-html; charset=utf-8">
+ <link href="<?php echo base_url();?>dist/css/invoice.css" rel="stylesheet">
+</head>
 
-        <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-		<?php $this->load->view('header_message');?>
-		<?php $this->load->view('left_message');?>
-		  </nav>
-        <div id="page-wrapper">
-			
-			
-			
-			<!-- start-->
-			
-			<form action="<?php echo base_url(); ?>index.php/operations/add_estimation" method="POST" name="Formulaire">  
-				<?php if (isset($errormsg)) {	?>						
-                                    <div class="alert alert-danger">
-										<?php echo $errormsg; ?>
-									</div>
-									<?php } ?>
-       
-	   <div class="row">
-            <?php  $quo_no = (rand(1000,10000)); ?>
-		 <div class="col-md-6">
-            <div class="form-group">
-                <label for="exampleInputEmail1">S. No</label>
-                <div class="input-group">
-                   <div class="input-group-addon">SN-</div>
-                   <input id="quo" class="form-control" value="<?php echo $quo_no; ?>" readonly type="text" name="quotation">
-                 
-                </div>
-                <span id="errMsg" class="text-danger"></span>
-            </div>
-          </div> 
-	
-		 <div class="col-md-6">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Unit</label>
-   
-                    <input class="form-control" placeholder="Enter Unit" name="total_pages">
-       
-                <span id="errMsg" class="text-danger"></span>
-            </div>
-          </div> 
+<body>
+<div class="main_outer">
+<header class="clearfix">
+  <div class="container">
+    <div class="company-info">
+      <h2 class="title"><img src="<?php echo base_url();?>public/images/logo_td.png"><br>Thomson Digital</h2>
+	   <?php
+                                    // echo "<pre>"; print_r($purchase_request_list); die();
+                                    $i = 0;
+                                    foreach ($purchase_request_list as $list) {
+                                       // echo "--->". "<pre/>"; print_r($list); 
+										?>
+                                 
+      <div class="address">
+        <p> 129 Noida Special Economic Zone, Noida, Uttar Pradesh 201305</p>
+        <p>Phone: 91-120-3085000 <span style="padding:0 10px;">|</span> Email: contact@thomsondigital.com <span style="padding:0 10px;">|</span> G.S.T. No.:  09AAACT4827F2ZB</p>
+      </div>
 		
-		</div>
-				
-       <div class="row">
-            
-            <div class="col-md-6">
-             
-              <div class="form-group">
-                <label for="">Supplier Name</label>
-              <input class="form-control" placeholder="Enter Supplier Name" name="total_pages">  
-		       </div>
-             
-            </div>
-  
-            <div class="col-md-6">
-              <div class="form-group">
-				  <label for="">Order No</label>
- 			<input class="form-control" placeholder="Enter Order No" name="total_pages">			
-               </div>
-            </div>
-		</div>
-		
-	   <div class="row">		
-          <div class="col-md-6">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Material Code/Description / Specifications</label>
-              <input class="form-control" placeholder="Enter Material Code/Description / Specifications" name="total_pages">
-                <span id="errMsg" class="text-danger"></span>
-            </div>
-          </div>    
-		  <div class="col-md-6">
-            <div class="form-group">
-                <label for="exampleInputEmail1">PR No.</label>
-              <input class="form-control" placeholder="Enter PR No." name="total_pages">
-                <span id="errMsg" class="text-danger"></span>
-            </div>
-          </div>    
-			
-        </div>
-
-       <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Payment Terms</label>
-          <select class="form-control" name="payment_terms">
-            <option value="30" selected="">30</option>
-            <option value="45">45</option>
-			   <option value="90">90</option>
-          </select>
-				 </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Date</label>
-                  <input class="form-control" placeholder="Ente Date" name="volume" id="search">
-               </div>
-            </div>
-        </div>
-				
-	    <div class="row">
-          <div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Unit</label>
-                     <select class="form-control select2 select2-hidden-+" name="account">
-                                          <option value="1" selected="">Unit 1</option>
-                                          <option value="2">Unit 2</option>
-                                        </select>
-              </div>
-            </div>
-          <div class="col-md-6">
-            <div class="form-group">
-                <label for="exampleInputEmail1">PR Date</label>
-              <input class="form-control" placeholder="Enter PR Date" name="total_pages">
-                <span id="errMsg" class="text-danger"></span>
-            </div>
-          </div> 
-        </div>
-
-		 <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Quantity</label>
-                  <input class="form-control" placeholder="Enter Quantity" name="volume" id="search">
-               </div>
-            </div>
-			<div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Rate (Rs)- Per unit</label>
-                  <input class="form-control" placeholder="Enter rate (Rs)- Per unit" name="level">
-
-            </div>
-            </div>
-         </div>
-				
-        <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Delivery Schedule : Days/Months</label>
-                  <input class="form-control auto ui-autocomplete-input" placeholder="Enter delivery Schedule : Days/Months" name="volume" id="search">
-
-                     </div>
-            </div>
-			 <div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Value (Rs)-Total</label>
-                  <input class="form-control" placeholder="Enter value (Rs)-Total" name="level">
-
-            </div>
-            </div>
-        </div>
 	
-	   <div class="row">
-        <div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Discount</label>
-                  <input class="form-control" placeholder="Enter discount" name="illustrations">
-
-            
+    </div>
+  </div>
+</header>
+<section class="sectionContent">
+  <div class="container">
+    <div class="details clearfix">
+      <div class="client left">
+        <p class="name">John Doe</p>
+        <p>Modern Engineering Works, T-11 Gali No. 10, Anand Parbat Industrial Area, Delhi</p>
+        <p><strong>Party Pan:</strong></p>
+        <p><strong>GSTIN:</strong> O7AAAPP1081C1Z7</p>
+        <p><strong>Email:</strong>john@example.com</p>
+      </div>
+        
+      <div class="data right">
+        <div class="title">Order no: <?php echo $list['sr_no']; ?></div>
+        <div class="date">
+          <p><strong>Date of Order:</strong> <?php echo date("Y-m-d"); ?></p>
+		  <p><strong>PR No.:</strong> <?php echo $list['sr_no']; ?> </p>
+          <p><strong>PR Date:</strong> <?php echo date("d-m-Y", strtotime($list['pr_issue_date'])); ?> </p>
+		  <p><strong>Deptt:</strong> <?php echo $list['department_name']; ?> </p>
+        </div>
+      </div>
+    </div>
+	  	 <?php }?>
+    <table border="0" cellspacing="0" cellpadding="0">
+      <thead>
+        <tr>
+          <th class="qty" width="4%">S.No</th>
+          <th class="desc">Material Code / Description / Specification</th>
+		  <th class="unit">Unit</th>
+          <th class="unit">Qty</th>
+          <th class="unit">Unit price</th>
+          <th class="total">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="qty">1</td>
+          <td class="desc"><h3> <?php echo $list['pr_description']; ?></h3></td>
+		  <td class="qty"><?php echo $list['units']; ?></td>
+          <td class="qty"><?php echo $list['qty_req']; ?></td>
+          <td class="unit"><?php echo $list['pr_supplier_rate']; ?></td>
+          <td class="total"><?php echo $list['pr_supplier_supplier']; ?></td>
+        </tr>
+       
+       
+        
+        <tr>
+          <td colspan="2">
+          	<div class="detail_section">
+            	<h2>Delivery Schedule : 2-3 Days</h2>
+            </div>
+          </td>
+          <td colspan="4">
+              <ul class="sub_total">
+                <li>Add: SUBTOTAL@........................%</li>
+                <li>126,750.00</li>
+              </ul>
+              <ul class="sub_total">
+                <li>Add: CGST@........................%</li>
+                <li>7,605.00</li>
+              </ul>
+              <ul class="sub_total">
+                <li>Add: SGST@........................%</li>
+                <li>7,605.00</li>
+              </ul>
+              <ul class="sub_total">
+                <li>Add: FREIGHT</li>
+                <li>0.00</li>
+              </ul>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+          	<div class="detail_section">
+            	<p><strong>Delevery Schedule:</strong> 20 Days</p>
+            </div>
+          </td>
+          <td colspan="4">
+              <ul class="sub_total">
+                <li><strong>GRAND TOTAL:</strong></li>
+                <li><strong>141,960.00</strong></li>
+              </ul>
+               
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+          	<div class="detail_section">
+            	<h2>IMPORTANT CONDITIONS: IGST: As Applicable.  Warranty: As per OEM.</h2>
+                <ul>
+                    <li>1)  Payment against pro-forma bills/invoice shall be made after fulfilling all the conditions of the purchase order in terms of quality, description, delivery and satisfactory installation of the product wherever necessary and agreed.</li>
+<li>2) Final bill/ Invoice with Challan/copy of the purchase order  etc. to be  furnished after the delivery of goods duly signed and vetted by authorities</li>
+<li>3)  Payments will be usually made by A/c Payee Cheque. No cash payment shall be paid under any circumstances </li>
+<li>4)  Deduction as prescribed under the various statutory statues as applicable shall be made from the payment. </li>
+<li>5)  Ensure that bills contain all the statutory information as required under the Income tax act /companies act etc. </li>
+<li>6)  The price of any item mentioned in this order should not exceed the accepted price. Company reserves the right to vary the quantity before the dispatch of the consignment or delivery </li>
+<li>7) Failure to comply with specifications, terms and conditions of this order, or accepted delivery schedule shall be sufficient grounds for cancellation of order by purchaser without being liable for paying any compensation to the supplier. In case of delay in supply, liquidated damage at the rate of 0.5% on value of the purchase order per week, or part thereof, will be recovered. All dispute shall be subject to the jurisdiction of Courts at Delhi</li>
+                    
+                </ul>
+            </div>
+          </td>
+          <td colspan="4">
+          	<div class="signature_section">
+              <h1> For Thomson Digital</h1>
+            </div>
+              <div>
+                  A Division of Thomson Press (India) Ltd.
               </div>
+              <div>(Authorised Signatory)</div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+          	<div class="detail_section">
+            	<p>Note: Custom Gate entry on all bills or challans for material is must to claim IGST.</p>
             </div>
-		<div class="col-md-6">
-              <div class="form-group">
-                  <label for="exampleInputEmail1">Total</label>
-                  <input class="form-control auto ui-autocomplete-input" placeholder="Total" name="illustrations">
+          </td>
+          <td colspan="4">
+          	<div class="detail_section">
+               <strong>Distribution:</strong><br> Vendor/Accounts/Indenter/Office copy 
             </div>
-            </div>
-       </div>
-
-        <div class="row">
-          <div class="col-md-12">
-            <div class="text-center" id="quantityMessage" style="color:red; font-weight:bold">
-            </div>
-          </div>
-        </div>
-				 <div class="row">
-					 <div class="col-md-2">
-	<button type="submit" class="btn btn-primary btn-flat pull-left" id="btnSubmit">Create PDF</button>
-					 </div>
-						 <div class="col-md-2">
-   <button type="submit" class="btn btn-primary btn-flat pull-left" id="btnSubmit">Send email to Requestor</button>
-				</div>
-				</div>
-        </form>
-            <!-- end -->
-          
-        </div>
-        <!-- /#page-wrapper -->
-
-<?php echo $this->load->view("common/bottom"); ?>
-  
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+  </div>
+</section>
+ 
+</div>
+</body>
+</html>

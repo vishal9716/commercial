@@ -151,7 +151,7 @@ angular
                     var editor = CKEDITOR.instances.editor.getData();
                   
                     $.ajax({
-                    url: "<?php echo base_url(); ?>purchase_request/add_internal_memo",
+                    url: "<?php echo base_url(); ?>index.php/purchase_request/add_internal_memo",
                     method: "POST",
                     data: {
                         to: to, 

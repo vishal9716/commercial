@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 29, 2019 at 01:57 AM
+-- Generation Time: Aug 30, 2019 at 12:36 AM
 -- Server version: 10.1.26-MariaDB
 -- PHP Version: 7.1.9
 
@@ -123,9 +123,9 @@ CREATE TABLE `approval_chain` (
   `pr_sr_no` varchar(255) DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
   `modified_date` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `status` enum('0','1') DEFAULT NULL,
-  `approved_by_user_id` int(11) DEFAULT NULL,
-  `rejected_by_user_id` int(11) DEFAULT NULL
+  `status` enum('0','1','2') DEFAULT NULL,
+  `approved_by_user_id` varchar(100) DEFAULT NULL,
+  `rejected_by_user_id` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -133,7 +133,10 @@ CREATE TABLE `approval_chain` (
 --
 
 INSERT INTO `approval_chain` (`id`, `approver_user_id`, `pr_sr_no`, `created_date`, `modified_date`, `status`, `approved_by_user_id`, `rejected_by_user_id`) VALUES
-(1, '5,6', 'TD-NSEZ/2019-20/IT/1283', '2019-08-29 01:21:23', '2019-08-28 23:31:09', NULL, NULL, NULL);
+(1, '5,2,3', 'TD-NSEZ/2019-20/IT/3218', '2019-08-29 20:08:25', '2019-08-29 20:48:37', NULL, '5,2', NULL),
+(2, '5,2,3', 'TD-MAU/2019-20/IT/3458', '2019-08-29 23:01:16', '2019-08-29 21:20:15', '0', '5,2', NULL),
+(4, '5,', 'TD-CH/2019-20/IT/3627', '2019-08-29 23:50:31', '2019-08-29 22:17:39', '0', NULL, '5'),
+(5, '5,2,3', 'TD-MAU/2019-20/IT/8094', '2019-08-30 00:29:18', '2019-08-29 22:32:07', '0', '5,2', NULL);
 
 -- --------------------------------------------------------
 
@@ -270,7 +273,7 @@ INSERT INTO `department` (`department_id`, `department_name`, `department_desp`,
 (2, 'IT Department', 'Informatiom Technology', 'IT'),
 (3, 'Account', 'Account', 'AC'),
 (4, 'Utility Department', 'Adding Utility Department', 'UD'),
-(5, 'Purchase Department', 'purchase department', NULL);
+(5, 'Purchase Department', 'purchase department', 'PD');
 
 -- --------------------------------------------------------
 
@@ -648,15 +651,15 @@ CREATE TABLE `pr_internal_memo` (
   `pr_internal_memo_id` int(11) NOT NULL,
   `pr_sr_no` varchar(255) DEFAULT NULL,
   `pr_date` datetime DEFAULT NULL,
-  `pr_to` varchar(100) DEFAULT NULL COMMENT 'type id',
-  `pr_from` varchar(100) DEFAULT NULL,
+  `pr_to` varchar(100) DEFAULT NULL COMMENT 'User Type id',
+  `pr_from` varchar(100) DEFAULT NULL COMMENT 'From User Type Id',
   `pr_from_user_id` int(11) DEFAULT NULL COMMENT 'User id of user by placed',
   `subject` varchar(500) DEFAULT NULL,
   `description` text,
   `created_by` varchar(50) DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
   `modified_by` varchar(50) DEFAULT NULL,
-  `modified_date` datetime DEFAULT NULL
+  `modified_date` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -664,7 +667,10 @@ CREATE TABLE `pr_internal_memo` (
 --
 
 INSERT INTO `pr_internal_memo` (`pr_internal_memo_id`, `pr_sr_no`, `pr_date`, `pr_to`, `pr_from`, `pr_from_user_id`, `subject`, `description`, `created_by`, `created_date`, `modified_by`, `modified_date`) VALUES
-(1, 'TD-NSEZ/2019-20/IT/1283', '2019-08-29 00:00:00', '1', '', 4, 'Stationary items', '<p>Please have look</p>\n', 'Nishikant', '2019-08-29 01:21:23', 'Anupam', '2019-08-29 04:59:25');
+(1, 'TD-NSEZ/2019-20/IT/3218', '2019-08-29 00:00:00', '4', 'Nishikant', 4, 'Ms Kb Test', '<p>This is test. Plz ignore it</p>\n', 'Nishikant', '2019-08-29 20:16:03', NULL, NULL),
+(2, 'TD-MAU/2019-20/IT/3458', '2019-08-29 00:00:00', '4', 'Nishikant', 4, '2nd Test', '<p>2nd test</p>\n', 'Nishikant', '2019-08-29 23:01:16', NULL, NULL),
+(4, 'TD-CH/2019-20/IT/3627', '2019-08-29 00:00:00', '4', 'Nishikant', 4, 'For Reject', '<p>For reject</p>\n', 'Nishikant', '2019-08-29 23:50:31', NULL, NULL),
+(5, 'TD-MAU/2019-20/IT/8094', '2019-08-30 00:00:00', '4', 'Nishikant', 4, 'Test 1', '<p>Test 1</p>\n', 'Nishikant', '2019-08-30 00:29:18', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -711,8 +717,8 @@ CREATE TABLE `pr_status` (
   `status_by` varchar(50) DEFAULT NULL,
   `pr_status_date` datetime DEFAULT NULL COMMENT 'Date action taken',
   `remarks` varchar(255) DEFAULT NULL,
-  `action_first_user_id` int(11) DEFAULT NULL COMMENT 'first reviewer user id',
-  `action_second_user_id` int(11) DEFAULT NULL COMMENT 'next reviewer user id',
+  `request_raised_by` int(11) DEFAULT NULL COMMENT 'request for approval raised by',
+  `request_approved_by` int(11) DEFAULT NULL COMMENT 'approval approved by',
   `created_date` datetime DEFAULT NULL,
   `modified_date` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -721,8 +727,17 @@ CREATE TABLE `pr_status` (
 -- Dumping data for table `pr_status`
 --
 
-INSERT INTO `pr_status` (`pr_status_id`, `pr_no`, `pr_status`, `status_by`, `pr_status_date`, `remarks`, `action_first_user_id`, `action_second_user_id`, `created_date`, `modified_date`) VALUES
-(1, 'TD-NSEZ/2019-20/IT/1283', '1', 'Anupam Kumar', '2019-08-29 01:31:09', 'Approved', 5, NULL, NULL, NULL);
+INSERT INTO `pr_status` (`pr_status_id`, `pr_no`, `pr_status`, `status_by`, `pr_status_date`, `remarks`, `request_raised_by`, `request_approved_by`, `created_date`, `modified_date`) VALUES
+(1, 'TD-NSEZ/2019-20/IT/3218', '1', 'Nishikant', '2019-08-29 00:00:00', NULL, 4, 5, '2019-08-29 20:16:03', '2019-08-29 19:37:50'),
+(2, 'TD-NSEZ/2019-20/IT/3218', '1', 'Anupam Shai', '2019-08-29 21:37:50', 'Approved By It Manager', 5, 2, '2019-08-30 12:20:19', '2019-08-29 19:46:29'),
+(3, 'TD-NSEZ/2019-20/IT/3218', '', 'Vice President', '2019-08-29 21:46:29', 'Approved by Vp to Purchase Department', 2, 3, '2019-08-29 21:46:29', NULL),
+(4, 'TD-MAU/2019-20/IT/3458', '1', 'Nishikant', '2019-08-29 00:00:00', NULL, 4, 5, '2019-08-29 23:01:16', '2019-08-29 21:02:35'),
+(5, 'TD-MAU/2019-20/IT/3458', '1', 'Anupam Shai', '2019-08-29 23:02:35', 'Approved by Manager', 5, 2, '2019-08-29 23:02:35', '2019-08-29 21:20:15'),
+(6, 'TD-MAU/2019-20/IT/3458', '0', 'Vice President', '2019-08-29 23:20:15', 'Approved By Vp Go PD', 2, 3, '2019-08-29 23:20:15', NULL),
+(8, 'TD-CH/2019-20/IT/3627', '2', 'NishikantAnupam', '2019-08-29 00:00:00', NULL, 4, 5, '2019-08-29 23:50:31', '2019-08-29 22:33:50'),
+(9, 'TD-MAU/2019-20/IT/8094', '1', 'Nishikant', '2019-08-30 00:00:00', NULL, 4, 5, '2019-08-30 00:29:18', '2019-08-29 22:29:51'),
+(10, 'TD-MAU/2019-20/IT/8094', '1', 'Anupam Shai', '2019-08-30 00:29:51', 'Approvedc Test', 5, 2, '2019-08-30 00:29:51', '2019-08-29 22:32:07'),
+(11, 'TD-MAU/2019-20/IT/8094', '0', 'Vice President', '2019-08-30 00:32:07', 'Apppp', 2, 3, '2019-08-30 00:32:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -753,7 +768,7 @@ CREATE TABLE `purchase_order` (
 
 CREATE TABLE `purchase_request` (
   `pr_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL COMMENT 'Request Created By User id',
   `sr_no` varchar(100) NOT NULL,
   `department_id` int(11) DEFAULT NULL,
   `unit_region_id` int(11) DEFAULT NULL,
@@ -765,7 +780,7 @@ CREATE TABLE `purchase_request` (
   `action_taken_by` varchar(100) DEFAULT NULL,
   `phone_person` enum('1','2') DEFAULT NULL COMMENT '1-OnPhone,2-Inperson',
   `pr_description` text,
-  `units` int(11) DEFAULT NULL,
+  `units` varchar(255) DEFAULT NULL,
   `avg_cods` varchar(100) DEFAULT NULL,
   `qty_in_stock` int(11) DEFAULT NULL,
   `reorder_point` varchar(100) DEFAULT NULL,
@@ -785,8 +800,12 @@ CREATE TABLE `purchase_request` (
 --
 
 INSERT INTO `purchase_request` (`pr_id`, `user_id`, `sr_no`, `department_id`, `unit_region_id`, `pr_issue_date`, `supplier_name`, `expense`, `pr_recd_on`, `order_placed_by`, `action_taken_by`, `phone_person`, `pr_description`, `units`, `avg_cods`, `qty_in_stock`, `reorder_point`, `reorder_quantity`, `qty_req`, `pr_supplier_rate`, `pr_supplier_supplier`, `order_placed_rate`, `order_placed_supplier`, `status`, `created_date`, `modified_date`) VALUES
-(1, 4, 'TD-NSEZ/2019-20/IT/1283', 2, 4, '2019-08-29 00:00:00', 'Parul Goyal', '', '0000-00-00', 'Nishikant', '4', '1', 'Mouse', 34, 'MS', 30, '20', '20', 45, '200', '9000', '250', '11250', '1', '2019-08-29 01:20:16', '2019-08-28 23:31:09'),
-(2, 4, 'TD-NSEZ/2019-20/IT/1283', 2, 4, '2019-08-29 00:00:00', 'Parul Goyal', '', '0000-00-00', 'Nishikant', '4', '1', 'Pen', 50, 'PN', 100, '190', '200', 250, '25', '6250', '30', '7500', '1', '2019-08-29 01:20:16', '2019-08-28 23:31:09');
+(1, 4, 'TD-NSEZ/2019-20/IT/3218', 2, 4, '2019-08-29 00:00:00', '', '', '0000-00-00', 'Nk@ituser', '4', '1', 'MouseHj', 'MS', '001', 20, '20', '20', 20, '200', '4000', '250', '5000', '0', '2019-08-29 18:25:45', '2019-08-29 17:47:40'),
+(2, 4, 'TD-NSEZ/2019-20/IT/3218', 2, 4, '2019-08-29 00:00:00', '', '', '0000-00-00', 'Nk@ituser', '4', '1', 'MouseHj', 'MS', '001', 20, '20', '20', 20, '200', '4000', '250', '5000', '0', '2019-08-29 18:25:45', '2019-08-29 17:48:18'),
+(3, 4, 'TD-MAU/2019-20/IT/3458', 2, 1, '2019-08-29 00:00:00', 'Parul Goyal', '', '0000-00-00', 'Nk@ituser', '4', '1', 'Pen', 'PN', '001', 30, '20', '20', 20, '24', '480', '25', '500', '0', '2019-08-29 22:55:53', '2019-08-29 20:55:59'),
+(4, 4, 'TD-GTK/2019-20/IT/3567', 2, 2, '2019-08-29 00:00:00', 'Parul Goyal', '', '0000-00-00', 'Nk@ituser', '4', '1', 'Glu', 'GLU', '002', 20, '5', '50', 20, '209', '4180', '245', '4900', '0', '2019-08-29 23:40:51', '2019-08-29 21:41:08'),
+(5, 4, 'TD-CH/2019-20/IT/3627', 2, 3, '2019-08-29 00:00:00', 'Parul Goyal', '', '0000-00-00', 'Nk@ituser', '4', '1', 'WS', 'YT', '006', 19, '3', '45', 34, '250', '8500', '123', '4182', '2', '2019-08-29 23:49:57', '2019-08-29 22:04:38'),
+(6, 4, 'TD-MAU/2019-20/IT/8094', 2, 1, '2019-08-30 00:00:00', 'Parul Goyal', '', '0000-00-00', 'Nk@ituser', '4', '1', 'We', '5', '6', 6, '6', '6', 6, '6', '36', '6', '36', '0', '2019-08-30 00:28:55', '2019-08-29 22:28:58');
 
 -- --------------------------------------------------------
 
@@ -982,8 +1001,8 @@ INSERT INTO `types` (`type_id`, `department_id`, `type_name`, `parent_id`, `stat
 (5, 2, 'IT User', 4, '1', '2019-08-21 21:11:05', '0000-00-00 00:00:00'),
 (6, 3, 'Account Manager', 2, '1', '2019-08-21 21:11:37', '0000-00-00 00:00:00'),
 (7, 3, 'Account User', 6, '1', '2019-08-21 21:11:58', '0000-00-00 00:00:00'),
-(10, 1, 'Purchase Department', 2, '1', '2019-08-28 19:32:07', '2019-08-28 21:18:35'),
-(11, 1, 'ED', 0, '1', '2019-08-28 10:00:25', '0000-00-00 00:00:00');
+(11, 1, 'ED', 0, '1', '2019-08-28 10:00:25', '0000-00-00 00:00:00'),
+(12, 5, 'Purchase Manager', 2, '1', '2019-08-29 16:59:28', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -1054,13 +1073,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `username`, `password`, `fname`, `lname`, `email_id`, `photo`, `type`, `department_id`, `status`, `created_date`, `modified_date`) VALUES
-(2, 'mangatram', 'zaq123', 'mangat', 'ram', 'mangat@gmail.com', NULL, 7, 3, '1', '2019-08-22 12:13:15', NULL),
-(3, 'test', 'test', 'test', 'test', NULL, NULL, 3, 1, '0', NULL, NULL),
-(4, 'nishikant', '12345', 'Nishikant', 'kr', 'visit2nkant@gmail.com', '', 5, 2, '', '2019-08-26 19:54:45', '2019-08-28 02:31:59'),
-(5, 'Anupam', '12345', 'Anupam', 'Kumar', 'coolvishalkumar2009@gmail.com', NULL, 4, 2, '1', '2019-08-26 20:00:02', '2019-08-27 19:02:50'),
-(6, 'Vp', '12345', 'Vp', 'Kiumar', 'vp@gmail.com', NULL, 1, 1, '1', '2019-08-28 05:06:48', NULL),
-(7, 'pu', '12345', 'Ramesh', 'Sharma', 'pu@gmail.com', NULL, 10, 1, '1', '2019-08-28 19:33:53', '2019-08-28 22:10:31'),
-(8, 'Ed', '12345', 'ED', 'ED', 'ed@gmail.com', NULL, 11, 1, '1', '2019-08-28 19:34:33', NULL);
+(1, 'ED@thomsandigital', 'zaq12345', 'Enforcement', 'Directorate', 'ed@gmail.com', NULL, 2, 1, '1', '2019-08-29 10:24:18', '2019-08-29 16:12:56'),
+(2, 'vp@thomsandigital', 'zaq12345', 'Vice', 'President', 'vp@gmail.com', NULL, 1, 1, '1', '2019-08-29 17:55:31', '2019-08-29 16:00:47'),
+(3, 'pd@thomsandigital', 'zaq12345', 'Purchase', 'Department', 'pd@gmail.com', NULL, 12, 5, '1', '2019-08-29 18:02:37', NULL),
+(4, 'nk@ituser', 'zaq12345', 'Nishikant', 'Kumar', 'nk@gmail.com', NULL, 5, 2, '1', '2019-08-29 18:03:36', NULL),
+(5, 'nk@itmanager', 'zaq12345', 'Anupam', 'Shai', 'anu@gmail.com', NULL, 4, 2, '1', '2019-08-29 18:04:23', NULL),
+(6, 'vishal@account', 'zaq12345', 'vishal', 'kumar', 'versatile@gmail.com', NULL, 7, 3, '1', '2019-08-29 20:21:32', NULL),
+(7, 'vishal@accmanager', 'zaq12345', 'Suresh', 'Kumar', 'su@gmail.com', NULL, 6, 3, '1', '2019-08-29 20:22:25', NULL);
 
 --
 -- Indexes for dumped tables
@@ -1332,7 +1351,7 @@ ALTER TABLE `activity`
 -- AUTO_INCREMENT for table `approval_chain`
 --
 ALTER TABLE `approval_chain`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `categorys`
@@ -1464,7 +1483,7 @@ ALTER TABLE `pr_comparision_sheet`
 -- AUTO_INCREMENT for table `pr_internal_memo`
 --
 ALTER TABLE `pr_internal_memo`
-  MODIFY `pr_internal_memo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `pr_internal_memo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `pr_negotiation_matrix`
@@ -1482,7 +1501,7 @@ ALTER TABLE `pr_sop_checklist`
 -- AUTO_INCREMENT for table `pr_status`
 --
 ALTER TABLE `pr_status`
-  MODIFY `pr_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `pr_status_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `purchase_order`
@@ -1494,7 +1513,7 @@ ALTER TABLE `purchase_order`
 -- AUTO_INCREMENT for table `purchase_request`
 --
 ALTER TABLE `purchase_request`
-  MODIFY `pr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `pr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `quotation`
@@ -1542,7 +1561,7 @@ ALTER TABLE `transactionmaster`
 -- AUTO_INCREMENT for table `types`
 --
 ALTER TABLE `types`
-  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `unit`
@@ -1560,7 +1579,7 @@ ALTER TABLE `unit_region`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

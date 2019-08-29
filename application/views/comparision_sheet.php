@@ -271,9 +271,9 @@
                     });
                 
                     $.ajax({
-                        url: "<?php echo base_url(); ?>index.php/purchase_request/add_comparision/"+sr_no,
+                        url: "<?php echo base_url(); ?>index.php/purchase_request/add_comparision",
                         method: "POST",
- data: {item_desp: item_desp, unit: unit, qty: qty, quoted_unit_price: quoted_unit_price, quoted_total_price: quoted_total_price, final_quoted_unit_price: final_quoted_unit_price, final_quoted_total_price: final_quoted_total_price},
+ data: {sr_no:sr_no, item_desp: item_desp, unit: unit, qty: qty, quoted_unit_price: quoted_unit_price, quoted_total_price: quoted_total_price, final_quoted_unit_price: final_quoted_unit_price, final_quoted_total_price: final_quoted_total_price},
                         success: function (data) {
                             alert(data);
 window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/comparision_history";  

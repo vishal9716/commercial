@@ -184,7 +184,7 @@
 													<td>
  <input class="form-control" style="width:100px;" type="text" name="order_placed_supplier[]" id="order_placed_supplier" value="<?php echo $purchase_request_list[$i]['order_placed_supplier'];?>"/>
 	</td>
-	<td onclick="edit_pr();"><a><i class="glyphicon glyphicon-pencil"></i></a></td>
+	<td onclick="edit_pr(<?php echo $purchase_request_list[$i]['pr_id'];?>);"><a><i class="glyphicon glyphicon-pencil"></i></a></td>
 		<!--  <td><input class="form-control" type="button" value="Delete" onclick="delRow(this)"></td> -->
 											</tr>
 											
@@ -212,8 +212,8 @@
  
 <script>
 
-function edit_pr() {
-//alert("in");
+function edit_pr(id) { 
+var pr_idd=id;
 var sr_no = "<?php echo $_GET['sr_no'];?>";
 var department_id = $("#departmentsDropdownSelect option:selected").val();
 var issuing_date = $('#issuing_date').val();
@@ -221,8 +221,7 @@ var phone_person = $('#phone_person').val();
 var supplier_name = $('#supplier_name').val();
 var action_taken_by = $('#action_taken_by').val();
 var pr_reacd_on = $('#pr_reacd_on').val();
-var	order_placed_by= $('#order_placed_by').val();
-//var sr_no = '1';
+var order_placed_by= $('#order_placed_by').val();
 var pr_id =$('#pr_id').val();
 var pr_description = $('#pr_description').val();
 var units = $('#units').val();
@@ -236,28 +235,17 @@ var pr_supplier_supplier = $('#pr_supplier_supplier').val();
 var order_placed_rate = $('#order_placed_rate').val();
 var order_placed_supplier = $('#order_placed_supplier').val();
 	
-//alert(reorder_point);	
-//var selectedOption = $("input:radio[name=optradio]:checked").val()
-//alert("<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request/"+pr_srno);
-//alert(pr_description);
-			
-		//alert(pr_supplier_supplier);
-	//alert("<?php echo base_url(); ?>index.php/`	/update_pr/"+sr_no);
          $.ajax({
             method: "POST",
             url: "<?php echo base_url(); ?>index.php/purchase_request/edit_pr",
-            data: {sr_no:sr_no, department_id:department_id,issuing_date: issuing_date,phone_person: phone_person, supplier_name:supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on,order_placed_by:order_placed_by, pr_description:pr_description,units:units,avg_cods:avg_cods,qty_in_stock:qty_in_stock,reorder_point:reorder_point,reorder_quantity:reorder_quantity,qty_req:qty_req,pr_supplier_rate:pr_supplier_rate,pr_supplier_supplier:pr_supplier_supplier,order_placed_rate:order_placed_rate,order_placed_supplier:order_placed_supplier,pr_description:pr_description},
+            data: {pr_idd:pr_idd, sr_no:sr_no, department_id:department_id,issuing_date: issuing_date,phone_person: phone_person, supplier_name:supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on,order_placed_by:order_placed_by, pr_description:pr_description,units:units,avg_cods:avg_cods,qty_in_stock:qty_in_stock,reorder_point:reorder_point,reorder_quantity:reorder_quantity,qty_req:qty_req,pr_supplier_rate:pr_supplier_rate,pr_supplier_supplier:pr_supplier_supplier,order_placed_rate:order_placed_rate,order_placed_supplier:order_placed_supplier,pr_description:pr_description},
             success: function(data) {
-		   alert(data);
-		//data = JSON.parse(data);	
-		//json_decode($data);
-  //  window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
-            $('#departmentModal').modal('hide');
-			$('#department_name').val('');
-			$('#department_descp').val('');
+                    alert(data);
+                    $('#departmentModal').modal('hide');
+                    $('#department_name').val('');
+                    $('#department_descp').val('');
             },
             error: function(data) {
-               
                 alert("error");
             }
         });
