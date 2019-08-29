@@ -415,7 +415,8 @@ class Purchase_request extends CI_Controller {
             $currentDate =date('Y-m-d H:i:s');
             $update_pr_status=array(
                 'pr_no' =>$pr_srno,
-                'pr_status' =>$request_data['status'],
+               // 'pr_status' =>$request_data['status'],
+                'pr_status' =>0,
                 'status_by' =>  $session_data['firstname'] .' '. $session_data['lastname'],
                 'pr_status_date' => $currentDate,
                 'remarks' =>$request_data['remarks'],

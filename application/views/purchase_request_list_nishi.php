@@ -65,7 +65,7 @@
                                 <tbody>
 
                                     <?php
-                                     //echo "<pre>"; print_r($purchase_request_list); die();
+                                    // echo "<pre>"; print_r($purchase_request_list); die();
                                     $i = 0;
                                     foreach ($purchase_request_list as $list) {
                                         $i++;
@@ -127,7 +127,7 @@
 //                                                    }
                                                 
                                                 foreach ($list['statushistory'] as $history) {
-                                                    if ($session_data['uid'] == $history['action_first_user_id']) {
+                                                    if ($session_data['uid'] != $history['action_first_user_id']) {
                                                         $flag = 1;
                                                         $showStatus= 1;
                                                     }
@@ -136,31 +136,42 @@
                                                 ?>
                        
                                                 <?php
-//                                                if ($flag == 1 && $showStatus ==1) {
-//                                                    if ($list['status'] == 1) {
-//                                                        $class = 'success disabled';
-//                                                    } else if ($list['status'] == 2) {
-//                                                        $class = 'danger disabled';
-//                                                    } else if ($list['status'] == 0 && $list['user_id'] = $session_data['uid']) {
-//                                                        $class = 'warning disabled';
-//                                                    } 
-//                                                } else {
-//                                                    if ($list['status'] == 1 && $showStatus == 1 ) {
-//                                                        $class = 'success';
-//                                                    } else if ($list['status'] == 2) {
-//                                                        $class = 'danger';
-//                                                    }else if($list['status'] == 1 && $showStatus != 1){
-//                                                        $class = 'warning';
-//                                                    }else if ($list['status'] == 0 && $list['user_id'] = $session_data['uid']) {
-//                                                        $class = 'warning';
-//                                                    }
-//                                                }
+                                                if ($flag == 1 && $showStatus ==1) {
+                                                    if ($list['status'] == 1) {
+                                                        $class = 'success disabled';
+                                                    } else if ($list['status'] == 2) {
+                                                        $class = 'danger disabled';
+                                                    } else if ($list['status'] == 0 && $list['user_id'] = $session_data['uid']) {
+                                                        $class = 'warning disabled';
+                                                    } 
+                                                } else {
+                                                    if ($list['status'] == 1 && $showStatus == 1 ) {
+                                                        $class = 'success';
+                                                    } else if ($list['status'] == 2) {
+                                                        $class = 'danger';
+                                                    }else if($list['status'] == 1 && $showStatus != 1){
+                                                        $class = 'warning';
+                                                    }else if ($list['status'] == 0 && $list['user_id'] = $session_data['uid']) {
+                                                        $class = 'warning';
+                                                    }
+                                                }
                                                 ?>
-                                                 <?php if ($list['status'] != 0) { ?>
-                                                    <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo $status_list[$list['status']]; ?></span></span>
-                                                <?php } else { ?> 
-                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning"><?php echo "6" . $status_list[$list['status']]; ?></span>
-                                                <?php } ?>
+                                                <?php if( ($list['status'] == 0) &&($session_data['uid'] == $list[user_id])){ ?>
+                                                     <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php  echo $status_list[$list['status']]; ?></span></span>
+                                                <?php } else if ($list['status'] != 0 && $showStatus == 1) { ?>
+<!--                                                    <span title="<?php //echo $hello; ?>">  <span class="show_status label label-<?php //echo $class; ?>" prid="<?php //echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php //echo "4" . $status_list[$list['status']]; ?></span></span>-->
+                                                    <span title="<?php echo $hello; ?>">  <span class="show_status label label-<?php echo $class; ?>" prid="<?php echo $list['sr_no']; ?>" ><?php echo $status_list[$showStatus]; ?></span></span>
+                                                <?php } else if ($session_data['uid'] == $list[user_id]) { 
+                                                    // Self Created user check
+                                                    ?>
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" class="label label-<?php echo $class; ?>"><?php echo $status_list[$list['status']]; ?></span>                                                    
+                                                <?php } elseif( (in_array ($session_data['uid'], $review_list)) && ($showStatus ==1) ) { echo "inn" ;?> 
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo $status_list[$showStatus]; ?></span>
+                                                <?php }elseif((in_array ($session_data['uid'], $review_list)) && ($showStatus != 1) && $list['status'] != 0){ ?>
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title=""  class="label label-<?php echo $class; ?>"><?php echo $status_list[$showStatus]; ?></span>
+                                                <?php } elseif((in_array ($session_data['uid'], $review_list)) && ($showStatus != 1)){ ?>
+                                                    <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-<?php echo $class; ?>"><?php echo $status_list[$showStatus]; ?></span>
+                                                <?php } ?>  
                                                     
                                                     
                                             </td>
