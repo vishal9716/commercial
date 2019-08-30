@@ -117,6 +117,7 @@ class User extends CI_Controller {
                 'lname' => $this->input->post('lname'),
                 'email_id' => $this->input->post('email'),
                 'type' => $this->input->post('type'),
+                'department_id' => $this->input->post('department_id'),
                 'photo' => $this->input->post('photo'),
                 'status' => $this->input->post('status'),
                 'userid' => $this->input->post('userid'),
@@ -145,7 +146,13 @@ class User extends CI_Controller {
             $data = array(
                 'userrecord' => $result_records,
             );
+            $data['departments'] = $this->department_model->department_lists();
             $data['actionTakenBy']=$this->user_database->employee_types();
+            
+//           echo "<pre>";
+//                print_r($data);
+//                print_r($session_data);
+//                die("55");
             $this->load->view('edit_user', $data);
         }
     }

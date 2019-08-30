@@ -52,6 +52,17 @@
                                         <label>Email</label>
                                         <input class="form-control" type="email" name="email" id="email" placeholder="Enter email" value="<?php echo $recordslist->email_id; ?>" required>
                                     </div>
+                                
+                                    <div class="form-group">
+                                    <label for="exampleInputEmail1">Department</label>
+                                    <select id="department_id" class="form-control select2 select2-hidden-accessible" name="department_id">
+                                        <option hidden value="" >--Select--</option>   
+                                        <?php foreach ($departments as $department) { ?>
+                                            <option <?php if($recordslist->department_id == $department['department_id']){ echo "selected"; } ?> value="<?php echo $department['department_id']; ?>"   ><?php echo $department['department_name']; ?></option>     
+                                        <?php } ?> 
+                                    </select>
+                                    <span id="errMsg" class="text-danger"></span>
+                                    </div>
 
                                     <div class="form-group">
                                         <label>Department Role</label>
