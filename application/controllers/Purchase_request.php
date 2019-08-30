@@ -73,16 +73,12 @@ class Purchase_request extends CI_Controller {
             $sr_no = $_GET['sr_no'];
             $this->load->view('checklist');		
 	}
-	public function add_sop_checklist($pr_sr_no){
+	public function add_sop_checklist(){
+            $pr_sr_no = $_POST['sr_no'];
             $data['result'] = $this->purchase_model->add_sop_checklist($pr_sr_no);
 	}
 	
-        public function comparision()
-        {
-            $sr_no = $_GET['sr_no'];
-            $this->load->view('comparision_sheet');
-        }
-	
+      
 	public function add_purchase_request() {           
             $request_data=$_POST;
             $data=array();
@@ -264,7 +260,10 @@ class Purchase_request extends CI_Controller {
             $prIds = $_POST['pr_id'];
             $pr_no = $_POST['pr_no'];
             $pr_nos = explode("/",$pr_no);
-            $pr_nos_final = $pr_nos[0]."-".$pr_nos[1]."-".$pr_nos[2]."-".$pr_nos[3];		
+            $pr_nos_final = $pr_nos[0]."-".$pr_nos[1]."-".$pr_nos[2]."-".$pr_nos[3];
+            
+            $pridval = $this->purchase_model->findpr_id($pr_no);		
+	   $prIds = $pridval[0]['pr_id'];
             if($_FILES['pr_quotation']['name'][0] <> "")
             {			
                 $pathweb=$DOCUMENT_ROOT."/commercial/uploads/PR/";			
@@ -355,37 +354,10 @@ class Purchase_request extends CI_Controller {
             exit; 		
 	}
         
-        // NEGOTIATION MATRIX
-	public function negotiation()
-	{
-        $this->load->view('negotiation_matrix');
-		
-	}
-        public function add_negotiation()
-	{
-            //echo "<pre/>";
-            //print_r($_POST); die;
-			$pr_sr_no = $_POST['sr_no'];
-            $data['result'] = $this->purchase_model->add_negotiation($pr_sr_no);
-       // $this->load->view('negotiation_matrix');
-		
-	}
-	     public function negotiation_list()
-	{
-         $data['negotiation_matrix_list']=$this->purchase_model->display_negotiation($nid);
-		//echo "<pre/>"; print_r($data); die;
-		$this->load->view('negotiation_matrix_list',$data);
-		
-	}
-	 
+      
 	
 	//PURCHASE SOP AUDIT CHECKLIST 
-	public function audit_checklist()
-	{
-		$sr_no = '';
-        $this->load->view('audit_checklist');
-		
-	}
+	
 	
 	public function audit(){
 		 $sr_no = $_GET['sr_no'];
@@ -402,38 +374,36 @@ class Purchase_request extends CI_Controller {
             }	
 	}
 	
+	// audit_checklist START
+      public function add_audit_checklist() {
+        // echo "<pre/>";
+        //print_r($_POST); die;\
+        $pr_sr_no = $_POST['sr_no'];
+
+        $data['result'] = $this->purchase_model->add_audit_checklist($pr_sr_no);
+    }
+
+    public function audit_checklist_listing() {
+        $id = '';
+        $data['audit_checklist_listing'] = $this->purchase_model->display_audit_checklist($id);
+        $this->load->view('audit_checklist_listing', $data);
+    }
 	
-	public function add_audit_checklist()
-	{
-	 // echo "<pre/>";
-      //print_r($_POST); die;\
-	  $pr_sr_no = $_POST['sr_no'];
-		
-      $data['result'] = $this->purchase_model->add_audit_checklist($pr_sr_no);
-		
-	}
+   public function display_audit_checklist_list() {
+	 //echo "in"; die;
+        $pr_srno = $this->input->post('pr_srnumber');
+	 // echo $pr_srno; die;
+        $data['pr_list'] = $this->purchase_model->display_audit_checklist_list($pr_srno);
+        echo json_encode($data);
+    }
+	// audit_checklist ENDS
 	
 	
-	public function audit_checklist_listing(){
-		$id='';
-		 $data['audit_checklist_listing']=$this->purchase_model->display_audit_checklist($id);
-		 $this->load->view('audit_checklist_listing',$data);
-		
-	}
-	// Comparision Sheet
 	
-	public function add_comparision(){
-	//echo "<pre/>";
-    //print_r($_POST); die;
-	$pr_sr_no = $_POST['sr_no'];
-	$data['result'] = $this->purchase_model->add_comparision_sheet($pr_sr_no);
-	}
 	
-	public function comparision_history(){
-		//echo "--";
-		$data['comparision_history']=$this->purchase_model->display_comparision($id);
-		$this->load->view('comparision_history',$data);
-	}
+	
+	
+	
 	
    	public function checklist_listing(){
 		$data['checklist_listing']=$this->purchase_model->display_checklist($id);
@@ -674,5 +644,67 @@ class Purchase_request extends CI_Controller {
        
         return $this->approval_chain_model->add_approvar_user($approval_data);
     }
+    
+    
+    // NEGOTIATION MATRIX START
+    public function negotiation() {
+        $this->load->view('negotiation_matrix');
+    }
+
+    public function add_negotiation() {
+        //echo "<pre/>";
+        //print_r($_POST); die;
+        $pr_sr_no = $_POST['sr_no'];
+        $data['result'] = $this->purchase_model->add_negotiation($pr_sr_no);
+        // $this->load->view('negotiation_matrix');
+    }
+
+    public function negotiation_list() {
+        $data['negotiation_matrix_list'] = $this->purchase_model->display_negotiation($nid);
+
+        //echo "<pre/>"; print_r($data); die;
+        $this->load->view('negotiation_matrix_list', $data);
+    }
+	public function display_negotition_list() {
+	//echo "in"; die;
+        $pr_srno = $this->input->post('pr_srnumber');
+	 //echo $pr_srno; die;
+        $data['pr_list'] = $this->purchase_model->display_negotition_list($pr_srno);
+        echo json_encode($data);
+    }
+	
+// NEGOTIATION MATRIX ENDS
+
+
+
+
+    // Comparision Sheet Start
+	public function comparision() {
+        $sr_no = $_GET['sr_no'];
+        $this->load->view('comparision_sheet');
+    }
+
+    public function add_comparision() {
+        //echo "<pre/>";
+        //print_r($_POST); die;
+        $pr_sr_no = $_POST['sr_no'];
+        $data['result'] = $this->purchase_model->add_comparision_sheet($pr_sr_no);
+    }
+
+    public function comparision_history() {
+        //echo "--";
+        $data['comparision_history'] = $this->purchase_model->display_comparision($id);
+        $this->load->view('comparision_history', $data);
+    }
+
+	public function display_comparision_list() {
+	// echo "in"; die;
+        $pr_srno = $this->input->post('pr_srnumber');
+	 // echo $pr_srno; die;
+        $data['pr_list'] = $this->purchase_model->display_comparision_list($pr_srno);
+        echo json_encode($data);
+    }
+	 // Comparision Sheet Ends
+    
 	
 }

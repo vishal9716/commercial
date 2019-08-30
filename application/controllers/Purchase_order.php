@@ -40,15 +40,10 @@ class Purchase_order extends CI_Controller {
                 'pr_id'=> '',
                 'uid'=>$session_data['uid']
             );
-            $data['purchase_request_list']=$this->purchase_model->display_purchase_order($sr_no);                       
+           $data['purchase_request_list']=$this->purchase_model->display_purchase_order($sr_no);   
+           $data['pr_list']=$this->purchase_model->display_pr_order($sr_no);                       
             
-         //echo "<pre>";
-         //   print_r($data);
-//                print_r($session_data);
-//                die("55");
-          //  $data['type_list']=$this->type_model->typelist_info_by_key_val_arr();
-          //  $data['status_list']= $this->purchase_model::$actionstatus;
-         //   $data['session_data'] = $session_info;  
+
          $this->load->view('purchase_order',$data);
 		
 	}

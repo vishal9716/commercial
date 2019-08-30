@@ -6,7 +6,7 @@
           <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Comparision History</h1>
+                    <h1 class="page-header">Comparison History</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -15,7 +15,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default ">
                         <div class="panel-heading clearfix">
-                            Comparision History Listing
+                            Comparison History Listing
 							<span class="activity pull-right"><a href="<?php echo base_url();?>index.php/purchase_request/purchase_request_list" class="btn btn-default btn-sm">Back to PR List</a></span>
                         </div>
                         <!-- /.panel-heading -->
@@ -25,13 +25,7 @@
                                     <tr>
 										<th>SrNo.</th>
                                         <th style="text-align: center;">PR No.</th>
-										<th>Item Description</th>
-                                        <th>Unit</th>
-                                        <th>Quantity</th>
-                                        <th>Quoated Unit Price</th>
-                                        <th>Quoated Total Amount</th>
-										<th>Final Unit Price</th>
-                                        <th>Final Total Amount</th>
+										
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -54,14 +48,11 @@
 								
                                     <tr class="<?php echo $classname; ?>">
                                         <td><?php echo $i; ?></td>
-										<td style="text-align: center;"><?php echo $list['pr_srno'];?></td>
-                                        <td><?php echo $list['desp'];?></td>
-                                        <td><?php echo $list['unit'];?></td>
-                                        <td><?php echo $list['quantity'];?></td>
-                                        <td><?php echo $list['quoted_unit_price'];?></td>
-										<td><?php echo $list['quoted_amount'];?></td>
-                                        <td><?php echo $list['final_quoted_unit_price'];?></td>
-										<td><?php echo $list['final_quoted_amount'];?></td>
+								<td style="text-align: center;" id="pr_srno"><a prsno="<?php echo $list['pr_srno']; ?>" class="prsno" href='#' data-toggle='modal' data-target='#prQuot'>
+                                                    <?php echo $list['pr_srno']; ?></a>
+                                            </td>
+	
+                                     
                                     </tr>
                                    
 									<?php } ?>  
@@ -87,6 +78,115 @@
         <!-- /#page-wrapper -->
 
     </div>
+
+    <div class="modal fade" id="prQuot" role="dialog" style="overflow:hidden;">
+    <div class="modal-dialog modal-lg" style="width:95%;">
+        <div class="modal-content">
+            <div class="modal-header" style="overflow:hidden;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-info">Negotiation Listing</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+
+                    <!-- Editable table -->
+                    <div class="card">
+
+                        <!-- <h3 class="card-header text-center font-weight-bold text-uppercase py-4">PURCHASE REQUISITION</h3>-->
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-md-1" style="margin-bottom: 20px;"></div>
+                          <!--  <div class="col-md-2"><input class="form-control" placeholder="Enter PR S. No." id="sr_no" name="sr_no" value=""></div>-->
+                        </div>
+                        <div class="card-body">
+                            <div id="table" class="table-editable">
+
+                                <table class="table table-bordered table-responsive-md table-striped text-center" id="crud_table">
+                                    <thead> 	
+                                      <tr>
+										<th>SrNo.</th>
+                                        <th style="text-align: center;">PR No.</th>
+										<th>Item Description</th>
+                                        <th>Unit</th>
+                                        <th>Quantity</th>
+                                        <th>Quoated Unit Price</th>
+                                        <th>Quoated Total Amount</th>
+										<th>Final Unit Price</th>
+                                        <th>Final Total Amount</th>
+                                    </tr>
+                                        
+
+
+                                    </thead>
+                                    <tbody class="test">
+
+                                    </tbody> 
+                                </table>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Editable table -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+                                                        $(document).ready(function () {
+
+
+                                                            $(".prsno").click(function () {
+                                               //I need to get the child of this-> then I need to fetch prsno attr
+                                                                var pr_srno = $(this).attr('prsno');
+                                                                var pr_srnumber = pr_srno.trim();
+                                                                $.ajax({
+                                                                    url: "<?php echo base_url(); ?>index.php/purchase_request/display_comparision_list",
+                                                                    method: "POST",
+                                                                    data: {
+                                                                        pr_srnumber: pr_srnumber
+                                                                    },
+                                                                    success: function (data) {
+																		//alert(data);
+                                                                        $('#crud_table tbody').empty();
+                                                                        data = JSON.parse(data);
+                                                                        var objList = data['pr_list'];
+                                                                        $.each(objList, function (index, obj) {
+                                                                            var row = $('<tr>');
+                                                                            row.append('<td>' + eval(index + 1) + '</td>');
+                                                                            row.append('<td>' + obj.pr_srno + '</td>');
+                                                                            row.append('<td>' + obj.desp + '</td>');
+                                                                            row.append('<td>' + obj.unit + '</td>');
+                                                                            row.append('<td>' + obj.quantity + '</td>');
+                                                                            row.append('<td>' + obj.quoted_unit_price + '</td>');
+                                                                            row.append('<td>' + obj.final_quoted_unit_price + '</td>');
+                                       row.append('<td>' + obj.quoted_amount + '</td>');
+																			row.append('<td>' + obj.final_quoted_amount + '</td>');
+                                                                          
+                                                                          
+                                                                            $('#crud_table tbody').append(row);
+                                                                        });
+                                                                        // Display Modal
+                                                                        // ('#prQuot').modal('show'); 
+                                                                    },
+                                                                    error: function (data) {
+
+                                                                        alert("error");
+                                                                    }
+                                                                });
+
+
+
+                                                            });
+															  });
+	</script>
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <!-- /#wrapper -->
 <script src="<?php echo base_url(); ?>vendor/datatables/js/jquery.dataTables.min.js"></script>
     <!-- jQuery -->

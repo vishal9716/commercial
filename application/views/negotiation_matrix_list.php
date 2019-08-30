@@ -33,15 +33,9 @@ text-align: center;
                             <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>Sr. No</th>
+                                        <th style="text-align: center;">Sr. No</th>
 										<th style="text-align: center;">PR No.</th>
-                                        <th style="text-align: center;">Date</th>
-                                        <th>Vendor Person</th>
-                                        <th>Contact Person</th>
-										 <th>Number</th>
-										 <th>Negotiation</th>
-										<th>Remarks</th>
-									<!--	<th>Action</th> -->
+                                        
                                     </tr>
                                 </thead>								
                                 <tbody>
@@ -63,15 +57,11 @@ text-align: center;
 								?>
 								
                                 <tr class="<?php echo $classname; ?>">
-                                <td><?php echo $i; ?></td>
-							<td style="text-align: center;"><?php echo $list['pr_sr_no'];?></td>
-	<td style="text-align: center;"><?php echo date("d-m-Y", strtotime($list['negotiation_matrix_date'])); ?></td>
-                                        
-                                        <td style="text-align: center;"><?php echo $list['vendor_person'];?></td>
-                                        <td><?php echo $list['contact_person'];?></td>
-										<td><?php echo $list['number'];?></td>
-										<td><?php echo $list['negotiation'];?></td>
-										<td><?php echo $list['remarks'];?></td>
+									<td style="text-align: center;"><?php echo $i; ?></td>
+                                <td style="text-align: center;" id="pr_srno"><a prsno="<?php echo $list['pr_sr_no']; ?>" class="prsno" href='#' data-toggle='modal' data-target='#prQuot'>
+                                                    <?php echo $list['pr_sr_no']; ?></a>
+                                            </td>
+	
 
 									<!--	<td><a href="<?php echo base_url();?>index.php/operations/edit_quotation?qid=<?php echo $list['quotation_id'];?>">Edit</a> / <a href="javascript:delete_quotation('<?php echo $list['quot_sub_activity_id'];?>','<?php echo $list['quotation_id'];?>');">Delete</a></td> -->
                                     </tr>
@@ -103,6 +93,113 @@ text-align: center;
 
     </div>
     <!-- /#wrapper -->
+
+    
+    <div class="modal fade" id="prQuot" role="dialog" style="overflow:hidden;">
+    <div class="modal-dialog modal-lg" style="width:95%;">
+        <div class="modal-content">
+            <div class="modal-header" style="overflow:hidden;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-info">Negotiation Listing</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+
+                    <!-- Editable table -->
+                    <div class="card">
+
+                        <!-- <h3 class="card-header text-center font-weight-bold text-uppercase py-4">PURCHASE REQUISITION</h3>-->
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-md-1" style="margin-bottom: 20px;"></div>
+                          <!--  <div class="col-md-2"><input class="form-control" placeholder="Enter PR S. No." id="sr_no" name="sr_no" value=""></div>-->
+                        </div>
+                        <div class="card-body">
+                            <div id="table" class="table-editable">
+
+                                <table class="table table-bordered table-responsive-md table-striped text-center" id="crud_table">
+                                    <thead> 	
+                                       <tr>
+                                        <th>Sr. No</th>
+										<th style="text-align: center;">PR No.</th>
+                                        <th style="text-align: center;">Date</th>
+                                        <th>Vendor Person</th>
+                                        <th>Contact Person</th>
+										 <th>Number</th>
+										 <th>Negotiation</th>
+										
+                                    </tr>
+                                        
+
+
+                                    </thead>
+                                    <tbody class="test">
+
+                                    </tbody> 
+                                </table>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Editable table -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+                                                        $(document).ready(function () {
+
+
+                                                            $(".prsno").click(function () {
+                                               //I need to get the child of this-> then I need to fetch prsno attr
+                                                                var pr_srno = $(this).attr('prsno');
+                                                                var pr_srnumber = pr_srno.trim();
+                                                                $.ajax({
+                                                                    url: "<?php echo base_url(); ?>index.php/purchase_request/display_negotition_list",
+                                                                    method: "POST",
+                                                                    data: {
+                                                                        pr_srnumber: pr_srnumber
+                                                                    },
+                                                                    success: function (data) {
+									//alert(data);									//alert(data);
+                                                                        $('#crud_table tbody').empty();
+                                                                        data = JSON.parse(data);
+                                                                        var objList = data['pr_list'];
+                                                                        $.each(objList, function (index, obj) {
+                                                                            var row = $('<tr>');
+                                                                            row.append('<td>' + eval(index + 1) + '</td>');
+                                                                            row.append('<td>' + obj.pr_sr_no + '</td>');
+                                                                            row.append('<td>' + obj.negotiation_matrix_date + '</td>');
+                                                                            row.append('<td>' + obj.vendor_person + '</td>');
+                                                                            row.append('<td>' + obj.contact_person + '</td>');
+                                                                            row.append('<td>' + obj.number + '</td>');
+                                                                            row.append('<td>' + obj.negotiation + '</td>');
+                                                                         
+                                                                          
+                                                                          
+                                                                            $('#crud_table tbody').append(row);
+                                                                        });
+                                                                        // Display Modal
+                                                                        // ('#prQuot').modal('show'); 
+                                                                    },
+                                                                    error: function (data) {
+
+                                                                        alert("error");
+                                                                    }
+                                                                });
+
+
+
+                                                            });
+															  });
+	</script>
+
 
     <!-- jQuery -->
     <script src="<?php echo base_url(); ?>vendor/jquery/jquery.min.js"></script>

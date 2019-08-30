@@ -325,10 +325,20 @@ class Purchase_model extends CI_Model {
         if ((!empty($id))) {
             $sql = "select * from pr_negotiation_matrix where pr_negotiation_matrix_id='" . $id . "'";
         } else {
-            $sql = "select * from pr_negotiation_matrix order by pr_negotiation_matrix_id desc";
+            // $sql = "select * from pr_negotiation_matrix order by pr_negotiation_matrix_id desc";
+            $sql = "select distinct pr_sr_no from pr_negotiation_matrix";
         }
         //echo $sql; die;
         $result = $this->db->query($sql)->result_array();
+        //echo "<pre/>"; print_r($result); die;
+        return $result;
+    }
+    
+   function display_negotition_list($pr_srno) {
+        //echo "---".$pr_srno; die;
+        $pr_srno = trim($pr_srno);
+        $result = $this->db->get_where('pr_negotiation_matrix', array('pr_sr_no' => $pr_srno));
+        $result = $result->result_array();
         //echo "<pre/>"; print_r($result); die;
         return $result;
     }
@@ -385,15 +395,24 @@ class Purchase_model extends CI_Model {
         }
     }
 
-    function display_audit_checklist($id) {
+     function display_audit_checklist($id) {
         //  echo "--".$id; die;
         if ((!empty($id))) {
             $sql = "select * from pr_audit_checklist where pr_audit_checklist_id='" . $id . "'";
         } else {
-            $sql = "select * from pr_audit_checklist order by pr_audit_checklist_id desc";
+            //$sql = "select * from pr_audit_checklist order by pr_audit_checklist_id desc";
+			$sql = "select distinct pr_srno from pr_audit_checklist";
         }
         //echo $sql; die;
         $result = $this->db->query($sql)->result_array();
+        //echo "<pre/>"; print_r($result); die;
+        return $result;
+    }
+    function display_audit_checklist_list($pr_srno) {
+        //echo "---".$pr_srno; die;
+        $pr_srno = trim($pr_srno);
+        $result = $this->db->get_where('pr_audit_checklist', array('pr_srno' => $pr_srno));
+        $result = $result->result_array();
         //echo "<pre/>"; print_r($result); die;
         return $result;
     }
@@ -459,6 +478,8 @@ class Purchase_model extends CI_Model {
             echo "Error in Adding checklist";
         }
     }
+    
+    
 
     // Add comparision sheet
     public function add_comparision_sheet($pr_sr_no) {
@@ -491,6 +512,29 @@ class Purchase_model extends CI_Model {
         }
     }
 
+    function display_comparision($id) {
+        //  echo "--".$id; die;
+        if ((!empty($id))) {
+            $sql = "select * from pr_comparision_sheet where pr_comparision_sheet_id='" . $id . "'";
+        } else {
+           // $sql = "select * from pr_comparision_sheet order by pr_comparision_sheet_id desc";
+			$sql = "select distinct pr_srno from pr_comparision_sheet";
+        }
+       // echo $sql; die;
+        $result = $this->db->query($sql)->result_array();
+        //echo "<pre/>"; print_r($result); die;
+        return $result;
+    }
+	
+	 function display_comparision_list($pr_srno) {
+        //echo "---".$pr_srno; die;
+        $pr_srno = trim($pr_srno);
+        $result = $this->db->get_where('pr_comparision_sheet', array('pr_srno' => $pr_srno));
+        $result = $result->result_array();
+        //echo "<pre/>"; print_r($result); die;
+        return $result;
+    }
+    
     function add_internal_memo($addMemodata) {
         //echo "<pre/>"; print_r($_POST); die;
         $this->db->insert('pr_internal_memo', $addMemodata);
@@ -544,18 +588,7 @@ class Purchase_model extends CI_Model {
         return $result;
     }
 
-    function display_comparision($id) {
-        //  echo "--".$id; die;
-        if ((!empty($id))) {
-            $sql = "select * from pr_comparision_sheet where pr_comparision_sheet_id='" . $id . "'";
-        } else {
-            $sql = "select * from pr_comparision_sheet order by pr_comparision_sheet_id desc";
-        }
-        //echo $sql; die;
-        $result = $this->db->query($sql)->result_array();
-        //echo "<pre/>"; print_r($result); die;
-        return $result;
-    }
+    
 
     function display_checklist($id) {
         //  echo "--".$id; die;
@@ -621,6 +654,14 @@ class Purchase_model extends CI_Model {
         return $result;
     }
     
+    function findpr_id($pr_no) {
+        if ((!empty($pr_no))) {
+            $sql = "select pr_id from purchase_request where sr_no='" . $pr_no . "' limit 1";
+        }         
+        $result = $this->db->query($sql)->result_array();        
+        return $result;
+    }
+    
     // Start Quotation	
 // uploading documents
     function upload_documents($pathweb,$uploaddocfile_namefinal,$uploaded_by,$doc_type, $insert_ids, $doc_typename, $doc_size) {
@@ -682,24 +723,38 @@ class Purchase_model extends CI_Model {
 	
 // end Quotation
     
-     function display_purchase_order($sr_no) {
-      //  echo $sr_no; die;
-    $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.pr_description,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where sr_no ='$sr_no'";
-        
-      // echo $sql; //die;
+         
+    // Purchase Order Start
+function display_purchase_order($sr_no) {
+        //  echo $sr_no; die;
+        $sql = "select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,"
+                . "pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,"
+                . "pr.status,d.department_name,u.unit_region_name, ac.approver_user_id from "
+                . "purchase_request pr join department d on(pr.department_id=d.department_id) left "
+                . "join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) "
+                . "where sr_no ='$sr_no'";
+
+        //echo $sql; //die;
         $result = $this->db->query($sql)->result_array();
         foreach ($result as $key => $pr) {
             $srno = $pr['sr_no'];
             $sqlforstatushistory = "select * from pr_status where pr_no='" . $srno . "'";
             $statushistory = $this->db->query($sqlforstatushistory)->result_array();
-           // $result[$key]['statushistory'] = $statushistory;
+            // $result[$key]['statushistory'] = $statushistory;
             // echo "<pre/>"; print_r($statushistory); die;
             // $pr['statushistory'] = $statushistory[0];
             //echo "<pre/>"; print_r($pr); die;
         }
 //		echo "<pre/>"; print_r($result); die;
         return $result;
-    }  
+    }
+
+    function display_pr_order($sr_no) {
+        $sql = "select * from purchase_request where sr_no='$sr_no'";
+        $result = $this->db->query($sql)->result_array();
+        return $result;
+    }
+    // Purchase Order End
 
 }
 

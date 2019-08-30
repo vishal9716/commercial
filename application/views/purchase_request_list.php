@@ -96,8 +96,8 @@
                                             
                                             <td>									
 											<?php 
-												$quatcount = quotationlist($list['pr_id']);
-                                                                                                print_r($quatcount);
+												$quatcount = quotationlist($list['sr_no']);
+                          
 												$qtcount = count($quatcount);
 												if($qtcount > 0)
 												{
@@ -162,6 +162,15 @@
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a></td>
                                             <?php } elseif ( (in_array ($session_data['uid'], $review_list)) && ($session_data['department_id'] == 5) ){ ?> 
                                                     <!-- For Purchase Department -->
+<!--                                                    <td class="text-center">
+                                                        <a disabled="disabled" class="disabled" href="#">Edit</a> 
+                                                    | <a disabled="disabled" class="disabled" href="#">Memo</a> 
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation/?pr_id=<?php echo $list['pr_id']; ?>&sr_no=<?php echo $list['sr_no']; ?>">Quotation</a>
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/checklist?sr_no=<?php echo $list['sr_no']; ?>">Checklist</a>
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/negotiation?sr_no=<?php echo $list['sr_no']; ?>">Negotiation</a> 
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit_checklist?sr_no=<?php echo $list['sr_no']; ?>">Audit</a></td>                                                -->
+                                                    
                                                     <td class="text-center">
                                                         <a disabled="disabled" class="disabled" href="#">Edit</a> 
                                                     | <a disabled="disabled" class="disabled" href="#">Memo</a> 
@@ -169,7 +178,8 @@
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/checklist?sr_no=<?php echo $list['sr_no']; ?>">Checklist</a>
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/negotiation?sr_no=<?php echo $list['sr_no']; ?>">Negotiation</a> 
                                                     | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit_checklist?sr_no=<?php echo $list['sr_no']; ?>">Audit</a></td>                                                
+                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit?sr_no=<?php echo $list['sr_no']; ?>">Audit</a> | <a href="<?php echo base_url(); ?>index.php/purchase_order?sr_no=<?php echo $list['sr_no']; ?>">PO</a></td>
+                                                    
                                                <?php } elseif(in_array ($session_data['uid'], $review_list))  { ?>
                                                 <td><a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> </td>
                                             <?php } ?>
@@ -218,8 +228,13 @@
                             
                             function quotationlist($dpt_id)
 				{
-					$conn = @mysqli_connect("localhost", "root", "", "commercial");
-					$query2 = "select document_id from documents where document_dept = 'PR' and document_dept_id= $dpt_id";
+					$conn = @mysqli_connect("localhost", "root", "", "commercial");					
+					$sql = "select pr_id from purchase_request where sr_no='" . $dpt_id . "' limit 1";
+					$exepr = @mysqli_query($conn,$sql);
+					$recordspr = @mysqli_fetch_array($exepr);
+					$prIDS = $recordspr[0];
+					
+					$query2 = "select document_id from documents where document_dept = 'PR' and document_dept_id= $prIDS";					
 					$exes = @mysqli_query($conn,$query2);
 					while($records = @mysqli_fetch_array($exes))
 					{

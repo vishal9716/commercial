@@ -66,8 +66,11 @@
         </tr>
       </thead>
       <tbody>
+           <?php 
+            $i = 0;
+           foreach ($pr_list as $list) {  $i++;	?>
         <tr>
-          <td class="qty">1</td>
+          <td class="qty"><?php echo $i; ?></td>
           <td class="desc"><h3> <?php echo $list['pr_description']; ?></h3></td>
 		  <td class="qty"><?php echo $list['units']; ?></td>
           <td class="qty"><?php echo $list['qty_req']; ?></td>
@@ -75,7 +78,7 @@
           <td class="total"><?php echo $list['pr_supplier_supplier']; ?></td>
         </tr>
        
-       
+           <?php } ?>
         
         <tr>
           <td colspan="2">
@@ -85,33 +88,24 @@
           </td>
           <td colspan="4">
               <ul class="sub_total">
-                <li>Add: SUBTOTAL@........................%</li>
-                <li>126,750.00</li>
+               
               </ul>
               <ul class="sub_total">
-                <li>Add: CGST@........................%</li>
-                <li>7,605.00</li>
+                
               </ul>
               <ul class="sub_total">
-                <li>Add: SGST@........................%</li>
-                <li>7,605.00</li>
+               
               </ul>
               <ul class="sub_total">
-                <li>Add: FREIGHT</li>
-                <li>0.00</li>
+                
               </ul>
           </td>
         </tr>
         <tr>
-          <td colspan="2">
-          	<div class="detail_section">
-            	<p><strong>Delevery Schedule:</strong> 20 Days</p>
-            </div>
-          </td>
+         
           <td colspan="4">
               <ul class="sub_total">
-                <li><strong>GRAND TOTAL:</strong></li>
-                <li><strong>141,960.00</strong></li>
+               
               </ul>
                
           </td>
