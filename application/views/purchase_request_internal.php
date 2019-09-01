@@ -54,8 +54,8 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <label><input type="radio" id="phone_person" name="phone_person" value="1" > On Phone &nbsp;&nbsp;
-                                <input type="radio"  id="phone_person" name="phone_person" value="2" checked /> In person</label>
+                            <label><input type="radio" name="phone_person" value="1" > On Phone &nbsp;&nbsp;
+                                <input type="radio" name="phone_person" value="2" checked /> In person</label>
 
                             <span id="errMsg" class="text-danger"></span>
                         </div>
@@ -88,9 +88,9 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Supplier/Make Referred<a href="#" data-toggle="modal" data-target="#supplierModal" style="margin-left: 39px;" class="btn-border-orange pull-right"><span class="fa fa-plus"> &nbsp;</span>New Supplier</a></label>
-                            <select id="supplierDropdownSelect" class="form-control select2 select2-hidden-accessible" name="department">
+                            <select id="supplierDropdownSelect" class="form-control select2 select2-hidden-accessible" name="supplier_name">
                                 <?php foreach ($suppliers as $supplier) { ?>
-                                    <option id="departmentsDropdown" value="<?php echo $supplier['supplier_id']; ?>"><?php echo $supplier['supplier_name']; ?></option>
+                                    <option value="<?php echo $supplier['supplier_id']; ?>"><?php echo $supplier['supplier_name']; ?></option>
                                 <?php } ?>
                             </select>
                             <span id="errMsg" class="text-danger"></span>
@@ -112,8 +112,8 @@
                         <div class="form-group">
                             <label for="exampleInputEmail1"></label>
                             &nbsp;&nbsp;
-                            <label><input type="radio" id="expense" name="expense" value="1" checked> opEx &nbsp;&nbsp;
-                                <input type="radio" id="expense" name="expense" value="2"> capEx</label>
+                            <label><input type="radio" name="expense" value="1" checked> opEx &nbsp;&nbsp;
+                                <input type="radio"  name="expense" value="2"> capEx</label>
                             <span id="errMsg" class="text-danger"></span>
                         </div>
                     </div>
@@ -195,10 +195,10 @@
                                                 <td class="pr_reorder_pt" contenteditable="true"></td>
                                                 <td class="pr_reorder_qty" contenteditable="true"></td>
                                                 <td class="pr_qty_req" id="pr_qty_req_1" contenteditable="true"></td>
-                                                <td class="pr_supplier_rate" id="pr_supplier_rate_1" contenteditable="true"></td>
-                                                <td class="pr_supplier_supplier" id="pr_supplier_supplier_1" onclick="calculateTotal(1)" contenteditable="true"></td>
-                                                <td class="pr_order_rate"  id="pr_order_rate_1" contenteditable="true"></td>
-                                                <td class="pr_order_supplier"id="pr_order_supplier_1" onclick="calculateTotal(1)"  contenteditable="true"></td>
+                                                <td class="pr_supplier_rate" id="pr_supplier_rate_1"  onfocusout="calculateTotal(1)" contenteditable="true"></td>
+                                                <td class="pr_supplier_supplier" id="pr_supplier_supplier_1" contenteditable="true"></td>
+                                                <td class="pr_order_rate"  id="pr_order_rate_1" onfocusout="calculateTotal(1)" contenteditable="true"></td>
+                                                <td class="pr_order_supplier"id="pr_order_supplier_1" contenteditable="true"></td>
                                                 <td>
 
                                                     <span class="table-remove">
@@ -216,11 +216,10 @@
                                         <tfoot>
                                             <tr>
                                                 <th colspan="8">Total</th>
-
-                                                <th  colspan="1" class="" contenteditable="true"></th>
-                                                <th  colspan="1" class="" contenteditable="true"></th>               
-                                                <td></td> 
-                                                <td></td>
+                                                <th  colspan="1"  contenteditable="true"></th>
+                                                <th  colspan="1" class="grand_total_1" contenteditable="true"></th>               
+                                                <th  colspan="1"  contenteditable="true"></th>
+                                                <th  colspan="1" class="grand_total_2" contenteditable="true"></th>        
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -322,7 +321,7 @@
                                         <label class="">Name</label>
 
                                         <div class="">
-                                            <input type="text" class="form-control" id="supplier_name" placeholder="Enter Supplier Name" name="supplier_name" value="">
+                                            <input required type="text" class="form-control" id="supplier_name" placeholder="Enter Supplier Name" name="supplier_name" value="">
                                         </div>
                                     </div>
 
@@ -331,20 +330,19 @@
                                         <label class="">Description</label>
 
                                         <div class="">
-                                            <input type="text" value="" placeholder="Enter Description" class="form-control" id="supplier_descp" name="supplier_descp">
+                                            <input required type="text" value="" placeholder="Enter Description" class="form-control" id="supplier_descp" name="supplier_descp">
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="">Email</label>
 
-
+                                        <div class="">
+                                            <input required type="email" value="" placeholder="Enter email" class="form-control" id="supplier_email" name="supplier_email">
+                                        </div>
+                                    </div>
                                 </div>
-
-
                             </div>
                         </div>
-                        <!-- /.box-body -->
-
-
-
                     </div>
                     <div class="modal-footer">
                         <a href="" class="btn btn-default pull-left">Cancel</a>
@@ -357,6 +355,24 @@
         </div>
     </div>
     <!--Department Modal End-->
+    <!-- Alert Modal -->
+  <div class="modal fade" id="alertModal" role="dialog">
+    <div class="modal-dialog">    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Purchase Request</h4>
+        </div>
+        <div class="modal-body">
+          <p id="alert_msg"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>      
+    </div>
+  </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
                             function createPurchaseRequest() {
@@ -394,15 +410,11 @@
                                     success: function (data) {
                                         //alert(data);
                                         data = JSON.parse(data);
-
                                         $('#departmentsDropdownSelect').empty();
-
                                         for (var i = 0; i < data.length; i++) {
                                             $('#departmentsDropdownSelect').append($("<option></option>")
                                                     .attr("value", data[i]['department_id']).text(data[i]['department_name']));
                                         }
-
-
                                         $('#departmentModal').modal('hide');
                                         $('#department_name').val('');
                                         $('#department_descp').val('');
@@ -416,33 +428,30 @@
 
                             // For adding Supplier
                             function add_supplier() {
-                                //alert("in");
                                 var supplier_name = $('#supplier_name').val();
                                 var supplier_descp = $('#supplier_descp').val();
-
-                                //  alert(supplier_name);
+                                var supplier_email = $('#supplier_email').val();
                                 $.ajax({
                                     method: "POST",
                                     url: "<?php echo base_url(); ?>index.php/purchase_request/add_supplier",
-                                    data: {supplier_name: supplier_name, supplier_descp: supplier_descp},
+                                    data: {
+                                        supplier_name: supplier_name,
+                                        supplier_descp: supplier_descp,
+                                        supplier_email: supplier_email,
+                                    },
                                     success: function (data) {
-                                        //alert(data);
+                                        //alert(data);                                         
                                         data = JSON.parse(data);
-
                                         $('#supplierDropdownSelect').empty();
-
                                         for (var i = 0; i < data.length; i++) {
                                             $('#supplierDropdownSelect').append($("<option></option>")
                                                     .attr("value", data[i]['supplier_id']).text(data[i]['supplier_name']));
                                         }
-
-
                                         $('#supplierModal').modal('hide');
                                         $('#supplier_name').val('');
                                         $('#supplier_descp').val('');
                                     },
-                                    error: function (data) {
-
+                                    error: function (data) {                                       
                                         alert("error");
                                     }
                                 });
@@ -459,6 +468,20 @@
 
                                 $("#pr_supplier_supplier_" + c).text(total1);
                                 $("#pr_order_supplier_" + c).text(total2);
+                                
+                                // Cloumn Total Vlaue
+//                                var grand1=0;
+//                                var grand2=0;
+//                                for(let i = 1; i =< c; i++){ 
+//                                    alert(grand1);
+//                                    alert(i);
+//                                    grand1 = grand1 + Number($("#pr_supplier_supplier_" +i).text());
+//                                    grand2 = grand2 + Number($("#pr_order_supplier_" +i).text());
+//                                     alert(grand1);
+//                                }
+                                $(".grand_total_1").text(grand1);
+                                $(".grand_total_2").text(grand2);
+                                
                             }
 
                             $(document).ready(function () {
@@ -476,10 +499,10 @@
                                     html_code += "<td class='pr_reorder_pt' contenteditable='true'></td>";
                                     html_code += "<td class='pr_reorder_qty' contenteditable='true'></td>";
                                     html_code += "<td class='pr_qty_req' id='pr_qty_req_" + count + "' contenteditable='true'></td>";
-                                    html_code += "<td class='pr_supplier_rate' id='pr_supplier_rate_" + count + "' contenteditable='true'></td>";
-                                    html_code += " <td class='pr_supplier_supplier' id='pr_supplier_supplier_" + count + "' onclick='calculateTotal(" + count + ")' contenteditable='true'></td>";
-                                    html_code += "<td class='pr_order_rate' id='pr_order_rate_" + count + "' contenteditable='true'></td>";
-                                    html_code += "<td class='pr_order_supplier' id='pr_order_supplier_" + count + "' onclick='calculateTotal(" + count + ")' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_supplier_rate' id='pr_supplier_rate_" + count + "' onfocusout='calculateTotal(" + count + ")' contenteditable='true'></td>";
+                                    html_code += " <td class='pr_supplier_supplier' id='pr_supplier_supplier_" + count + "' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_order_rate' id='pr_order_rate_" + count + "' onfocusout='calculateTotal(" + count + ")' contenteditable='true'></td>";
+                                    html_code += "<td class='pr_order_supplier' id='pr_order_supplier_" + count + "' contenteditable='true'></td>";
 
                                     html_code += "<td><button type='button' name='remove' data-row='row" + count + "' class='btn btn-danger btn-sm remove'>-</button></td>";
                                     html_code += "</tr>";
@@ -541,22 +564,35 @@
                                 var department_id = $("#departmentsDropdownSelect option:selected").val();
                                 var unit_id = $("#unitDropdownSelect option:selected").val();
                                 var issuing_date = $('#issuing_date').val();
-                                var phone_person = $('#phone_person').val();
-                                var expense = $('#expense').val();
+                                var phone_person = $("input[name='phone_person']:checked").val();                                
+                                var expense = $("input[name='expense']:checked").val();
 
                                 var action_taken_by = $('#action_taken_by').val();
                                 var pr_reacd_on = $('#pr_reacd_on').val();
                                 var order_placed_by = $('#order_placed_by').val();
                                 var pr_srno = document.getElementById("pr_srno").value;
                                 var selectedOption = $("input:radio[name=optradio]:checked").val();
-                                var supplier_name = $("#supplierDropdownSelect option:selected").text();
+                                var supplier_name = $("#supplierDropdownSelect :selected").val();
 
                                 $.ajax({
                                     method: "POST",
                                     url: "<?php echo base_url(); ?>index.php/purchase_request/update_purchase_request",
-                                    data: {pr_srno: pr_srno, department_id: department_id, unit_id: unit_id, issuing_date: issuing_date, phone_person: phone_person, supplier_name: supplier_name, action_taken_by: action_taken_by, pr_reacd_on: pr_reacd_on, order_placed_by: order_placed_by, selectedOption: selectedOption},
+                                    data: { 
+                                        pr_srno: pr_srno, 
+                                        department_id: department_id, 
+                                        unit_id: unit_id, 
+                                        issuing_date: issuing_date, 
+                                        phone_person: phone_person, 
+                                        supplier_name: supplier_name, 
+                                        action_taken_by: action_taken_by,
+                                        pr_reacd_on: pr_reacd_on, 
+                                        order_placed_by: order_placed_by, 
+                                        selectedOption: selectedOption,
+                                        expense: expense
+                                    },
                                     success: function (data) {
-                                        alert(data);
+                                        $("#alert_msg").html(data);
+                                        $("#alertModal").modal('show');
                                         window.location.href = "<?php echo base_url(); ?>purchase_request/purchase_request_list";
                                         $('#departmentModal').modal('hide');
                                         $('#department_name').val('');

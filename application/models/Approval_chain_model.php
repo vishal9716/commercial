@@ -58,5 +58,17 @@ Class Approval_chain_model extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
+    
+    /*
+     * General Metohd to update any feild
+     */
+    public function update_fields($param,$where) {        
+        $this->db->update('approval_chain', $param, $where);        
+    }
+    
+    public function remove_record($pr_srno) {
+        $this->db->where('pr_sr_no', $pr_srno);
+        $this->db->delete('approval_chain');
+    }
 
 }

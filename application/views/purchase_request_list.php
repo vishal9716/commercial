@@ -42,7 +42,6 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover mb-0" id="dataTables-example">
                                 <thead>
-
                                     <tr>
                                         <th width="20">SNo</th>
                                         <th>PR SNo.</th>
@@ -52,20 +51,17 @@
                                         <th>Supplier</th>
                                         <th>Order Placed</th>
                                         <th>Action Taken</th>
+                                        <?php if($session_data['department_id'] == PU_DEPT_ID) { ?>
                                         <th>Quotation</th>
+                                        <?php } ?>
                                         <th>Status</th>
-
-                                        <?php
-                                        if (($username == 'parul') || ($username == 'vikas')) {
-                                            
-                                        } else {
-                                            ?>  <th width="200">Action</th> <?php } ?>
+                                        <th width="200">Action</th>
                                     </tr>
                                 </thead>								
                                 <tbody>
 
                                     <?php
-                                    // echo "<pre>"; print_r($purchase_request_list); //die();
+                                     //echo "<pre>"; print_r($purchase_request_list); //die();
                                     $i = 0;
                                     foreach ($purchase_request_list as $list) {
                                         $i++;
@@ -89,101 +85,81 @@
                                             <td><?php echo $list['department_name']; ?></td>
 
                                             <td><?php echo date("d-m-Y", strtotime($list['pr_issue_date'])); ?></td>
-                                            <td><?php echo $list['supplier_name']; ?></td>
-                                            <!--<td><?php // echo $list['pr_recd_on'];    ?></td>-->
-                                            <td><?php echo $list['order_placed_by']; ?></td>
-                                            <td><?php echo $type_list[$list['action_taken_by']]; ?></td>
+                                            <td><?php echo $supplier_list[$list['supplier_name']]; ?></td>
                                             
+                                            <td><?php echo $list['order_placed_by']; ?></td>
+                                            <td><?php echo $type_list[$list['action_taken_by']]; ?></td>                                            
+                                            <?php if($session_data['department_id'] == PU_DEPT_ID) { ?>
                                             <td>									
-											<?php 
-												$quatcount = quotationlist($list['sr_no']);
-                          
-												$qtcount = count($quatcount);
-												if($qtcount > 0)
-												{
-													for($i=1; $i<=$qtcount;$i++)
-													{												
-														
-											?>		
-													<a href="<?php echo base_url(); ?>purchase_request/download?doc=<?php echo $quatcount[$i-1];?>"><?php echo $i;?></a>
-														
-											<?php
-													}
-												}
-											
-											?>
-																					
-											
-											
-											</td>
-                                            <td>
+                                                <?php 
+                                                    $quatcount = quotationlist($list['sr_no']);
+                                                    $qtcount = count($quatcount);
+                                                    if($qtcount > 0)
+                                                    {
+                                                        for($i=1; $i<=$qtcount;$i++)
+                                                        {
+                                                ?>		
+                                                    <a href="<?php echo base_url(); ?>purchase_request/download?doc=<?php echo $quatcount[$i-1];?>"><?php echo $i;?></a>
 
+                                                <?php } } ?>
+                                            </td>
+                                            <?php } ?>
+                                    <td>
                                     <?php
-                                    $hello = "";
-                                   $showApproved=0;
-                                    foreach ($list['statushistory'] as $history) {
-                                        if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 1)) {
-                                           
-                                            $showApproved=1;
-                                        }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 2) ){
-                                            $showApproved=2;
-                                        }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 0) ){
-                                            $showApproved=0;
-                                        }
-                                        if($list['user_id'] != $history['request_raised_by']) {
-                                            $hello .= $status_list[$history['pr_status']] . " on : " . date('Y-m-d', strtotime($history['pr_status_date'])) . " by : " . $history['status_by'] . "\n";                          
-                                        }  
-                                        if($list['user_id'] != $history['request_raised_by'] && $history['pr_status'] == 2) {
-                                            $hello .= $status_list[$history['pr_status']] . " on : " . date('Y-m-d', strtotime($history['pr_status_date'])) . " by : " . $history['status_by'] . "\n";                          
-                                        } 
+                                        $actionMessage = "";
+                                        $showApproved=0;
+                                        foreach ($list['statushistory'] as $history) {
+                                            if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 1)) {                                           
+                                                $showApproved=1;
+                                            }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 2) ){
+                                                $showApproved=2;
+                                            }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 0) ){
+                                                $showApproved=0;
+                                            }
+                                            $actionMessage .= $status_list[$history['pr_status']] . " on : " . date('Y-m-d', strtotime($history['pr_status_date'])) . " by : " . $history['request_reviewed_by_name'] . "\n";
                                         }
                                     ?>
-                                    <?php if ($showApproved == 1) { ?>
-                                                <span title="<?php echo $hello; ?>">  <span class="show_status label label-success disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo  "Approved" ?></span></span>
-                                          <?php }else if($showApproved == 2) { ?>
-                                              <span title="<?php echo $hello; ?>">  <span class="show_status label label-danger disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "Rejected" ?></span></span>
-                                          <?php } else if((in_array($session_data['uid'], $showApproved)) && $history['pr_status'] == 0 ){ ?>
+                                    <?php if($list['status'] == 1){ ?>
+                                        <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-success disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo  "Approved" ?></span></span>
+                                    <?php } elseif ($list['status'] == 2) { ?>
+                                        <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-danger disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo  "Rejected" ?></span></span>
+                                    <?php }else { ?>
+                                            <?php if ($showApproved == 1) { ?>
+                                                   <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-success disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo  "Approved" ?></span></span>
+                                             <?php }else if($showApproved == 2) { ?>
+                                                 <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-danger disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "Rejected" ?></span></span>
+                                             <?php } else if((in_array($session_data['uid'], $showApproved)) && $history['pr_status'] == 0 ){ ?>
                                               <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning disabled"><?php echo "Pending"; ?></span> 
-                                    <?php } else if($showApproved == 0 && $session_data['uid'] == $list['user_id']){ ?> 
-                                               <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning disabled"><?php echo "Pending"; ?></span>
-                                    <?php }else if( ($showApproved == 0) && (in_array($session_data['uid'], $approved_list)) ){ ?> 
-                                               <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning disabled"><?php echo "Pending"; ?></span>
-                                    <?php }else if(in_array($session_data['uid'], $rejected_list)){ ?> 
-                                               <span title="<?php echo $hello; ?>">  <span class="show_status label label-danger disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "Rejected" ?></span></span>
-                                    <?php }else if($showApproved == 0){ ?> 
-                                               <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning"><?php echo "Pending"; ?></span>
-                                    <?php } ?>  
-                                                    
-                                            </td>
-                                            <?php echo $list['phone_person']; ?>
-                                            
-                                            <?php if (($session_data['uid'] == $list[user_id]) && $list['status'] == '0') { ?>
-                                                <td class="text-center"><a href="<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request?sr_no=<?php echo $list['sr_no']; ?>">Edit</a> 
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a></td>
-                                            <?php } elseif ( (in_array ($session_data['uid'], $review_list)) && ($session_data['department_id'] == 5) ){ ?> 
-                                                    <!-- For Purchase Department -->
-<!--                                                    <td class="text-center">
-                                                        <a disabled="disabled" class="disabled" href="#">Edit</a> 
-                                                    | <a disabled="disabled" class="disabled" href="#">Memo</a> 
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation/?pr_id=<?php echo $list['pr_id']; ?>&sr_no=<?php echo $list['sr_no']; ?>">Quotation</a>
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/checklist?sr_no=<?php echo $list['sr_no']; ?>">Checklist</a>
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/negotiation?sr_no=<?php echo $list['sr_no']; ?>">Negotiation</a> 
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit_checklist?sr_no=<?php echo $list['sr_no']; ?>">Audit</a></td>                                                -->
-                                                    
-                                                    <td class="text-center">
-                                                        <a disabled="disabled" class="disabled" href="#">Edit</a> 
-                                                    | <a disabled="disabled" class="disabled" href="#">Memo</a> 
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation/?pr_id=<?php echo $list['pr_id']; ?>&sr_no=<?php echo $list['sr_no']; ?>">Quotation</a>
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/checklist?sr_no=<?php echo $list['sr_no']; ?>">Checklist</a>
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/negotiation?sr_no=<?php echo $list['sr_no']; ?>">Negotiation</a> 
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
-                                                    | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit?sr_no=<?php echo $list['sr_no']; ?>">Audit</a> | <a href="<?php echo base_url(); ?>index.php/purchase_order?sr_no=<?php echo $list['sr_no']; ?>">PO</a></td>
-                                                    
-                                               <?php } elseif(in_array ($session_data['uid'], $review_list))  { ?>
-                                                <td><a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> </td>
-                                            <?php } ?>
-                                                
+                                            <?php } else if($showApproved == 0 && $session_data['uid'] == $list['user_id']){ ?> 
+                                                       <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning disabled"><?php echo "Pending"; ?></span>
+                                            <?php }else if( ($showApproved == 0) && (in_array($session_data['uid'], $approved_list)) ){ ?> 
+                                                       <span title="<?php echo $actionMessage; ?>"><span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning disabled"><?php echo "Pending"; ?></span></span>
+                                            <?php }else if(in_array($session_data['uid'], $rejected_list)){ ?> 
+                                                       <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-danger disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "Rejected" ?></span></span>
+                                            <?php }else if($showApproved == 0){ ?> 
+                                                       <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning"><?php echo "Pending"; ?></span>
+                                    <?php } } ?>                                           
+                                    </td>                                                                                      
+                                    <?php if($list['status'] == 1){ ?>
+                                            <td class="text-center"><a disabled="disabled" class="disabled" href="#">Edit</a> 
+                                            | <a disabled="disabled" class="disabled" href="#">Memo</a></td>
+                                    <?php } else if (($session_data['uid'] == $list['user_id']) && ( $list['status'] == '0' || $list['status'] == '2' )) { ?>
+                                            <td class="text-center"><a href="<?php echo base_url(); ?>index.php/purchase_request/edit_purchase_request?sr_no=<?php echo $list['sr_no']; ?>">Edit</a> 
+                                             | <a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a></td>
+                                     <?php } elseif ( ($session_data['department_id'] == 5) && ($list['status'] == 1) ){ ?> 
+                                             <!-- For Purchase Department -->
+                                             <td class="text-center">
+                                               <a disabled="disabled" class="disabled" href="#">Edit</a> 
+                                             | <a disabled="disabled" class="disabled" href="#">Memo</a> 
+                                             | <a href="<?php echo base_url(); ?>index.php/purchase_request/pr_quotation/?pr_id=<?php echo $list['pr_id']; ?>&sr_no=<?php echo $list['sr_no']; ?>">Quotation</a>
+                                             | <a href="<?php echo base_url(); ?>index.php/purchase_request/checklist?sr_no=<?php echo $list['sr_no']; ?>">Checklist</a>
+                                             | <a href="<?php echo base_url(); ?>index.php/purchase_request/negotiation?sr_no=<?php echo $list['sr_no']; ?>">Negotiation</a> 
+                                             | <a href="<?php echo base_url(); ?>index.php/purchase_request/comparision?sr_no=<?php echo $list['sr_no']; ?>">Comparision </a>
+                                             | <a href="<?php echo base_url(); ?>index.php/purchase_request/audit?sr_no=<?php echo $list['sr_no']; ?>">Audit</a> | <a href="<?php echo base_url(); ?>index.php/purchase_order?sr_no=<?php echo $list['sr_no']; ?>">PO</a></td>
+
+                                        <?php } elseif(in_array ($session_data['uid'], $review_list) )  { ?>
+                                         <td><a href="<?php echo base_url(); ?>index.php/purchase_request/internal_memo?sr_no=<?php echo $list['sr_no']; ?>" class="">Memo</a> </td>
+                                     <?php } ?>                                                
                                             <!-- Status updation code starts -->
 
                                     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -197,13 +173,10 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <form>
-
                                                         <div class="form-group">
-
                                                             <div id="prIdForDecision" style="visibility: hidden;"></div>
-                                                            <label><input type="radio" name="optradio" value="1"> Approved &nbsp;&nbsp;
-                                                                <input type="radio" name="optradio" value="0"> Rejected</label>
-
+                                                            <label ><input type="radio" name="optradio" value="1" checked/> Approved &nbsp;&nbsp;
+                                                                <input type="radio" name="optradio" value="0"/> Rejected</label>
                                                             <span id="errMsg" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group">
@@ -215,13 +188,11 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> 
                                                     <input type="button" class="btn btn-primary" name="button" value="Submit Status" onclick="confirmation();"/>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Status updation code ends -->
-                                    
+                                    <!-- Status updation code ends -->                                    
                                     <?php
                                 }
                             }
@@ -243,24 +214,17 @@
 					return $documentids;
 				}
                             ?>
-
-
                             </tbody>
                         </table>
-
                     </div>
-
                 </div>
-
                 <div class="panel-footer">
                <!-- <span class="label label-warning">Pending</span>
                 <span class="label label-primary">Approved</span>
                 <span class="label label-danger">Rejected</span>
                 <span class="label label-success">Approved</span>-->
                 </div>
-
             </div>
-
         </div>		
     </div>
 
@@ -355,7 +319,24 @@
         </div>
     </div>
 </div>
-
+ <!-- Alert Modal -->
+  <div class="modal fade" id="alertModal" role="dialog">
+    <div class="modal-dialog">    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Purchase Request</h4>
+        </div>
+        <div class="modal-body">
+          <p>Purchase request approved successfully.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>      
+    </div>
+  </div>
 
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -437,9 +418,8 @@
                                                                 url: "<?php echo base_url(); ?>index.php/purchase_request/update_pr_status",
                                                                 method: "POST",
                                                                 data: {status: status, remarks: remarks, pr_srno:pr_srno},
-                                                                success: function (data) {
-//                                                                    alert(data);
-//                                                                    return false;
+                                                                success: function (data) {                                                                    
+                                                                    $("#alertModal").modal('show');;                                                                   
                                                                     $('#exampleModal').modal('hide');
                                                                     window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
 

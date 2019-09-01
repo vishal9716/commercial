@@ -36,10 +36,12 @@
 					//echo "<pre/>"; print_r($_SESSION) ; die;
                     $session_data = $this->session->userdata('logged_in');
                     $fname = $session_data['firstname'];
+                    $uid = $session_data['uid'];
                     ?>             
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="exampleInputEmail1">From</label>
+                            <input type="hidden" id="from_user_id" name="from_user_id" value="<?php echo $uid ;?>"></input>
                             <input class="form-control auto ui-autocomplete-input" placeholder="Enter From" value="<?php echo ucfirst($fname); ?>" name="order_placed_by" id="order_placed_by">
                         </div>
                     </div>
@@ -159,25 +161,35 @@ angular
   .controller('DemoCtrl', DemoCtrl);
 
 // adding data
-		  function internal_memo() {
+		function internal_memo() {
                     var sr_no = "<?php echo $_GET['sr_no'];?>";
-			       // alert(sr_no);
-			  		var to = $('#to').val();
-			  		var from = $('#from').val();
+                    var to = $('#to').val();
+                    var from = $('#from').val();
                     var subject = $('#subject').val();
                     var date = $('#date').val();
-			        var editor = CKEDITOR.instances.editor.getData();
+                    var order_placed_by = $('#order_placed_by').val();
+                    var from_user_id = $('#from_user_id').val();
+                    var editor = CKEDITOR.instances.editor.getData();
                   
-			       //alert(editor);
                     $.ajax({
                     url: "<?php echo base_url(); ?>purchase_request/edit_internal_memo",
                     method: "POST",
-                    data: {to: to, date: date, from: from, subject: subject, editor: editor, sr_no:sr_no },
-                        success: function (data) {
-                          //  console.log(data);
-							alert(data);
+                    data: {
+                        to: to, 
+                        date: date, 
+                        from: from, 
+                        subject: subject, 
+                        editor: editor, 
+                        sr_no:sr_no,
+                        from_user_id:from_user_id,
+                        order_placed_by: order_placed_by
+                    },
+                    success: function (data) {
+                        alert(data);
+                        //return false;
+                      //  console.log(data);
 window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
-                        }
+                    }
 					  });
 		  }
 		

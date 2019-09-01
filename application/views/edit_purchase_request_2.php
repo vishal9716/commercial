@@ -50,8 +50,8 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <label><input type="radio" name="phone_person" value="1" > On Phone &nbsp;&nbsp;
-                            <input type="radio" name="phone_person" value="2" checked /> In person</label>
+                        <label><input type="radio" id="phone_person" name="phone_person" value="1" > On Phone &nbsp;&nbsp;
+                            <input type="radio"  id="phone_person" name="phone_person" value="2" checked /> In person</label>
 
                         <span id="errMsg" class="text-danger"></span>
                     </div>
@@ -86,9 +86,9 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="">Supplier/Make Referred</label>
-                        <select id="supplierDropdownSelect" name="supplier_name"  class="form-control select2 select2-hidden-accessible">
+                        <select id="supplierDropdownSelect" class="form-control select2 select2-hidden-accessible" name="department">
     <?php foreach ($suppliers as $supplier) { ?>
-                                <option value="<?php echo $supplier['supplier_id']; ?>"><?php echo $supplier['supplier_name']; ?></option>
+                                <option id="departmentsDropdown" value="<?php echo $supplier['supplier_id']; ?>"><?php echo $supplier['supplier_name']; ?></option>
                 <?php } ?>
                         </select>
                         <span id="errMsg" class="text-danger"></span>
@@ -108,8 +108,8 @@
                     <div class="form-group">
                         <label for="exampleInputEmail1"></label>
                         &nbsp;&nbsp;
-                        <label><input type="radio" name="expense" value="1" checked> opEx &nbsp;&nbsp;
-                            <input type="radio" name="expense" value="2"> capEx</label>
+                        <label><input type="radio" id="expense" name="expense" value="1" checked> opEx &nbsp;&nbsp;
+                            <input type="radio" id="expense" name="expense" value="2"> capEx</label>
                         <span id="errMsg" class="text-danger"></span>
                     </div>
                 </div>
@@ -141,57 +141,32 @@
                 </thead>
                 <tbody>
 <?php
-foreach ($purchase_request_list as $key => $value) {
-    ?>
-        <tr id="row_<?php echo $value['pr_id']; ?>">
-            <td>
-                <textarea class="form-control" cols="7"  style="width:200px;resize:none;" name="pr_description" id="pr_description_<?php echo $value['pr_id']; ?>"><?php echo $value['pr_description']; ?></textarea>
-            </td>
-            <td hidden>
-                <input class="form-control" type="text" style="width:50px;" name="sr_no" id="sr_no_<?php echo $value['pr_id']; ?>" value="<?php echo $value['sr_no']; ?>"/>
-                </td>
-            <td hidden>
-                <input class="form-control" type="text" style="width:50px;" name="pr_dept_id" id="pr_dept_id_<?php echo $value['pr_id']; ?>" value="<?php echo $value['department_id']; ?>"/>
-            </td>
-            <td hidden>
-                <input class="form-control" type="text" style="width:50px;" name="pr_id" id="pr_id_<?php echo $value['pr_id']; ?>" value="<?php echo $value['pr_id']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" type="text" style="width:50px;" name="units" id="units_<?php echo $value['pr_id']; ?>" value="<?php echo $value['units']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" type="text" name="avg_cods" id="avg_cods_<?php echo $value['pr_id']; ?>" value="<?php echo $value['avg_cods']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" type="text" name="qty_in_stock" id="qty_in_stock_<?php echo $value['pr_id']; ?>" value="<?php echo $value['qty_in_stock']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" type="text" name="reorder_point" id="reorder_point_<?php echo $value['pr_id']; ?>" value="<?php echo $value['reorder_point']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" type="text" name="reorder_quantity" id="reorder_quantity_<?php echo $value['pr_id']; ?>" value="<?php echo $value['reorder_quantity']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" type="text" name="qty_req" id="qty_req_<?php echo $value['pr_id']; ?>" value="<?php echo $value['qty_req']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" style="width:100px;" type="text" name="pr_supplier_rate" id="pr_supplier_rate_<?php echo $value['pr_id']; ?>" onfocusout="calculateTotal(<?php echo $value['pr_id']; ?>)" value="<?php echo $value['pr_supplier_rate']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" style="width:100px;" type="text" name="pr_supplier_supplier" id="pr_supplier_supplier_<?php echo $value['pr_id']; ?>" value="<?php echo $value['pr_supplier_supplier']; ?>"/>
-            </td>
-            <td>
-                <input class="form-control" style="width:100px;" type="text" name="order_placed_rate" id="order_placed_rate_<?php echo $value['pr_id']; ?>" onfocusout="calculateTotal(<?php echo $value['pr_id']; ?>)" value="<?php echo $value['order_placed_rate']; ?>"/>
-            <td>
-                <input class="form-control" style="width:100px;" type="text" name="order_placed_supplier" id="order_placed_supplier_<?php echo $value['pr_id']; ?>" value="<?php echo $value['order_placed_supplier']; ?>"/>
-            </td>
-            <td onclick="edit_pr(<?php echo $value['pr_id']; ?>);"><a><i class="glyphicon glyphicon-pencil"></i></a></td>
-        </tr>
+//for ($i = 0; $i < count($purchase_request_list); $i++) {
+    foreach($purchase_request_list as $listKeys => $value){ ?>
+        <tr id="row_<?php echo $value['pr_id']?>">
+            
+            <td class="pr_desp" contenteditable="true"> <textarea class="form-control" cols="7"><?php echo $value['pr_description']?></textarea></td>            
+            <td class="pr_dept_id" contenteditable="false" hidden ><?php echo $value['department_id']?></td>
+            <td class="pr_unit" contenteditable="true"><input class="form-control" type="text" style="width:50px;" value="<?php echo $value['units']?>" /></td>
+            <td class="pr_avg_cods" contenteditable="true"><input class="form-control" type="text" style="width:50px;" value="<?php echo $value['avg_cods']?>" /></td>
+            <td class="pr_qty_stk" contenteditable="true"><?php echo $value['qty_in_stock']?></td>
+            <td class="pr_reorder_pt" contenteditable="true"><?php echo $value['reorder_point']?></td>
+            <td class="pr_reorder_qty" contenteditable="true"><?php echo $value['reorder_quantity']?></td>
+            <td class="pr_qty_req" id="pr_qty_req_<?php echo $value['pr_id']?>" contenteditable="true"><?php echo $value['qty_req']?></td>
+            <td class="pr_supplier_rate" id="pr_supplier_rate_<?php echo $value['pr_id']?>" contenteditable="true"><?php echo $value['pr_supplier_rate']?></td>
+            <td class="pr_supplier_supplier" id="pr_supplier_supplier_<?php echo $value['pr_id']?>" onclick="calculateTotal(1)" contenteditable="true"><?php echo $value['pr_supplier_supplier']?></td>
+            <td class="pr_order_rate"  id="pr_order_rate_<?php echo $value['pr_id']?>" contenteditable="true"><?php echo $value['order_placed_rate']?></td>
+            <td class="pr_order_supplier"id="pr_order_supplier_<?php echo $value['pr_id']?>" onclick="calculateTotal(1)"  contenteditable="true"><?php echo $value['order_placed_supplier']?></td>
+            <td onclick="edit_pr(<?php echo $value['pr_id'];?>);"><a><i class="glyphicon glyphicon-pencil"></i></a></td>
+            
+        </tr>   
 <?php } ?>
-            <tbody>
-            </table>
+                </tbody>
+            </table>									
+
             <!-- end add rows -->										
         </div>
+
 
         <div class="row">
             <div class="col-md-2">
@@ -206,57 +181,62 @@ foreach ($purchase_request_list as $key => $value) {
 
     <script type="text/javascript">
 
-    function edit_pr(id) {        
-        var formData={};
-        var textVal = '';
-        var inputName = '';
-        $('table tbody tr#row_' + id).find("td input:text, textarea").each(function() {        
-            textVal = this.value;
-            inputName = $(this).attr("name");
-            formData[inputName] = textVal;
-        });
-        
-        var issuing_date = $('#issuing_date').val();
-        var phone_person = $("input[name='phone_person']:checked").val();
-        var supplier_id = $('#supplierDropdownSelect :selected').val();
-        var action_taken_by = $('#action_taken_by').val();
-        var expense = $("input[name='expense']:checked").val();      
-         
-        $.ajax({
-            method: "POST",
-            url: "<?php echo base_url(); ?>index.php/purchase_request/edit_pr",
-            data: {
-                memo_items: formData,
-                issuing_date: issuing_date,
-                phone_person: phone_person,
-                supplier_name: supplier_id,
-                action_taken_by: action_taken_by,
-                expense: expense
-            },
-            success: function (data) {
-                window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
-                $('#departmentModal').modal('hide');
-                $('#department_name').val('');
-                $('#department_descp').val('');
-            },
-            error: function (data) {
-                alert("error");
-            }
-        });
-    }
-    
-    function calculateTotal(c) {
-        var qnty = $("#qty_req_" + c).val();
-        var suppRate = $("#pr_supplier_rate_" + c).val();
-        var total1 = qnty * suppRate;
-          
+        function edit_pr(id) {
+            var pr_idd = id;
+            var sr_no = "<?php echo $_GET['sr_no']; ?>";
+            var memo_items = [];           
+            var ret = {};
+            $('table tbody tr#row_' + id + ' td').map(function (index, td) {
+                if (typeof $(td).attr('class') !== "undefined") {
+                    ret[$(td).attr('class')] = $(td).val();
+                }
+            });
+            memo_items.push(ret);
            
-        var orderRate = $("#order_placed_rate_" + c).val();
-        var total2 = qnty * orderRate;
+            alert(memo_items);
+            console.log(memo_items);
 
-        $("#pr_supplier_supplier_" + c).val(total1);
-        $("#order_placed_supplier_" + c).val(total2);
-    }
+            //    var department_id = $("#departmentsDropdownSelect option:selected").val();
+            //    var issuing_date = $('#issuing_date').val();
+            //    var phone_person = $('#phone_person').val();
+            //    var supplier_name = $('#supplier_name').val();
+            //    var action_taken_by = $('#action_taken_by').val();
+            //    var pr_reacd_on = $('#pr_reacd_on').val();
+            //    var order_placed_by= $('#order_placed_by').val();
+            //    var pr_id =$('#pr_id').val();
+            //    var pr_description = $('#pr_description').val();
+            //    var units = $('#units').val();
+            //    var avg_cods =$('#avg_cods').val();
+            //    var qty_in_stock = $('#qty_in_stock').val();
+            //    var reorder_point =$('#reorder_point').val() ;
+            //    var reorder_quantity =$('#reorder_quantity').val() ;
+            //    var qty_req = $('#qty_req').val();
+            //    var pr_supplier_rate = $('#pr_supplier_rate').val();
+            //    var pr_supplier_supplier = $('#pr_supplier_supplier').val();
+            //    var order_placed_rate = $('#order_placed_rate').val();
+            //    var order_placed_supplier = $('#order_placed_supplier').val();
+
+            $.ajax({
+                method: "POST",
+                url: "<?php echo base_url(); ?>index.php/purchase_request/edit_pr",
+                data: {
+                    pr_idd: pr_idd,
+                    sr_no: sr_no,
+                    memo_items: memo_items
+                },
+                success: function (data) {
+                    alert(data);
+                    return false;
+                    window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
+                    $('#departmentModal').modal('hide');
+                    $('#department_name').val('');
+                    $('#department_descp').val('');
+                },
+                error: function (data) {
+                    alert("error");
+                }
+            });
+        }
 
     </script>
 <?php echo $this->load->view("common/bottom"); ?>

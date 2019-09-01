@@ -169,4 +169,13 @@ Class type_model extends CI_Model {
             $query = $this->db->get();
             return $result= $query->result_array();
         }
+        
+        public function dept_user_types($dept_id){
+            $this->db->select('type_id');
+            //$this->db->from('types');
+            $this->db->where('department_id', $dept_id);
+            $this->db->order_by('parent_id', 'DESC');
+            $query= $this->db->get('types', 1);
+            return $query->result_array();
+        }
 }

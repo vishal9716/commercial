@@ -32,7 +32,7 @@ class Type extends CI_Controller {
         // Load database
         $this->load->model('type_model');
         $this->load->model('department_model');
-        
+
         //Loading url helper
         //$this->load->helper('url');
     }
@@ -50,27 +50,26 @@ class Type extends CI_Controller {
     }
 
     public function add_type() {
-        
+
         $request_data = $_POST;
-        $data['departments']=$this->department_model->department_lists();
-        $data['types']=$this->type_model->roles_by_dep_id(array('dep_id'=>1));
-       
-        if(isset($request_data) && !empty(($request_data))){
-            if(!empty($request_data['typename']) && !empty($request_data['department_id'])){
-                $currentDate =date('Y-m-d H:i:s');
-                $request_data['created_date']=$currentDate;
+        $data['departments'] = $this->department_model->department_lists();
+        $data['types'] = $this->type_model->roles_by_dep_id(array('dep_id' => 1));
+
+        if (isset($request_data) && !empty(($request_data))) {
+            if (!empty($request_data['typename']) && !empty($request_data['department_id'])) {
+                $currentDate = date('Y-m-d H:i:s');
+                $request_data['created_date'] = $currentDate;
                 $type_added = $this->type_model->add_typelist($request_data);
-                if($type_added == 1){
+                if ($type_added == 1) {
                     redirect('type/index');
-                }else {
+                } else {
                     $data = array(
-                        'error_message' => '<strong>' . $request_data['typename'] . '</strong>' . ' ' .' role is already exists , Please try other role.'
+                        'error_message' => '<strong>' . $request_data['typename'] . '</strong>' . ' ' . ' role is already exists , Please try other role.'
                     );
                     $this->load->view('add_type', $data);
                 }
             }
-        }
-        else {
+        } else {
             $this->load->view('add_type', $data);
         }
     }
@@ -130,17 +129,18 @@ class Type extends CI_Controller {
             $this->load->view('user_list', $data);
         }
     }
-    
+
     public function get_roles() {
-        $request_data=$_POST;
+        $request_data = $_POST;
         $result = $this->type_model->roles_by_dep_id($request_data);
-        $xyz= json_encode($result);
-        print_r($xyz);die();
+        $xyz = json_encode($result);
+        print_r($xyz);
+        die();
         exit;
     }
-    
+
     public function check_existing_type() {
-        $request_data=$_POST;
+        $request_data = $_POST;
         $result = $this->type_model->check_existing_type($request_data);
         $is_existing = count($result) ? 1 : 0;
         echo $is_existing;

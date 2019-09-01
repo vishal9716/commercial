@@ -108,8 +108,8 @@ class User extends CI_Controller {
     // Edit user	
     public function edit_user() {
         if ($this->input->post('username')) {
-            //$user_id=$this->input->post('userid');
-            $user_id=$this->input->post('uid');
+            $user_id=$this->input->post('userid');
+            //$user_id=$this->input->post('uid');
             $data = array(
                 'username' => $this->input->post('username'),
                 'password' => $this->input->post('password'),
@@ -120,24 +120,29 @@ class User extends CI_Controller {
                 'department_id' => $this->input->post('department_id'),
                 'photo' => $this->input->post('photo'),
                 'status' => $this->input->post('status'),
-                'userid' => $this->input->post('userid'),
+                'uid' => $this->input->post('userid'),
             );
             $result_user = $this->user_database->edit_userlist($data);
             if ($result_user == 200) {
+                
                 $result = $this->user_database->userlist_info();
                 $data = array(
                     'userdata' => $result,
                 );
+                //echo "1";die;
                 echo '<script>alert("Records has been modified successfully.");</script>';
-                redirect('/user');
+                redirect('/user/');
             } else if($result_user == 404){
+                //echo "$user_id"; die;
                 $result_records = $this->user_database->userlist_info_data($user_id);
+              echo"<pre>";  print_r($result_records);  die;
                 $data = array(
                   'success_message' => 'Username or Email already exits',
                   'userrecord' => $result_records,
                   );
-                redirect('/user/edit_user?uid='.$user_id, $data);
-                //$this->load->view('edit_user',$data);
+                //echo "inn2";die;
+                //redirect('/user/edit_user?uid='.$user_id, $data);
+                $this->load->view('edit_user',$data);
             }
         } else {
             $usid = $_GET['uid'];
@@ -148,11 +153,7 @@ class User extends CI_Controller {
             );
             $data['departments'] = $this->department_model->department_lists();
             $data['actionTakenBy']=$this->user_database->employee_types();
-            
-//           echo "<pre>";
-//                print_r($data);
-//                print_r($session_data);
-//                die("55");
+//          
             $this->load->view('edit_user', $data);
         }
     }

@@ -76,13 +76,13 @@ Class User_Database extends CI_Model {
     public function edit_userlist($data) {
         $this->db->select('username','email_id');
         $this->db->from('users');
-        //$this->db->where('username', $data['username'] );
-        $this->db->where('email_id', $data['email_id'] );
+        $this->db->where('username', $data['username'] );
+        //$this->db->where('email_id', $data['email_id'] );
         $query = $this->db->get();
-        if ($query->num_rows() > 0) {
+        if ($query->num_rows() == 0) {
             return 404;
         } else {
-            $this->db->update('users', $data, array('id' => $data['userid'])); 
+            $this->db->update('users', $data, array('uid' => $data['uid'])); 
             return 200;
         }
     }

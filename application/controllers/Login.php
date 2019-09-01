@@ -32,18 +32,20 @@ class Login extends CI_Controller {
 
     public function login_submit() {
         $this->load->model('login_database');
+        $this->load->model('type_model');
         $username = $this->input->post('username');
         $passwords = $this->input->post('password');
         $data = array(
             'username' => $this->input->post('username'),
             'password' => $this->input->post('password')
         );
-        $result = $this->login_database->login($data);
+        $result = $this->login_database->login($data);        
+              
         if ($result == 1) {
             $vpTypeid= 1;
             $username = $this->input->post('username');
             $result = $this->login_database->read_user_information($username);
-            $vpInfo = $this->user_database->vp_info_by_type($vpTypeid);
+            $pe_type=$this->type_model->dept_user_types($result[0]->department_id);
            
             if ($result != false) {
                 $session_data = array(
@@ -54,13 +56,9 @@ class Login extends CI_Controller {
                     'lastname' => $result[0]->lname,
                     'user_type' => $result[0]->type,
                     'department_id' =>$result[0]->department_id,
-                    'vp_info' => array(
-                        'user_id' =>$vpInfo[0]['uid'],
-                        'user_type' =>$vpInfo[0]['type'],
-                        'email' =>$vpInfo[0]['email_id'],
-                        'department_id' =>$vpInfo[0]['department_id'],
-                    )
-                );
+                    'permission_type_id' => $pe_type[0]
+                );               
+                
                 // Add user data in session
                 $this->session->set_userdata('logged_in', $session_data);
                 $this->load->view('welcome_message');
@@ -83,6 +81,10 @@ class Login extends CI_Controller {
         $this->session->unset_userdata('logged_in', $sess_array);
         $data['message_display'] = 'Successfully Logout';
         $this->load->view('login_message', $data);
+    }
+    
+    public function departmantUserTypes($param) {
+        
     }
 
 }

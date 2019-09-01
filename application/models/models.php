@@ -51,6 +51,24 @@ class Purchase_model extends CI_Model {
         }
     }
 
+    // Add supplier
+    function add_supplier() {
+        //echo "<pre/>"; print_r($_POST); die;	
+        $supplier_name = trim($_POST['supplier_name']);
+        $supplier_descp = trim($_POST['supplier_descp']);
+
+        if (($supplier_name != "") || (!empty($supplier_name))) {
+            $sql = "insert into supplier(supplier_name,supplier_desp) values('" . ($supplier_name) . "','" . ($supplier_descp) . "')";
+            // echo $sql; die;
+            $query = $this->db->query($sql);
+
+            $sql1 = "select * from supplier";
+            $result = $this->db->query($sql1)->result_array();
+            //echo "<pre/>"; print_r($result);
+            return $result;
+        }
+    }
+
     // display supplier
     function display_supplier($id) {
         if ((!empty($id))) {
@@ -119,22 +137,28 @@ class Purchase_model extends CI_Model {
     
     public function add_purchase_request($param) {
         $this->db->insert('purchase_request', $param);
-        return $this->db->insert_id();       
+        return $this->db->insert_id();
+       
     }
 
     function update_purchase_request($pr_srno) {
         $session_data = $this->session->userdata('logged_in');
+
         $username = $session_data['username'];
         $uid = $session_data['uid'];
+//echo "<pre/>"; print_r($_POST); die;
         $department_id = trim($_POST['department_id']);
         $unit_region_id = trim($_POST['unit_id']);
+        // echo "--->".$department_id; die;
         $issuing_date = trim($_POST['issuing_date']);
+// echo $issuing_date; die;
         $phone_person = trim($_POST['phone_person']);
         $action_taken_by = trim($_POST['action_taken_by']);
         $pr_reacd_on = trim($_POST['pr_reacd_on']);
         $order_placed_by = trim($_POST['order_placed_by']);
         $supplier_name = trim($_POST['supplier_name']);
-        $expense = trim($_POST['expense']);
+        //$pr_issue_date =  trim($_POST['pr_issue_date']); 
+        $expense = trim($_POST['selectedOption']);
         $query = "update purchase_request set department_id='" . $department_id . "',unit_region_id='" . $unit_region_id . "',supplier_name='" . $supplier_name . "', expense='" . $expense . "', pr_issue_date='" . $issuing_date . "',phone_person='" . $phone_person . "',action_taken_by='" . $action_taken_by . "', pr_recd_on='" . $pr_reacd_on . "',order_placed_by='" . $order_placed_by . "',user_id='" . $uid . "',status='0' where sr_no='" . $pr_srno . "'";
         $result = $this->db->query($query);
         if ($result) {
@@ -231,13 +255,36 @@ class Purchase_model extends CI_Model {
         $result = $this->db->query($query);
     }
 
+// For editing PR 
 
-    /*
-     * This is used to edit purchase requesition
-     * 
-     */
-    public function edit_pr($editMemodata,$where) {
-        $this->db->update('purchase_request', $editMemodata, $where);
+    function edit_pr($sr_no,$pr_id) {
+
+        $issuing_date = trim($_POST['issuing_date']);
+        $phone_person = trim($_POST['phone_person']);
+        $action_taken_by = trim($_POST['action_taken_by']);
+        $pr_reacd_on = trim($_POST['pr_reacd_on']);
+        $order_placed_by = trim($_POST['order_placed_by']);
+        $supplier_name = trim($_POST['supplier_name']);
+        $pr_issue_date = trim($_POST['pr_issue_date']);
+        $pr_description = trim($_POST['pr_description']);
+        $units = trim($_POST['units']);
+        $avg_cods = trim($_POST['avg_cods']);
+        $qty_in_stock = trim($_POST['qty_in_stock']);
+        $reorder_point = trim($_POST['reorder_point']);
+        $reorder_quantity = trim($_POST['reorder_quantity']);
+        $qty_req = trim($_POST['qty_req']);
+        $pr_supplier_rate = trim($_POST['pr_supplier_rate']);
+        $pr_supplier_supplier = trim($_POST['pr_supplier_supplier']);
+        $order_placed_rate = trim($_POST['order_placed_rate']);
+        $order_placed_supplier = trim($_POST['order_placed_supplier']);
+        $pr_description = trim($_POST['pr_description']);
+        //$expense = trim($_POST['selectedOption']);
+        $query = "update purchase_request set supplier_name='" . $supplier_name . "', pr_issue_date='" . $issuing_date . "',phone_person='" . $phone_person . "',action_taken_by='" . $action_taken_by . "', pr_recd_on='" . $pr_reacd_on . "',order_placed_by='" . $order_placed_by . "',pr_description='" . $pr_description . "',units='" . $units . "', avg_cods='" . $avg_cods . "',qty_in_stock='" . $qty_in_stock . "',reorder_point='" . $reorder_point . "',reorder_quantity='" . $reorder_quantity . "',qty_req='" . $qty_req . "',pr_supplier_rate='" . $pr_supplier_rate . "',pr_supplier_supplier='" . $pr_supplier_supplier . "',order_placed_rate='" . $order_placed_rate . "',order_placed_supplier='" . $order_placed_supplier . "',pr_description ='" . $pr_description . "' where pr_id = ".$pr_id. " and sr_no='" . $sr_no . "'";
+//echo $query; die;
+        $result = $this->db->query($query);
+        if ($result) {
+            echo "PR edited successfully..";
+        }
     }
 
 //
@@ -484,7 +531,8 @@ class Purchase_model extends CI_Model {
         return $result;
     }
     
-    function add_internal_memo($addMemodata) {       
+    function add_internal_memo($addMemodata) {
+        //echo "<pre/>"; print_r($_POST); die;
         $this->db->insert('pr_internal_memo', $addMemodata);
         $last_inserted_id = $this->db->insert_id();
         if ($last_inserted_id > 0 ) {
@@ -739,19 +787,6 @@ function display_purchase_order($sr_no) {
         {		
             return $query->result_array();
         }
-    }
-    
-    function get_internal_memo_count() {       
-        $this->db->select('pr_internal_memo_id');
-        $this->db->from('pr_internal_memo');
-        $query = $this->db->get();
-        if ($query->num_rows() > 0) 
-        {		
-            return count($query->result_array());
-        }else{
-            return 1;
-        }
-        
     }
 
 }
