@@ -140,7 +140,7 @@
                                                        <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning"><?php echo "Pending"; ?></span>
                                     <?php } } ?>                                           
                                     </td>                                                                                      
-                                    <?php if($list['status'] == 1){ ?>
+                                    <?php if(($session_data['department_id'] != 5) && ($list['status'] == 1)){ ?>
                                             <td class="text-center"><a disabled="disabled" class="disabled" href="#">Edit</a> 
                                             | <a disabled="disabled" class="disabled" href="#">Memo</a></td>
                                     <?php } else if (($session_data['uid'] == $list['user_id']) && ( $list['status'] == '0' || $list['status'] == '2' )) { ?>

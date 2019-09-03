@@ -145,20 +145,23 @@ class Purchase_model extends CI_Model {
         //return $result;
     }
 
-    function display_purchase_request($parms) {
-        if ($parms['pr_id'] != '') {
+    function display_purchase_request($parms) {       
+        if ($parms['pr_id'] != '') {           
             $id=$parms['pr_id'];
             $sql = "select * from purchase_request where pr_id='" . $id . "'";
-        } elseif ($parms['department_id'] != '' && $parms['department_id'] != ADMIN_DEPT_ID && $parms['department_id'] != PU_DEPT_ID) {
+        } elseif ($parms['department_id'] != '' && $parms['department_id'] != ADMIN_DEPT_ID && $parms['department_id'] != PU_DEPT_ID) {           
             $dep_id=$parms['department_id'];
             $uId=$parms['uid'];
             //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
             // failing distinct here becuase of users table join 
             //$sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no,pr.user_id, usr.uid, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name,pr.pr_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) left join users usr on(pr.action_taken_by=usr.type) join unit_region u on(pr.unit_region_id=u.unit_region_id)";
-            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id, ac.approved_by_user_id, ac.rejected_by_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.department_id='" . $dep_id . "' and (ac.approver_user_id IN(".$uId.") OR pr.user_id = ".$uId.")";
+            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,pr.created_date,d.department_name,u.unit_region_name, ac.approver_user_id, ac.approved_by_user_id, ac.rejected_by_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.department_id='" . $dep_id . "' and (ac.approver_user_id IN(".$uId.") OR pr.user_id = ".$uId.") order by pr.created_date DESC";
             /* $sql = "select distinct prs.pr_status,prs.status_by,prs.pr_status_date,prs.remarks,pr.sr_no, pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name from purchase_request pr join department d on(pr.department_id=d.department_id) left join  pr_status prs on(pr.sr_no=prs.pr_no) order by pr.pr_issue_date desc"; */
-        }else{
-            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id, ac.approved_by_user_id, ac.rejected_by_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.status !='" . 2 . "'" ;
+        }elseif($parms['type_id'] == VP_TYPE_ID || $parms['department_id'] == PU_DEPT_ID){
+            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id, ac.approved_by_user_id, ac.rejected_by_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.status ='" . 1 . "' order by pr.created_date DESC" ;
+        }
+        else{
+            $sql="select distinct pr.sr_no,pr.user_id,pr.department_id,pr.pr_issue_date,pr.supplier_name,pr.order_placed_by,pr.phone_person,pr.expense,pr.action_taken_by,pr.status,d.department_name,u.unit_region_name, ac.approver_user_id, ac.approved_by_user_id, ac.rejected_by_user_id from purchase_request pr join department d on(pr.department_id=d.department_id) left join approval_chain ac on(pr.sr_no = ac.pr_sr_no) join unit_region u on(pr.unit_region_id=u.unit_region_id) where pr.status !='" . 2 . "' order by pr.created_date DESC" ;
         }
        //echo $sql; die;
         $result = $this->db->query($sql)->result_array();
@@ -752,6 +755,18 @@ function display_purchase_order($sr_no) {
             return 1;
         }
         
+    }
+    
+    public function get_comparison_info($sr_no){
+        $this->db->select(array('pr_description','units', 'qty_req'));       
+        $this->db->from('purchase_request');
+        $this->db->where('sr_no', $sr_no);
+        $this->db->where('status', '1');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) 
+        {		
+            return $query->result_array();
+        }
     }
 
 }

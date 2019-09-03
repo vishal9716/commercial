@@ -102,3 +102,4 @@ define('THOMSAN_DIGITAL', 'TD');
 
 define('ADMIN_DEPT_ID', 1);
 define('PU_DEPT_ID', 5);
+define('VP_TYPE_ID', 1);

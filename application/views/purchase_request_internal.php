@@ -457,7 +457,7 @@
                                 });
                             }
 
-                            function calculateTotal(c) {
+                            function calculateTotal(c) { 
                                 var qnty = $("#pr_qty_req_" + c).text();
                                 var suppRate = $("#pr_supplier_rate_" + c).text();
                                 var total1 = qnty * suppRate;
@@ -468,17 +468,13 @@
 
                                 $("#pr_supplier_supplier_" + c).text(total1);
                                 $("#pr_order_supplier_" + c).text(total2);
-                                
-                                // Cloumn Total Vlaue
-//                                var grand1=0;
-//                                var grand2=0;
-//                                for(let i = 1; i =< c; i++){ 
-//                                    alert(grand1);
-//                                    alert(i);
-//                                    grand1 = grand1 + Number($("#pr_supplier_supplier_" +i).text());
-//                                    grand2 = grand2 + Number($("#pr_order_supplier_" +i).text());
-//                                     alert(grand1);
-//                                }
+                               
+                                var grand1=0;
+                                var grand2=0;
+                                for(var i=1; i <= c; i++){
+                                    grand1 = grand1 + Number($("#pr_supplier_supplier_" +i).text());
+                                    grand2 = grand2 + Number($("#pr_order_supplier_" +i).text());
+                                }
                                 $(".grand_total_1").text(grand1);
                                 $(".grand_total_2").text(grand2);
                                 
@@ -504,13 +500,13 @@
                                     html_code += "<td class='pr_order_rate' id='pr_order_rate_" + count + "' onfocusout='calculateTotal(" + count + ")' contenteditable='true'></td>";
                                     html_code += "<td class='pr_order_supplier' id='pr_order_supplier_" + count + "' contenteditable='true'></td>";
 
-                                    html_code += "<td><button type='button' name='remove' data-row='row" + count + "' class='btn btn-danger btn-sm remove'>-</button></td>";
+                                    html_code += "<td><button type='button' name='remove' data-row='row_" + count + "' class='btn btn-danger btn-sm remove'>-</button></td>";
                                     html_code += "</tr>";
                                     $('#crud_table').append(html_code);
                                 });
 
                                 $(document).on('click', '.remove', function () {
-                                    var delete_row = $(this).data("row");
+                                    var delete_row = $(this).data("row");                                    
                                     $('#' + delete_row).remove();
                                 });
 

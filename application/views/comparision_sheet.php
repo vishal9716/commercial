@@ -32,9 +32,9 @@
         <th rowspan="2">Item Description</th>
 		<th rowspan="2">Unit</th>
         <th rowspan="2">Qty</th>
-		<th colspan="2">Vendor 1</th>
-		<th colspan="2">Vendor 2</th>
-		<th colspan="2">Vendor 3</th>
+        <th colspan="2"><input class="form-control" type="text" name="vendor_1" id="vendor_1" value="Vendor 1"/></th>		
+        <th colspan="2"><input class="form-control" type="text" name="vendor_2" id="vendor_2" value="Vendor 2"/></th>
+        <th colspan="2"><input class="form-control" type="text" name="vendor_3" id="vendor_3" value="Vendor 3"/></th>
 	    <th rowspan="2">Action</th>
     </tr>
     <tr>
@@ -48,7 +48,7 @@
    </thead>							
                                         <tbody>
 
-                                            <tr class="even gradeC">
+                                            <tr class="even gradeC" id="row_1">
                                                 <td class="srno" contenteditable="true">1</td>
                                                 <td class="item_desp" contenteditable="true"></td>
                                                 <td class="unit" contenteditable="true"></td>
@@ -212,23 +212,31 @@
         <!-- /#wrapper -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
+             $(document).ready(function () {
+           (function() {
+               alert(6);
+              $('#add').trigger('click');
+               
+            })();
+             });
+            
             $(document).ready(function () {
                 var count = 1;
                 $('#add').click(function () {
 				//alert("in");
                     count = count + 1;
-                    var html_code = "<tr id='row" + count + "'>";
+                    var html_code = "<tr id='row_" + count + "'>";
                     html_code += "<td class='srno' contenteditable='true'>" + count + "</td>";
                     html_code += "<td class='item_desp' contenteditable='true'></td>";
                     html_code += "<td class='unit' contenteditable='true'></td>";
-                    html_code += "<td class='qty' contenteditable='true'></td>";
+                    html_code += "<td class='qty'  contenteditable='true'></td>";
                     html_code += "<td class='quoted_unit_price' contenteditable='true'></td>";
                     html_code += "<td class='quoted_total_price' contenteditable='true'></td>";
                     html_code += "<td class='final_quoted_unit_price' contenteditable='true'></td>";
                     html_code += "<td class='final_quoted_total_price' contenteditable='true'></td>";
 					html_code += "<td class='' contenteditable='true'></td>";
                     html_code += "<td class='' contenteditable='true'></td>";
-                    html_code += "<td><button title='Remove Item' type='button' name='remove' data-row='row" + count + "' class='btn btn-danger remove'>-</button></td>";
+                    html_code += "<td><button title='Remove Item' type='button' name='remove' data-row='row_" + count + "' class='btn btn-danger remove'>-</button></td>";
                     html_code += "</tr>";
                     $('#crud_table').append(html_code);
                 });

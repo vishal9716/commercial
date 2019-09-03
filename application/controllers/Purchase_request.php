@@ -45,6 +45,7 @@ class Purchase_request extends CI_Controller {
          $this->load->view('purchase_request_import',$data);
 		
 	}
+        
 	public function internal()
 	{ 
             $data['units_region']=$this->purchase_model->display_unit_region($id);
@@ -138,13 +139,15 @@ class Purchase_request extends CI_Controller {
 	// purchase request listing
 	public function purchase_request_list() {  
             $session_data=$this->session->userdata('logged_in');
+            
             $pu_list_param=array(
                 'department_id' => $session_data['department_id'],
                 'pr_id'=> '',
-                'uid'=>$session_data['uid']
+                'uid'=>$session_data['uid'],
+                'type_id'=>$session_data['user_type'],
             );
             $supplier_list=$this->supplier_model->supplier_name_list();
-            $data['purchase_request_list']=$this->purchase_model->display_purchase_request($pu_list_param);               
+            $data['purchase_request_list']=$this->purchase_model->display_purchase_request($pu_list_param);       
             $data['type_list']=$this->type_model->typelist_info_by_key_val_arr();
             $data['status_list']= $this->purchase_model::$actionstatus;
             $data['session_data'] = $session_info;  
@@ -729,14 +732,13 @@ class Purchase_request extends CI_Controller {
     }
 	
 // NEGOTIATION MATRIX ENDS
-
-
-
-
     // Comparision Sheet Start
-	public function comparision() {
+    public function comparision() {
         $sr_no = $_GET['sr_no'];
-        $this->load->view('comparision_sheet');
+         $data['pr_info'] = $this->purchase_model->get_comparison_info($sr_no);
+       
+        
+        $this->load->view('comparision_sheet',$data);
     }
 
     public function add_comparision() {
