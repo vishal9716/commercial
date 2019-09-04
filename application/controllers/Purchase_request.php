@@ -735,9 +735,13 @@ class Purchase_request extends CI_Controller {
     // Comparision Sheet Start
     public function comparision() {
         $sr_no = $_GET['sr_no'];
-         $data['pr_info'] = $this->purchase_model->get_comparison_info($sr_no);
-       
-        
+        $data['pr_info'] =json_encode($this->purchase_model->get_comparison_info($sr_no));        
+//        echo "<pre>";
+//        print_r($data);
+//        die("4");
+        //$rt= json_encode($data['pr_info']);
+       // print_r($rt);
+        //die("66");
         $this->load->view('comparision_sheet',$data);
     }
 

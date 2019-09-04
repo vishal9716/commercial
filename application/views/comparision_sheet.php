@@ -50,9 +50,9 @@
 
                                             <tr class="even gradeC" id="row_1">
                                                 <td class="srno" contenteditable="true">1</td>
-                                                <td class="item_desp" contenteditable="true"></td>
-                                                <td class="unit" contenteditable="true"></td>
-                                                <td class="qty" contenteditable="true"></td>
+                                                <td class="item_desp" id="item_desp_1" contenteditable="true"></td>
+                                                <td class="unit" id="unit_1" contenteditable="true"></td>
+                                                <td class="qty" id="qty_1" contenteditable="true"></td>
                                                 <td class="quoted_unit_price" contenteditable="true"></td>
                                                 <td class="quoted_total_price" contenteditable="true"></td>
                                                 <td class="final_quoted_unit_price" contenteditable="true"></td>
@@ -60,7 +60,7 @@
 												<td class="final_quoted_unit_price" contenteditable="true"></td>
                                                 <td class="final_quoted_total_price" contenteditable="true"></td>
                                                 <td>
-													<button type="button" title="Add PR" name="add" id="add" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></button>
+                                                    <button type="button" title="Add PR" name="add" id="add" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></button>
                                                 </td>
 
                                             </tr>
@@ -212,18 +212,53 @@
         <!-- /#wrapper -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
-             $(document).ready(function () {
-           (function() {
-               alert(6);
-              $('#add').trigger('click');
-               
-            })();
-             });
-            
             $(document).ready(function () {
-                var count = 1;
+                (function() {
+                    var pr_list=<?php echo $pr_info; ?>;
+                    var ty=Object.keys(pr_list).length;                   
+                    var count = 1 ;
+                    $.each(pr_list, function (index, value) {
+                        var desc=value.pr_description;
+                        var units=value.units;
+                        var qty_req=value.qty_req; 
+                        if(count == 1){
+                            $("#item_desp_"+count).text(desc);
+                            $("#unit_"+count).text(units);
+                            $("#qty_"+count).text(qty_req);
+                        }else{
+                            addRow(count,desc,units,qty_req)
+                        }
+                        count++;
+                    });                  
+                })();
+             });
+             
+            function addRow(count,desc,units,qty_req){               
+                var html_code = "<tr id='row_" + count + "'>";
+                html_code += "<td class='srno' contenteditable='true'>" + count + "</td>";
+                html_code += "<td class='item_desp' contenteditable='true'>"+desc+"</td>";
+                html_code += "<td class='unit' contenteditable='true'>"+units+"</td>";
+                html_code += "<td class='qty'  contenteditable='true'>"+qty_req+"</td>";
+                html_code += "<td class='quoted_unit_price' contenteditable='true'></td>";
+                html_code += "<td class='quoted_total_price' contenteditable='true'></td>";
+                html_code += "<td class='final_quoted_unit_price' contenteditable='true'></td>";
+                html_code += "<td class='final_quoted_total_price' contenteditable='true'></td>";
+                html_code += "<td class='' contenteditable='true'></td>";
+                html_code += "<td class='' contenteditable='true'></td>";
+                html_code += "<td><button title='Remove Item' type='button' name='remove' data-row='row_" + count + "' class='btn btn-danger remove'>-</button></td>";
+                html_code += "</tr>";
+                $('#crud_table').append(html_code);
+            }
+            
+            $(document).ready(function () { 
+                var pr_list=<?php echo $pr_info; ?>;
+                var length=Object.keys(pr_list).length;
+                if(length > 0){
+                    var count= length;
+                }else{
+                    var count = 1; 
+                }
                 $('#add').click(function () {
-				//alert("in");
                     count = count + 1;
                     var html_code = "<tr id='row_" + count + "'>";
                     html_code += "<td class='srno' contenteditable='true'>" + count + "</td>";
@@ -234,7 +269,7 @@
                     html_code += "<td class='quoted_total_price' contenteditable='true'></td>";
                     html_code += "<td class='final_quoted_unit_price' contenteditable='true'></td>";
                     html_code += "<td class='final_quoted_total_price' contenteditable='true'></td>";
-					html_code += "<td class='' contenteditable='true'></td>";
+                    html_code += "<td class='' contenteditable='true'></td>";
                     html_code += "<td class='' contenteditable='true'></td>";
                     html_code += "<td><button title='Remove Item' type='button' name='remove' data-row='row_" + count + "' class='btn btn-danger remove'>-</button></td>";
                     html_code += "</tr>";
