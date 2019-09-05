@@ -30,6 +30,8 @@ class Purchase_request extends CI_Controller {
             $this->load->model('user_database');
             $this->load->model('pr_status_model');
             $this->load->model('supplier_model');
+            $this->load->model('Comparison_sheet_model');
+            $this->load->model('Comparison_sheet_vendor_model');
             //$this->load->model('approval_chain_model');
             $this->load->helper('string');
             error_reporting(0);		 
@@ -104,6 +106,7 @@ class Purchase_request extends CI_Controller {
             $last_inserted_id=array();            
             foreach($request_data['memo_items'] as $value){
                 ////////////////
+         
                 unset($value['pr_srno']);
                 $data['sr_no'] = $request_data['sr_no'];
                 $data['pr_description'] = $value['pr_desp'];
@@ -746,10 +749,50 @@ class Purchase_request extends CI_Controller {
     }
 
     public function add_comparision() {
-        //echo "<pre/>";
-        //print_r($_POST); die;
-        $pr_sr_no = $_POST['sr_no'];
-        $data['result'] = $this->purchase_model->add_comparision_sheet($pr_sr_no);
+        $request_data=$_POST;
+        $currentDate =date('Y-m-d H:i:s');
+        $comparison= $request_data['comparision_items'];       
+        foreach($comparison as $key => $value){
+            $cm_sheet=array(
+                'pr_no' => trim($request_data['sr_no']),
+                'description'=>trim($value['item_desp']),
+                'quantity'=>trim($value['qty']),
+                'unit'=>trim($value['unit']),
+                'created_date'=>$currentDate
+            );
+            $inserted_id=$this->Comparison_sheet_model->add_by_pr_so($cm_sheet);
+            if($inserted_id > 0){
+                $vendor1=array(
+                    'pr_no' => trim($request_data['sr_no']),
+                    'comp_id' => trim($inserted_id),
+                    'vendor_name' => trim($request_data['vendor_1']),
+                    'unit_rate' => trim($value['v1_unit_price']),
+                    'total' => trim($value['v1_total_price']),
+                    'created_date' => $currentDate
+                );
+                $this->Comparison_sheet_vendor_model->add_vendor($vendor1);
+                $vendor2=array(
+                    'pr_no' => trim($request_data['sr_no']),
+                    'comp_id' => trim($inserted_id),
+                    'vendor_name' => trim($request_data['vendor_2']),
+                    'unit_rate' => trim($value['v2_unit_price']),
+                    'total' => trim($value['v2_total_price']),
+                    'created_date' => $currentDate
+                );
+                $this->Comparison_sheet_vendor_model->add_vendor($vendor2);
+                $vendor3=array(
+                    'pr_no' => trim($request_data['sr_no']),
+                    'comp_id' => trim($inserted_id),
+                    'vendor_name' => trim($request_data['vendor_3']),
+                    'unit_rate' => trim($value['v3_unit_price']),
+                    'total' => trim($value['v3_total_price']),
+                    'created_date' => $currentDate
+                );
+                $this->Comparison_sheet_vendor_model->add_vendor($vendor3);
+            }
+        }
+        echo "Added successfully";
+        exit;
     }
 
     public function comparision_history() {
@@ -766,6 +809,10 @@ class Purchase_request extends CI_Controller {
         echo json_encode($data);
     }
 	 // Comparision Sheet Ends
+        public function add_comparision_sheet()
+        {
+            
+        }
     
 	
 }
