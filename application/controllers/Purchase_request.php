@@ -30,8 +30,8 @@ class Purchase_request extends CI_Controller {
             $this->load->model('user_database');
             $this->load->model('pr_status_model');
             $this->load->model('supplier_model');
-            $this->load->model('Comparison_sheet_model');
-            $this->load->model('Comparison_sheet_vendor_model');
+            $this->load->model('comparison_sheet_model');
+            $this->load->model('comparison_sheet_vendor_model');
             //$this->load->model('approval_chain_model');
             $this->load->helper('string');
             error_reporting(0);		 
@@ -770,7 +770,7 @@ class Purchase_request extends CI_Controller {
                     'total' => trim($value['v1_total_price']),
                     'created_date' => $currentDate
                 );
-                $this->Comparison_sheet_vendor_model->add_vendor($vendor1);
+                $this->comparison_sheet_vendor_model->add_vendor($vendor1);
                 $vendor2=array(
                     'pr_no' => trim($request_data['sr_no']),
                     'comp_id' => trim($inserted_id),
@@ -779,7 +779,7 @@ class Purchase_request extends CI_Controller {
                     'total' => trim($value['v2_total_price']),
                     'created_date' => $currentDate
                 );
-                $this->Comparison_sheet_vendor_model->add_vendor($vendor2);
+                $this->comparison_sheet_vendor_model->add_vendor($vendor2);
                 $vendor3=array(
                     'pr_no' => trim($request_data['sr_no']),
                     'comp_id' => trim($inserted_id),
@@ -788,7 +788,7 @@ class Purchase_request extends CI_Controller {
                     'total' => trim($value['v3_total_price']),
                     'created_date' => $currentDate
                 );
-                $this->Comparison_sheet_vendor_model->add_vendor($vendor3);
+                $this->comparison_sheet_vendor_model->add_vendor($vendor3);
             }
         }
         echo "Added successfully";
