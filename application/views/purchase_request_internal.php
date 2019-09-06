@@ -1,3 +1,4 @@
+
 <?php $this->load->view("common/top"); ?>
 <?php $this->load->view('header_message'); ?>
 <?php $this->load->view('left_message'); ?>
@@ -340,6 +341,28 @@
                                             <input required type="email" value="" placeholder="Enter email" class="form-control" id="supplier_email" name="supplier_email">
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="">Address</label>
+
+                                        <div class="">
+											<textarea class="form-control rounded-0"  id="supplier_address" placeholder="Enter Address" name="supplier_address"  rows="2"></textarea>
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="">Mobile No.</label>
+
+                                        <div class="">
+                                            <input required type="text" value="" placeholder="Enter Mobile" class="form-control" id="supplier_mobile" name="supplier_mobile">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="">GSTIN</label>
+
+                                        <div class="">
+                                            <input required type="email" value="" placeholder="Enter GSTIN" class="form-control" id="supplier_gstin" name="supplier_gstin">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -376,7 +399,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
                             function createPurchaseRequest() {
-
                                 var dept_id = $("#departmentsDropdownSelect").val();
                                 var unit_id = $("#unitDropdownSelect").val();
                                 var issuing_date = $("#issuing_date").val();
@@ -395,13 +417,11 @@
                                     }
                                 });
                             }
-
                             // For adding Department
                             function add_department() {
                                 //alert("in");
                                 var department_name = $('#department_name').val();
                                 var department_descp = $('#department_descp').val();
-
                                 // alert(department_name);
                                 $.ajax({
                                     method: "POST",
@@ -420,17 +440,18 @@
                                         $('#department_descp').val('');
                                     },
                                     error: function (data) {
-
                                         alert("error");
                                     }
                                 });
                             }
-
                             // For adding Supplier
                             function add_supplier() {
                                 var supplier_name = $('#supplier_name').val();
                                 var supplier_descp = $('#supplier_descp').val();
                                 var supplier_email = $('#supplier_email').val();
+                                var supplier_address = $('#supplier_address').val();
+                                var supplier_mobile = $('#supplier_mobile').val();
+                                var supplier_gstin = $('#supplier_gstin').val();
                                 $.ajax({
                                     method: "POST",
                                     url: "<?php echo base_url(); ?>index.php/purchase_request/add_supplier",
@@ -438,6 +459,9 @@
                                         supplier_name: supplier_name,
                                         supplier_descp: supplier_descp,
                                         supplier_email: supplier_email,
+                                        supplier_address: supplier_address,
+                                        supplier_mobile: supplier_mobile,
+                                        supplier_gstin: supplier_gstin
                                     },
                                     success: function (data) {
                                         //alert(data);                                         
@@ -456,16 +480,13 @@
                                     }
                                 });
                             }
-
                             function calculateTotal(c) { 
                                 var qnty = $("#pr_qty_req_" + c).text();
                                 var suppRate = $("#pr_supplier_rate_" + c).text();
                                 var total1 = qnty * suppRate;
-
                                 var qnty = $("#pr_qty_req_" + c).text();
                                 var orderRate = $("#pr_order_rate_" + c).text();
                                 var total2 = qnty * orderRate;
-
                                 $("#pr_supplier_supplier_" + c).text(total1);
                                 $("#pr_order_supplier_" + c).text(total2);
                                
@@ -479,9 +500,7 @@
                                 $(".grand_total_2").text(grand2);
                                 
                             }
-
                             $(document).ready(function () {
-
                                 var count = 1;
                                 $('#add').click(function () {
                                     count = count + 1;
@@ -499,17 +518,14 @@
                                     html_code += " <td class='pr_supplier_supplier' id='pr_supplier_supplier_" + count + "' contenteditable='true'></td>";
                                     html_code += "<td class='pr_order_rate' id='pr_order_rate_" + count + "' onfocusout='calculateTotal(" + count + ")' contenteditable='true'></td>";
                                     html_code += "<td class='pr_order_supplier' id='pr_order_supplier_" + count + "' contenteditable='true'></td>";
-
                                     html_code += "<td><button type='button' name='remove' data-row='row_" + count + "' class='btn btn-danger btn-sm remove'>-</button></td>";
                                     html_code += "</tr>";
                                     $('#crud_table').append(html_code);
                                 });
-
                                 $(document).on('click', '.remove', function () {
                                     var delete_row = $(this).data("row");                                    
                                     $('#' + delete_row).remove();
                                 });
-
                                 $('#save_pr').click(function () {
                                     
                                     var sr_no = $('#sr_no').val();
@@ -526,7 +542,6 @@
                                         });
                                         memo_items.push(ret);
                                     });
-
                                     $.ajax({
                                         url: "<?php echo base_url(); ?>index.php/purchase_request/add_purchase_request",
                                         method: "POST",
@@ -539,7 +554,6 @@
                                             //alert(data);
                                             var result = jQuery.parseJSON(data);
                                             console.log(result);
-
                                             if (result.error) {
                                                 $("#missing-srnum").html(result.error);
                                                 $("#missing-srnum").show();
@@ -562,14 +576,12 @@
                                 var issuing_date = $('#issuing_date').val();
                                 var phone_person = $("input[name='phone_person']:checked").val();                                
                                 var expense = $("input[name='expense']:checked").val();
-
                                 var action_taken_by = $('#action_taken_by').val();
                                 var pr_reacd_on = $('#pr_reacd_on').val();
                                 var order_placed_by = $('#order_placed_by').val();
                                 var pr_srno = document.getElementById("pr_srno").value;
                                 var selectedOption = $("input:radio[name=optradio]:checked").val();
                                 var supplier_name = $("#supplierDropdownSelect :selected").val();
-
                                 $.ajax({
                                     method: "POST",
                                     url: "<?php echo base_url(); ?>index.php/purchase_request/update_purchase_request",
@@ -595,13 +607,10 @@
                                         $('#department_descp').val('');
                                     },
                                     error: function (data) {
-
                                         alert("error");
                                     }
                                 });
                             }
-
-
                             $('#departmentsDropdownSelect').change(function () {
                                 $('#action_taken_by').html('');
                                 var dep_id = $(this).val();
@@ -616,10 +625,8 @@
                                         $.each(data, function (index, element) {
                                             $('#action_taken_by').append($("<option></option>").attr("value", element.type_id).text(element.type_name));
                                         });
-
                                     }
                                 });
                             });
-
     </script>
     <?php echo $this->load->view("common/bottom"); ?>
