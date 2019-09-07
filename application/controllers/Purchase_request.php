@@ -73,7 +73,10 @@ class Purchase_request extends CI_Controller {
                 'supplier_name' => $request_data['supplier_name'],
                 'supplier_desp' => $request_data['supplier_descp'],
                 'supplier_email' => $request_data['supplier_email'],
-                'created_date' => $currentDate                
+                'supplier_address' => $request_data['supplier_address'],
+                'supplier_mb' => $request_data['supplier_mobile'],
+                'supplier_gstin' => $request_data['supplier_gstin'],
+                'created_date' => $currentDate                  
             );           
             $data['result'] = $this->supplier_model->add_new_supplier($CreateData);
             echo json_encode($data['result']);
