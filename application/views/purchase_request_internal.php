@@ -514,6 +514,7 @@
                                     
                                     var sr_no = $('#sr_no').val();
                                     var pr_dept_id = $('.pr_dept_id').text();
+                                   
                                     var memo_items = [];
                                     var count = 0;
                                     $('table tbody tr').each(function () {
