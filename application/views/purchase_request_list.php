@@ -109,13 +109,13 @@
                                         $actionMessage = "";
                                         $showApproved=0;
                                         foreach ($list['statushistory'] as $history) {
-                                            if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 1)) {                                           
+                                            if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 1)) {                                             
                                                 $showApproved=1;
-                                            }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 2) ){
+                                            }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 2) ){                                              
                                                 $showApproved=2;
-                                            }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 0) ){
+                                            }else if( ($session_data['uid'] == $history['request_raised_by']) && ($history['pr_status'] == 0) ){                                               
                                                 $showApproved=0;
-                                            }
+                                            }                                            
                                             $actionMessage .= $status_list[$history['pr_status']] . " on : " . date('Y-m-d', strtotime($history['pr_status_date'])) . " by : " . $history['request_reviewed_by_name'] . "\n";
                                         }
                                     ?>
@@ -134,10 +134,12 @@
                                                        <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning disabled"><?php echo "Pending"; ?></span>
                                             <?php }else if( ($showApproved == 0) && (in_array($session_data['uid'], $approved_list)) ){ ?> 
                                                        <span title="<?php echo $actionMessage; ?>"><span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning disabled"><?php echo "Pending"; ?></span></span>
+                                            <?php }else if( ($showApproved == 0) && ($history['pr_status'] == 0 && $session_data['uid'] == $history['request_approved_by']) ){ ?> 
+                                                       <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-warning" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo  "Pending" ?></span></span>
                                             <?php }else if(in_array($session_data['uid'], $rejected_list)){ ?> 
                                                        <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-danger disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "Rejected" ?></span></span>
                                             <?php }else if($showApproved == 0){ ?> 
-                                                       <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="label label-warning"><?php echo "Pending"; ?></span>
+                                                       <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="show_status label label-warning"><?php echo "Pending"; ?></span>
                                     <?php } } ?>                                           
                                     </td>                                                                                      
                                     <?php if(($session_data['department_id'] != 5) && ($list['status'] == 1)){ ?>
