@@ -180,6 +180,7 @@ angular
         },
         success: function (data) {
             alert(data);
+//            return false;
             //$("#alert_msg").html(data);
            // $("#alertModal").modal('show');      
 window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";

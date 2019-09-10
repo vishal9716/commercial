@@ -264,7 +264,7 @@
         $('#save_comp').click(function () {
             //alert("in--");
              var sr_no = "<?php echo $_GET['sr_no']; ?>";
-            //alert(sr_no);
+            
             var vendor_1 = $("#vendor_1_name").val();
             var vendor_2 = $("#vendor_2_name").val();
             var vendor_3 = $("#vendor_3_name").val();            

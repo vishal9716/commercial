@@ -12,13 +12,13 @@ Class Approval_chain_model extends CI_Model {
     static $REQUEST_REJECTED = 2;
 
     public function add_approvar_user($param) {
+        
         $this->db->select('*');
         $this->db->from('approval_chain');
         $this->db->where('pr_sr_no', $param['pr_sr_no']);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
-            $result=$query->result();
-            
+            $result=$query->result();            
             // 1
             $existing_approver_list=$result[0]->approver_user_id;
             $approver_list=$existing_approver_list . ',' .$param['approver_user_id'];
@@ -46,7 +46,7 @@ Class Approval_chain_model extends CI_Model {
             );
             $this->db->where('pr_sr_no', $param['pr_sr_no']);      
             $this->db->update('approval_chain', $data);
-        }else{            
+        }else{
             $this->db->insert('approval_chain', $param);
         }
     }

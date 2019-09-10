@@ -234,6 +234,7 @@ class Purchase_model extends CI_Model {
 //         $sql= $this->db->last_query();
 //         echo $sql; die;  
         $result= $query->result_array();  
+        
         foreach ($result as $key => $pr) {
             $srno = $pr['sr_no'];                       
              $this->db->select('*')
@@ -243,10 +244,10 @@ class Purchase_model extends CI_Model {
             $statushistory = $query->result_array();
             $result[$key]['statushistory'] = $statushistory;
         }
-         echo "<pre>";
-        print_r($result);
-        echo "</pre>";
-        die("55");
+//         echo "<pre>";
+//        print_r($result);
+//        echo "</pre>";
+//        die("55");
         return $result;
         
        
@@ -644,7 +645,7 @@ class Purchase_model extends CI_Model {
     public function update_status($params) { 
         $data=array(
             'pr_status' => $params['pr_status']
-        );       
+        );               
         $this->db->update('pr_status', $data, array('pr_status_id' => $params['pr_status_id']));        
     }
     

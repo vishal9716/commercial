@@ -194,10 +194,14 @@ class Purchase_request extends CI_Controller {
             $addMemodata['created_by'] = $request_data['order_placed_by']; 
             $addMemodata['pr_from_user_id'] = $request_data['from_user_id']; 
             $addMemodata['created_date'] = $currentDate;
+            
             $inserted_id = $this->purchase_model->add_internal_memo($addMemodata);        
 //            if($inserted_id){
                 // Add approval 
                 $userInfo=$this->user_database->user_info_by_type($request_data['to']);
+//                echo"<pre>";
+//                print_r($userInfo);
+//                die(32);
                 $approval_data=array(
                     'pr_sr_no' => $request_data['sr_no'],
                     'type_user_id' => $request_data['to'],
@@ -227,6 +231,7 @@ class Purchase_request extends CI_Controller {
                 );
                 $this->sendmail($sendEmailData);*/
 //            }
+            echo "Internal Memo Mail sent successfully";
             exit;
 	}
         
@@ -491,13 +496,6 @@ class Purchase_request extends CI_Controller {
     }
 	// audit_checklist ENDS
 	
-	
-	
-	
-	
-	
-	
-	
    	public function checklist_listing(){
 		$data['checklist_listing']=$this->purchase_model->display_checklist($id);
 		$this->load->view('checklist_listing',$data);		
@@ -575,7 +573,8 @@ class Purchase_request extends CI_Controller {
                         'approved_by' => $session_data['uid'],
                     );
                     $this->add_approval_user($chain_data);                    
-                } else{
+                } else{ 
+                    // For manager
                     // send To VP
                     // Update Pr Data
                     $update_pr_status=array(
@@ -596,7 +595,7 @@ class Purchase_request extends CI_Controller {
                     $appr_uid_arr= explode(",", $appr_user_id);
                     // Send to VP if Only One User in Approval Chain Till Now
                     if(count($appr_uid_arr) == 1 && (in_array($session_data['uid'], $appr_uid_arr)) 
-                            && $session_data['user_type'] != $vp_type_id){                
+                            && $session_data['user_type'] != $vp_type_id){
                         $uInfo=$this->user_database->user_info_by_type($vp_type_id);
                         $vp_data=array(
                             'pr_sr_no' =>$pr_srno,
@@ -611,10 +610,9 @@ class Purchase_request extends CI_Controller {
                         $updateStatusInfo1=array(
                             'pr_status_id' => $status_data[0]['pr_status_id'],
                             'pr_status' => $request_data['status']
-                        );
+                        );                      
                         // Update Status of Purchase request table pr_status
-                        $this->purchase_model->update_status($updateStatusInfo1);
-                        
+                        $this->purchase_model->update_status($updateStatusInfo1);                                            
                         // Create new Pr status 
                         $update_pr_status['request_approved_by'] = $uInfo[0]['uid'];
                         $update_pr_status['request_reviewed_by_name'] = $uInfo[0]['fname'] .' '. $uInfo[0]['fname'];
@@ -682,6 +680,7 @@ class Purchase_request extends CI_Controller {
         }	
         
     public function add_approval_user($data){
+       
         // Add entry in approval chain
         $currentDate =date('Y-m-d H:i:s');
         $approval_data=array(
@@ -705,7 +704,7 @@ class Purchase_request extends CI_Controller {
                 $approval_data['status'] = '0';
                 break;
         }
-       
+        
         return $this->approval_chain_model->add_approvar_user($approval_data);
     }
     

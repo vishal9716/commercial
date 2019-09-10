@@ -30,7 +30,6 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Purchase Request listing  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <span><a href="<?php echo base_url(); ?>index.php/purchase_request/internal"><?php if ($username == 'konain') { ?>Add Purchase Request <?php } ?></a></span>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
@@ -139,7 +138,7 @@
                                             <?php }else if(in_array($session_data['uid'], $rejected_list)){ ?> 
                                                        <span title="<?php echo $actionMessage; ?>">  <span class="show_status label label-danger disabled" prid="<?php echo $list['sr_no']; ?>" data-toggle="modal" data-target="#exampleModal"><?php echo "Rejected" ?></span></span>
                                             <?php }else if($showApproved == 0){ ?> 
-                                                       <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="show_status label label-warning"><?php echo "Pending"; ?></span>
+                                                       <span  prid="<?php echo $list['sr_no']; ?>" title="" data-toggle="modal" data-target="#exampleModal" class="show_status label label-warning"><?php echo "Pending 4"; ?></span>
                                     <?php } } ?>                                           
                                     </td>                                                                                      
                                     <?php if(($session_data['department_id'] != 5) && ($list['status'] == 1)){ ?>
@@ -420,7 +419,9 @@
                                                                 url: "<?php echo base_url(); ?>index.php/purchase_request/update_pr_status",
                                                                 method: "POST",
                                                                 data: {status: status, remarks: remarks, pr_srno:pr_srno},
-                                                                success: function (data) {                                                                    
+                                                                success: function (data) {  
+                                                                    alert(data);
+                                                                    //return false;
                                                                     $("#alertModal").modal('show');;                                                                   
                                                                     $('#exampleModal').modal('hide');
                                                                     window.location.href = "<?php echo base_url(); ?>index.php/purchase_request/purchase_request_list";
